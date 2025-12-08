@@ -29,8 +29,8 @@ int main() {
     sf::IntRect playerRect(0, 0, 17, 17);
 
     GameState::getInstance().getMainCamera() -> addScript(script::followPlayer);
-    //GameState::getInstance().getMainCamera() -> addScript(script::dramaticZoom);
-    // GameState::getInstance().getMainCamera() -> addScript(script::cameraShake);
+    GameState::getInstance().getMainCamera() -> addScript(script::dramaticZoom);
+    GameState::getInstance().getMainCamera() -> addScript(script::cameraShake);
 
     RenderizerParameters params{
         window,

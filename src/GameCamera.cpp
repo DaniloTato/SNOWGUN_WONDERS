@@ -2,7 +2,7 @@
 #include "Constants.hpp"
 
 GameCamera::GameCamera()
-    : position(0.f, 0.f), desiredPosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), speed(0.1f) {}
+    : position(0.f, 0.f), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {}
 
 GameCamera::~GameCamera() {
     scripts.clear();
@@ -33,8 +33,8 @@ void GameCamera::update(const CameraContext& ctx) {
         }
     }
 
-    zoom += (desiredZoom - zoom) * speed;
-    position += (desiredPosition - position) * speed;
+    zoom += ((desiredZoom + impactZoom) - zoom) * speed;
+    position += ((desiredPosition + shakePosition) - position) * speed;
 }
 
 float GameCamera::getZoom() const {
@@ -62,4 +62,12 @@ sf::Vector2f GameCamera::worldToScreen(const sf::Vector2f& worldPos, float paral
     sf::Vector2f parallaxOffset(parallaxOffsetX, parallaxOffsetY);
 
     return base + zoomOffset + parallaxOffset;
+}
+
+void GameCamera::setCameraShakePosition(const sf::Vector2f& shakePos) {
+    shakePosition = shakePos;
+}
+
+void GameCamera::setImpactZoom(float impactZoom) {
+    this->impactZoom = impactZoom;
 }

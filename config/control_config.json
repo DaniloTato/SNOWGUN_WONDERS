@@ -5,6 +5,8 @@
         "up": "KeyUp",
         "down": "KeyDown",
         "zoomIn": "Num2",
-        "zoomOut": "Num1"
+        "zoomOut": "Num1",
+        "shakeCamera": "Q",
+        "dramaticZoom": "W"
     }
 }

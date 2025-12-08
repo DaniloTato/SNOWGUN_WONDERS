@@ -19,6 +19,8 @@ public:
     void update(const CameraContext& ctx);
     float getZoom() const;
     const float getDesiredZoom() const;
+    void setCameraShakePosition(const sf::Vector2f& shakePos);
+    void setImpactZoom(float impactZoom);
 
     void addScript(void (*script)(GameCamera&, const CameraContext&));
 
@@ -27,8 +29,10 @@ public:
 private:
     sf::Vector2f position;
     sf::Vector2f desiredPosition;
+    sf::Vector2f shakePosition;
     float zoom;
     float desiredZoom;
+    float impactZoom;
     float speed;
     std::vector<void (*)(GameCamera&, const CameraContext&)> scripts;
 };

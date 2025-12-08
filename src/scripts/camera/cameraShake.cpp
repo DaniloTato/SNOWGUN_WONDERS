@@ -1,7 +1,8 @@
 #include <random>
 
 #include "GameCamera.hpp"
-
+#include "Constants.hpp"
+#include "InputManager.hpp"
 
 namespace script {
 
@@ -23,14 +24,14 @@ namespace script {
             elapsed += deltaTime;
             if (elapsed >= shakeDuration) {
                 shakeDuration = 0.f;
-                camera.goTo(ctx.position);
+                camera.setCameraShakePosition({0.f, 0.f});
                 return;
             }
 
             float offsetX = distribution(generator) * shakeIntensity;
             float offsetY = distribution(generator) * shakeIntensity;
 
-            camera.goTo(ctx.position + sf::Vector2f(offsetX, offsetY));
+            camera.setCameraShakePosition({offsetX, offsetY});
         }
 
     private:
@@ -44,8 +45,12 @@ namespace script {
     static ScreenShake screenShake;
 
     void cameraShake(GameCamera& camera, const CameraContext& ctx) {
-        constexpr float deltaTime = 1.f / 60.f;
+        constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
         screenShake.update(camera, ctx, deltaTime);
+
+        if(InputManager::getInstance().isJustPressed("shakeCamera")){
+            screenShake.start(0.5f, 10.f);
+        }
     }
 
 }
