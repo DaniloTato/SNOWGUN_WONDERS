@@ -89,7 +89,7 @@ inline void dramaticZoom(GameCamera& camera, const CameraContext& ctx) {
     dramaticZoomObj.update(camera, ctx, deltaTime);
 
     if(InputManager::getInstance().isJustPressed("dramaticZoom")){
-        dramaticZoomObj.start(camera, 2.0f, 0.3f);
+        dramaticZoomObj.start(camera, camera.getZoom() * 2.0f, 0.3f);
     }
 }
 

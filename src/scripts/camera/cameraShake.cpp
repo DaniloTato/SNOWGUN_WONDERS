@@ -49,7 +49,7 @@ namespace script {
         screenShake.update(camera, ctx, deltaTime);
 
         if(InputManager::getInstance().isJustPressed("shakeCamera")){
-            screenShake.start(0.5f, 10.f);
+            screenShake.start(0.5f, 40.f);
         }
     }
 
