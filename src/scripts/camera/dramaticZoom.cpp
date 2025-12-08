@@ -56,7 +56,6 @@ public:
                 break;
         }
 
-        // Set the additive impact zoom to camera
         camera.setImpactZoom(impactZoomValue);
     }
 
@@ -81,7 +80,6 @@ private:
     }
 };
 
-// Static instance to be used as the script function
 static DramaticZoom dramaticZoomObj;
 
 inline void dramaticZoom(GameCamera& camera, const CameraContext& ctx) {
