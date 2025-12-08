@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/System/Vector2.hpp"
+#include "Scripter.hpp"
 #include <SFML/Graphics.hpp>
 
 struct CameraContext{
@@ -22,9 +23,9 @@ public:
     void setCameraShakePosition(const sf::Vector2f& shakePos);
     void setImpactZoom(float impactZoom);
 
-    void addScript(void (*script)(GameCamera&, const CameraContext&));
-
     sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;
+
+    Scripter<GameCamera, CameraContext> scripter;
 
 private:
     sf::Vector2f position;
@@ -34,5 +35,4 @@ private:
     float desiredZoom;
     float impactZoom;
     float speed;
-    std::vector<void (*)(GameCamera&, const CameraContext&)> scripts;
 };

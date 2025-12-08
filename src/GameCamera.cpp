@@ -1,12 +1,9 @@
 #include "GameCamera.hpp"
 #include "Constants.hpp"
+#include "Scripter.hpp"
 
 GameCamera::GameCamera()
     : position(0.f, 0.f), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {}
-
-GameCamera::~GameCamera() {
-    scripts.clear();
-}
 
 void GameCamera::setPosition(const sf::Vector2f& pos) {
     position = pos;
@@ -25,14 +22,7 @@ void GameCamera::zoomTo(float dZoom) {
 }
 
 void GameCamera::update(const CameraContext& ctx) {
-    if(!scripts.empty()) {
-        for (auto& script : scripts) {
-            if(script){
-                script(*this, ctx);
-            }
-        }
-    }
-
+    scripter.runScripts(*this, ctx);
     zoom += ((desiredZoom + impactZoom) - zoom) * speed;
     position += ((desiredPosition + shakePosition) - position) * speed;
 }
@@ -43,10 +33,6 @@ float GameCamera::getZoom() const {
 
 const float GameCamera::getDesiredZoom() const {
     return desiredZoom;
-}
-
-void GameCamera::addScript(void (*func)(GameCamera&, const CameraContext&)) {
-    scripts.push_back(func);
 }
 
 sf::Vector2f GameCamera::worldToScreen(const sf::Vector2f& worldPos, float parallax) const {
