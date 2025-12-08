@@ -18,3 +18,7 @@ std::vector<GameObject*> GameObject::s_gameObjects;
 std::vector<GameObject*>& GameObject::getGameObjects() {
     return s_gameObjects;
 }
+
+const sf::Vector2f GameObject::getPosition() const {
+    return position;
+}

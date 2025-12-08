@@ -8,3 +8,4 @@ CompileFlags:
     - -lsfml-window
     - -lsfml-audio
     - -lsfml-system
+    - -I/opt/homebrew/Cellar/nlohmann-json/3.12.0/include

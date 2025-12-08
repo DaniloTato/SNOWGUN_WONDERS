@@ -1,0 +1,10 @@
+{
+    "bindings": {
+        "left": "KeyLeft",
+        "right": "KeyRight",
+        "up": "KeyUp",
+        "down": "KeyDown",
+        "zoomIn": "Num2",
+        "zoomOut": "Num1"
+    }
+}

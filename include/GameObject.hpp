@@ -10,6 +10,7 @@ public:
     virtual void update() = 0;
 
     static std::vector<GameObject*>& getGameObjects();
+    const sf::Vector2f getPosition() const;
 
 protected:
     sf::Vector2f position;

@@ -4,7 +4,12 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Constants.hpp"
 
-void LevelManager::loadLevel(sf::RenderWindow& window, std::string levelPath) {
+LevelManager& LevelManager::getInstance() {
+    static LevelManager instance;
+    return instance;
+}
+
+void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, std::string levelPath) {
     std::ifstream levelFile(levelPath);
     if (!levelFile.is_open()) {
         throw std::runtime_error("Could not open level file: " + levelPath);
@@ -32,7 +37,9 @@ void LevelManager::loadLevel(sf::RenderWindow& window, std::string levelPath) {
                     {static_cast<float>(i * Constants::TILE_SIZE), static_cast<float>(lineNumber * Constants::TILE_SIZE)}
                 };
 
-                new RenderableObject(tileParams);
+                RenderableObject* newTile = new RenderableObject(tileParams);
+                newTile->renderizer.assignCamera(camera);
+                
             }
         }
         lineNumber++;
