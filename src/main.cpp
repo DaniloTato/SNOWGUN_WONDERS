@@ -1,6 +1,8 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
+#include "ContextTypes.hpp"
+
 /*Engine Objects*/
 #include "GameCamera.hpp"
 #include "GameObject.hpp"
@@ -16,6 +18,9 @@
 #include "scripts/camera/followPlayer.cpp"
 #include "scripts/camera/dramaticZoom.cpp"
 #include "scripts/camera/cameraShake.cpp"
+
+/*TangibleObject Scripts*/
+#include "scripts/tangible/movement.cpp"
 
 int main() {
 
@@ -42,6 +47,7 @@ int main() {
 
     TangibleObject player(params);
     player.collider.setSize({16.f, 16.f});
+    player.scripter.addScript(script::movement);
 
     LevelManager::getInstance().loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.txt");
 
@@ -57,15 +63,24 @@ int main() {
         }
 
         CameraContext camCtx;
-        camCtx.position = player.getPosition();
+        camCtx.position = player.position;
 
         for (GameCamera* gameCamera : GameState::getInstance().getActiveCameras()) {
             gameCamera->update(camCtx);
         }
 
+        BaseContext emptyCtx;
+        TangibleContext tangibleCtx;
+        tangibleCtx.position = {123,123};
+
         window.clear();
         for (GameObject* gameObject : GameObject::getGameObjects()) {
-            gameObject->update();
+            if (dynamic_cast<TangibleObject*>(gameObject)) {
+                GameContext ctx = tangibleCtx;
+                gameObject->update(ctx);
+            } else{
+                gameObject->update(emptyCtx);
+            }
         }
         window.display();
     }

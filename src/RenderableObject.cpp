@@ -4,6 +4,6 @@ RenderableObject::RenderableObject(RenderizerParameters params) : GameObject(par
     GameObject::getGameObjects().push_back(this);
 }
 
-void RenderableObject::update() {
+void RenderableObject::update(const GameContext& ctx) {
     renderizer.render(position);
 }

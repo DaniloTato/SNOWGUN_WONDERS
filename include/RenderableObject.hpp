@@ -4,6 +4,6 @@
 class RenderableObject: public GameObject {
 public:
     RenderableObject(RenderizerParameters params);
-    void update() override;
+    void update(const GameContext& ctx) override;
     Renderizer renderizer;
 };

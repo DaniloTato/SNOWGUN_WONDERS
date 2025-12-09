@@ -1,11 +1,8 @@
 #pragma once
 #include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
+#include "ContextTypes.hpp"
 #include <SFML/Graphics.hpp>
-
-struct CameraContext{
-    sf::Vector2f position = {0.f, 0.f};
-};
 
 class GameCamera {
 public:
