@@ -21,6 +21,7 @@
 
 /*TangibleObject Scripts*/
 #include "scripts/tangible/movement.cpp"
+#include "scripts/tangible/tangibleAnimations.cpp"
 
 int main() {
 
@@ -29,7 +30,7 @@ int main() {
     InputManager::getInstance().loadBindingsFromJsonFile("./config/control_config.json");
 
     sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets/snowman.png");
+    playerTexture.loadFromFile("assets/snowman_animation.png");
 
     sf::IntRect playerRect(0, 0, 17, 17);
 
@@ -46,8 +47,13 @@ int main() {
     };
 
     TangibleObject player(params);
-    player.collider.setSize({16.f, 16.f});
+    player.collider.setSize({18.f, 18.f});
+
+    player.scripter.addScript(script::tangibleAnimations);
     player.scripter.addScript(script::movement);
+
+    player.animator.loadFromAsepriteJSON("assets/json/snowman_animation.json");
+    player.animator.setSpeedMultiplier(1.8f);
 
     LevelManager::getInstance().loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.txt");
 
@@ -64,10 +70,6 @@ int main() {
 
         GeneralContext ctx;
         ctx.playerPosition = player.position;
-
-        for (GameCamera* gameCamera : GameState::getInstance().getActiveCameras()) {
-            gameCamera->update(ctx);
-        }
 
         window.clear();
         for (GameObject* gameObject : GameObject::getGameObjects()) {

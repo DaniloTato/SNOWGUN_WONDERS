@@ -1,12 +1,13 @@
 #include "TangibleObject.hpp"
 #include "GeneralContext.hpp"
+#include "Constants.hpp"
 
-TangibleObject::TangibleObject(RenderizerParameters params) : GameObject(params.position), renderizer(params) {
-    GameObject::getGameObjects().push_back(this);
-}
+TangibleObject::TangibleObject(RenderizerParameters params) : GameObject(params.position), renderizer(params) {}
 
 void TangibleObject::update(const GeneralContext& ctx) {
-    renderizer.render(position);
     collider.calculateCollisionGrid(position);
     scripter.runScripts(*this, ctx);
+    animator.update(1.f / Constants::FRAME_RATE);
+    renderizer.setRect(animator.getCurrentFrame(), direction);
+    renderizer.render(position);
 }

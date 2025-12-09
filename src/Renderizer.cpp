@@ -3,8 +3,8 @@
 
 Renderizer::Renderizer(const RenderizerParameters& params)
 : window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera) {
-    sprite.setTexture(this->texture);
-    sprite.setTextureRect(this->rect);
+    sprite.setTexture(texture);
+    sprite.setTextureRect(rect);
 }
 
 void Renderizer::assignCamera(GameCamera* cam) {
@@ -12,6 +12,7 @@ void Renderizer::assignCamera(GameCamera* cam) {
 }
 
 void Renderizer::render(sf::Vector2f position) {
+
     if (!assignedCamera) {
         sprite.setPosition(position);
         sprite.setScale(1.f, 1.f);
@@ -23,3 +24,9 @@ void Renderizer::render(sf::Vector2f position) {
     window.draw(sprite);
 }
 
+void Renderizer::setRect(const sf::IntRect& newRect, int direction) {
+    sf::IntRect directionRect = newRect;
+    directionRect.left = newRect.left + directionRect.width * ((direction - 1)/-2);
+    directionRect.width = newRect.width * direction;
+    sprite.setTextureRect(directionRect);
+}

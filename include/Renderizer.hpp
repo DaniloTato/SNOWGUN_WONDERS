@@ -18,6 +18,7 @@ public:
     Renderizer(const RenderizerParameters& params);
     ~Renderizer() = default;
 
+    void setRect(const sf::IntRect& newRect, int direction);
     void render(sf::Vector2f position);
     void assignCamera(GameCamera* cam);
 

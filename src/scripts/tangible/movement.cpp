@@ -1,22 +1,29 @@
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
+#include "PhysicsComponent.hpp"
 
 namespace script{
 
     void movement(TangibleObject& tangible, const GeneralContext& ctx) {
 
         if(InputManager::getInstance().isPressed("left")){
-            tangible.position.x -= 1.f;
+            tangible.direction = -1;
+            tangible.physics.setSpdx(-3.f);
         } else if (InputManager::getInstance().isPressed("right")){
-            tangible.position.x += 1.f;
+            tangible.direction = 1;
+            tangible.physics.setSpdx(3.f);
         }
+        tangible.physics.updateX(tangible.position);
         tangible.collider.horizontalLevelCollision(tangible.position);
-        if(InputManager::getInstance().isPressed("up")){
-            tangible.position.y -= 1.f;
-        } else if (InputManager::getInstance().isPressed("down")){
-            tangible.position.y += 1.f;
+
+        if(InputManager::getInstance().isJustPressed("up")){
+            tangible.physics.setSpdy(-5.f);
         }
-        tangible.collider.verticalLevelCollision(tangible.position);
+
+        tangible.physics.updateY(tangible.position);
+        if(tangible.collider.verticalLevelCollision(tangible.position)){
+            tangible.physics.setSpdy(0.f);
+        }
     }
 
 }

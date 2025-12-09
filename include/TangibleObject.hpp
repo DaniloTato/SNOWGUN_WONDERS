@@ -4,6 +4,8 @@
 #include "Renderizer.hpp"
 #include "BasicCollider.hpp"
 #include "Scripter.hpp"
+#include "Animator.hpp"
+#include "PhysicsComponent.hpp"
 
 class TangibleObject: public GameObject {
 public:
@@ -12,4 +14,7 @@ public:
     Renderizer renderizer;
     BasicCollider collider;
     Scripter<TangibleObject> scripter;
+    Animator animator;
+    PhysicsComponent physics;
+    int direction = 1;
 };
