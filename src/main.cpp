@@ -1,7 +1,7 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
-#include "ContextTypes.hpp"
+#include "GeneralContext.hpp"
 
 /*Engine Objects*/
 #include "GameCamera.hpp"
@@ -62,25 +62,16 @@ int main() {
             InputManager::getInstance().handleEvent(event);
         }
 
-        CameraContext camCtx;
-        camCtx.position = player.position;
+        GeneralContext ctx;
+        ctx.playerPosition = player.position;
 
         for (GameCamera* gameCamera : GameState::getInstance().getActiveCameras()) {
-            gameCamera->update(camCtx);
+            gameCamera->update(ctx);
         }
-
-        BaseContext emptyCtx;
-        TangibleContext tangibleCtx;
-        tangibleCtx.position = {123,123};
 
         window.clear();
         for (GameObject* gameObject : GameObject::getGameObjects()) {
-            if (dynamic_cast<TangibleObject*>(gameObject)) {
-                GameContext ctx = tangibleCtx;
-                gameObject->update(ctx);
-            } else{
-                gameObject->update(emptyCtx);
-            }
+            gameObject->update(ctx);
         }
         window.display();
     }

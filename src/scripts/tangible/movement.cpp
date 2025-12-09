@@ -3,7 +3,7 @@
 
 namespace script{
 
-    void movement(TangibleObject& tangible, const TangibleContext& ctx) {
+    void movement(TangibleObject& tangible, const GeneralContext& ctx) {
 
         if(InputManager::getInstance().isPressed("left")){
             tangible.position.x -= 1.f;

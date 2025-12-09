@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
-#include "ContextTypes.hpp"
+#include "GeneralContext.hpp"
 #include <SFML/Graphics.hpp>
 
 class GameCamera {
@@ -14,7 +14,7 @@ public:
 
     void goTo(const sf::Vector2f& pos);
     void zoomTo(float desiredZoom);
-    void update(const CameraContext& ctx);
+    void update(const GeneralContext& ctx);
     float getZoom() const;
     const float getDesiredZoom() const;
     void setCameraShakePosition(const sf::Vector2f& shakePos);
@@ -22,7 +22,7 @@ public:
 
     sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;
 
-    Scripter<GameCamera, CameraContext> scripter;
+    Scripter<GameCamera> scripter;
 
 private:
     sf::Vector2f position;

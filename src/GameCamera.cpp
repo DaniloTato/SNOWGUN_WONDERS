@@ -21,7 +21,7 @@ void GameCamera::zoomTo(float dZoom) {
     desiredZoom = dZoom;
 }
 
-void GameCamera::update(const CameraContext& ctx) {
+void GameCamera::update(const GeneralContext& ctx) {
     scripter.runScripts(*this, ctx);
     zoom += ((desiredZoom + impactZoom) - zoom) * speed;
     position += ((desiredPosition + shakePosition) - position) * speed;

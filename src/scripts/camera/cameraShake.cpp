@@ -18,7 +18,7 @@ namespace script {
             elapsed = 0.f;
         }
 
-        void update(GameCamera& camera, const CameraContext& ctx, float deltaTime) {
+        void update(GameCamera& camera, const GeneralContext& ctx, float deltaTime) {
             if (shakeDuration <= 0.f) return;
 
             elapsed += deltaTime;
@@ -44,7 +44,7 @@ namespace script {
 
     static ScreenShake screenShake;
 
-    void cameraShake(GameCamera& camera, const CameraContext& ctx) {
+    void cameraShake(GameCamera& camera, const GeneralContext& ctx) {
         constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
         screenShake.update(camera, ctx, deltaTime);
 

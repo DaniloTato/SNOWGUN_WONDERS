@@ -1,5 +1,5 @@
 #pragma once
-#include "ContextTypes.hpp"
+#include "GeneralContext.hpp"
 #include "GameObject.hpp"
 #include "Renderizer.hpp"
 #include "BasicCollider.hpp"
@@ -8,8 +8,8 @@
 class TangibleObject: public GameObject {
 public:
     TangibleObject(RenderizerParameters params);
-    void update(const GameContext& ctx) override;
+    void update(const GeneralContext& ctx) override;
     Renderizer renderizer;
     BasicCollider collider;
-    Scripter<TangibleObject, TangibleContext> scripter;
+    Scripter<TangibleObject> scripter;
 };

@@ -1,16 +1,17 @@
 #pragma once
+#include "GeneralContext.hpp"
 #include <vector>
 
-template <typename OwnerType, typename ContextType>
+template <typename OwnerType>
 class Scripter {
 public:
-    using ScriptFunc = void(*)(OwnerType&, const ContextType&);
+    using ScriptFunc = void(*)(OwnerType&, const GeneralContext&);
 
     void addScript(ScriptFunc func) {
         scripts.push_back(func);
     }
 
-    void runScripts(OwnerType& owner, const ContextType& ctx) {
+    void runScripts(OwnerType& owner, const GeneralContext& ctx) {
         for (auto& script : scripts) {
             if (script) {
                 script(owner, ctx);

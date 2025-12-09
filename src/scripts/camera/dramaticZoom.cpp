@@ -24,7 +24,7 @@ public:
         this->impactZoomValue = 0.f;
     }
 
-    void update(GameCamera& camera, const CameraContext& ctx, float deltaTime) {
+    void update(GameCamera& camera, const GeneralContext& ctx, float deltaTime) {
         timer += deltaTime;
 
         switch (state) {
@@ -82,7 +82,7 @@ private:
 
 static DramaticZoom dramaticZoomObj;
 
-inline void dramaticZoom(GameCamera& camera, const CameraContext& ctx) {
+inline void dramaticZoom(GameCamera& camera, const GeneralContext& ctx) {
     constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
     dramaticZoomObj.update(camera, ctx, deltaTime);
 
