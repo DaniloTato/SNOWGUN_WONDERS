@@ -1,17 +1,10 @@
 #include "GameCamera.hpp"
 #include "Constants.hpp"
+#include "GameObject.hpp"
 #include "Scripter.hpp"
 
 GameCamera::GameCamera()
-    : position(0.f, 0.f), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {}
-
-void GameCamera::setPosition(const sf::Vector2f& pos) {
-    position = pos;
-}
-
-const sf::Vector2f& GameCamera::getPosition() const {
-    return position;
-}
+    : GameObject({0,0}), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {}
 
 void GameCamera::goTo(const sf::Vector2f& pos) {
     desiredPosition = pos;

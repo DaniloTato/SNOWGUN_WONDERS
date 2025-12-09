@@ -1,10 +1,11 @@
 #pragma once
+#include "GameObject.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
 #include "GeneralContext.hpp"
 #include <SFML/Graphics.hpp>
 
-class GameCamera {
+class GameCamera: public GameObject {
 public:
     GameCamera();
     ~GameCamera();
@@ -12,9 +13,10 @@ public:
     void setPosition(const sf::Vector2f& pos);
     const sf::Vector2f& getPosition() const;
 
+    void update(const GeneralContext& ctx) override;
+
     void goTo(const sf::Vector2f& pos);
     void zoomTo(float desiredZoom);
-    void update(const GeneralContext& ctx);
     float getZoom() const;
     const float getDesiredZoom() const;
     void setCameraShakePosition(const sf::Vector2f& shakePos);
@@ -25,7 +27,6 @@ public:
     Scripter<GameCamera> scripter;
 
 private:
-    sf::Vector2f position;
     sf::Vector2f desiredPosition;
     sf::Vector2f shakePosition;
     float zoom;
