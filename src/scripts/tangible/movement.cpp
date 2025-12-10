@@ -16,7 +16,7 @@ namespace script{
         tangible.physics.updateX(tangible.position);
         tangible.collider.horizontalLevelCollision(tangible.position);
 
-        if(InputManager::getInstance().isJustPressed("up")){
+        if(InputManager::getInstance().isJustPressed("jump")){
             tangible.physics.setSpdy(-5.f);
         }
 

@@ -8,9 +8,7 @@
 class GameCamera: public GameObject {
 public:
     GameCamera();
-    ~GameCamera();
 
-    void setPosition(const sf::Vector2f& pos);
     const sf::Vector2f& getPosition() const;
 
     void update(const GeneralContext& ctx) override;
@@ -22,7 +20,8 @@ public:
     void setCameraShakePosition(const sf::Vector2f& shakePos);
     void setImpactZoom(float impactZoom);
 
-    sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;
+    const sf::Vector2f screenToWorld(const sf::Vector2f& screenPos, float parallax) const;
+    const sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;
 
     Scripter<GameCamera> scripter;
 

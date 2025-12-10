@@ -7,10 +7,11 @@
 class GameObject {
 public:
     GameObject(sf::Vector2f pos = {0.f, 0.f});
-    ~GameObject();
+    virtual ~GameObject();
     virtual void update(const GeneralContext& ctx) = 0;
 
     static std::vector<GameObject*>& getGameObjects();
+    static void destroy(GameObject* g);
     
     sf::Vector2f position;
 

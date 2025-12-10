@@ -1,12 +1,15 @@
 {
     "bindings": {
-        "left": "KeyLeft",
-        "right": "KeyRight",
-        "up": "KeyUp",
-        "down": "KeyDown",
-        "zoomIn": "Num2",
-        "zoomOut": "Num1",
-        "shakeCamera": "Q",
-        "dramaticZoom": "W"
+        "left": "A",
+        "right": "D",
+        "jump": "W",
+        "zoomIn": "O",
+        "zoomOut": "L",
+        "shakeCamera": "Num1",
+        "dramaticZoom": "Num2",
+        "saveLevel": "Num0",
+        "createTile": "Space",
+        "deleteTile": "LShift",
+        "tilePicker": "T"
     }
 }

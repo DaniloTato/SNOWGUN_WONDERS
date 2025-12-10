@@ -2,6 +2,12 @@
 #include "SFML/System/Vector2.hpp"
 #include <vector>
 
+void GameObject::destroy(GameObject* g){
+    auto& list = GameObject::s_gameObjects;
+    list.erase(std::remove(list.begin(), list.end(), g), list.end());
+    delete g;
+}
+
 GameObject::GameObject(sf::Vector2f pos) : position(pos) {
     s_gameObjects.push_back(this);
 }

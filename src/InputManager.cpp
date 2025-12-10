@@ -8,6 +8,12 @@ InputManager::InputManager() {
         currentState[(sf::Keyboard::Key)k] = false;
         previousState[(sf::Keyboard::Key)k] = false;
     }
+
+    mouseCurrent[MouseButton::Left]   = false;
+    mouseCurrent[MouseButton::Right]  = false;
+    mouseCurrent[MouseButton::Middle] = false;
+
+    mousePrevious = mouseCurrent;
 }
 
 sf::Keyboard::Key InputManager::keyFromString(const std::string& keyName) const {
@@ -51,16 +57,42 @@ void InputManager::bindKey(const std::string& action, sf::Keyboard::Key key) {
 }
 
 void InputManager::handleEvent(const sf::Event& event) {
+
     if (event.type == sf::Event::KeyPressed) {
         currentState[event.key.code] = true;
     }
     else if (event.type == sf::Event::KeyReleased) {
         currentState[event.key.code] = false;
     }
+
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left)
+            mouseCurrent[MouseButton::Left] = true;
+        if (event.mouseButton.button == sf::Mouse::Right)
+            mouseCurrent[MouseButton::Right] = true;
+        if (event.mouseButton.button == sf::Mouse::Middle)
+            mouseCurrent[MouseButton::Middle] = true;
+
+        lastMouseClickPosition = { event.mouseButton.x, event.mouseButton.y };
+    }
+
+    else if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Left)
+            mouseCurrent[MouseButton::Left] = false;
+        if (event.mouseButton.button == sf::Mouse::Right)
+            mouseCurrent[MouseButton::Right] = false;
+        if (event.mouseButton.button == sf::Mouse::Middle)
+            mouseCurrent[MouseButton::Middle] = false;
+    }
+
+    if (event.type == sf::Event::MouseMoved) {
+        lastMouseClickPosition = { event.mouseMove.x, event.mouseMove.y };
+    }
 }
 
 void InputManager::update() {
     previousState = currentState;
+    mousePrevious = mouseCurrent;
 }
 
 bool InputManager::isPressed(const std::string& action) const {
@@ -84,6 +116,22 @@ bool InputManager::isJustReleased(const std::string& action) const {
 
     sf::Keyboard::Key key = it->second;
     return !currentState.at(key) && previousState.at(key);
+}
+
+bool InputManager::isMousePressed(MouseButton button) const {
+    return mouseCurrent.at(button);
+}
+
+bool InputManager::isMouseJustPressed(MouseButton button) const {
+    return mouseCurrent.at(button) && !mousePrevious.at(button);
+}
+
+bool InputManager::isMouseJustReleased(MouseButton button) const {
+    return !mouseCurrent.at(button) && mousePrevious.at(button);
+}
+
+sf::Vector2i InputManager::getMousePosition() const {
+    return lastMouseClickPosition;
 }
 
 bool InputManager::loadBindingsFromJsonFile(const std::string& filePath) {
