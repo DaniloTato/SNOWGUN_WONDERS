@@ -5,34 +5,47 @@
 #include "SFML/Graphics/Rect.hpp"
 #include "GameCamera.hpp"
 #include "RenderableObject.hpp"
+#include <nlohmann/json.hpp>
+
+struct TileInfo {
+    int x, y;
+    sf::IntRect textureRect;
+    RenderableObject* object = nullptr;
+};
+
+struct LayerInfo {
+    float paralax = 1.f;
+    std::string name = "default";
+    std::vector<TileInfo> tiles;
+};
 
 class LevelManager {
 public:
-    struct TileInfo {
-        int x, y;
-        sf::IntRect textureRect;
-        RenderableObject* object = nullptr;
-    };
-
     static LevelManager& getInstance();
 
     void loadLevel(sf::RenderWindow& window, GameCamera* camera, const std::string& path);
+    void loadLayer(sf::RenderWindow& window,
+                   GameCamera* camera,
+                   int layerNo,
+                   const nlohmann::json& layerJSON,
+                   int tileSize);
 
-    void createTile(sf::RenderWindow& window, GameCamera* camera,
+    void createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
                     int x, int y, sf::IntRect rect);
 
-    void deleteTile(int x, int y);
+    void deleteTile(int layerNo, int x, int y);
     void saveLevel(const std::string& path);
 
     const std::vector<std::vector<int>>& getLevelLayout() const;
 
     sf::Texture& getTilesheet();
     sf::IntRect selectedTileRect;
+    std::vector<LayerInfo> layers;
+    int activeLayer;
 
 private:
     LevelManager();
 
-    std::vector<TileInfo> tiles;
     sf::Texture tilesheet;
 
     std::vector<std::vector<int>> levelLayout;

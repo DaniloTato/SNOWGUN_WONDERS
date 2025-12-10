@@ -1,3 +1,5 @@
+#include "tangibleAnimations.hpp"
+
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 

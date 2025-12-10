@@ -1,4 +1,4 @@
-#pragma once
+#include "dramaticZoom.hpp"
 
 #include "GameCamera.hpp"
 #include "Constants.hpp"
@@ -82,7 +82,7 @@ private:
 
 static DramaticZoom dramaticZoomObj;
 
-inline void dramaticZoom(GameCamera& camera, const GeneralContext& ctx) {
+void dramaticZoom(GameCamera& camera, const GeneralContext& ctx) {
     constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
     dramaticZoomObj.update(camera, ctx, deltaTime);
 
@@ -91,7 +91,7 @@ inline void dramaticZoom(GameCamera& camera, const GeneralContext& ctx) {
     }
 }
 
-inline void startDramaticZoom(GameCamera& camera, float zoomInLevel, float pauseDuration) {
+void startDramaticZoom(GameCamera& camera, float zoomInLevel, float pauseDuration) {
     dramaticZoomObj.start(camera, zoomInLevel, pauseDuration);
 }
 

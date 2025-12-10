@@ -1,5 +1,7 @@
 #include <random>
 
+#include "cameraShake.hpp"
+
 #include "GameCamera.hpp"
 #include "Constants.hpp"
 #include "InputManager.hpp"

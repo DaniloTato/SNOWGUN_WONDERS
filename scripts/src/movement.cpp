@@ -1,3 +1,5 @@
+#include "movement.hpp"
+
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 #include "PhysicsComponent.hpp"

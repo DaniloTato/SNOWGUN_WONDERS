@@ -9,35 +9,61 @@
 
 using json = nlohmann::json;
 
-LevelManager::LevelManager() {}
+LevelManager::LevelManager(): activeLayer(0){}
 
 LevelManager& LevelManager::getInstance() {
     static LevelManager instance;
     return instance;
 }
 
-void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const std::string& path)
-{
-    tiles.clear();
+void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const std::string& path){
+    layers.clear();
 
     std::ifstream file(path);
-    if (!file.is_open()) {
+    if (!file.is_open())
         throw std::runtime_error("Failed to open level file: " + path);
-    }
 
     json data = json::parse(file);
 
     tilesheet.loadFromFile(data["tileset"].get<std::string>());
-
     int tileSize = data["tile_size"];
 
-    for (auto& t : data["tiles"])
+    auto& jsonLayers = data["layers"];
+    layers.resize(jsonLayers.size());
+
+    int width  = 200;
+    int height = 200;
+    levelLayout.assign(height, std::vector<int>(width, 0));
+
+    for (int i = 0; i < jsonLayers.size(); i++) {
+        layers[i].paralax = jsonLayers[i]["parallax"].get<float>();
+        loadLayer(window, camera, i, jsonLayers[i], tileSize);
+    }
+}
+
+void LevelManager::loadLayer(sf::RenderWindow& window,
+                             GameCamera* camera,
+                             int layerNo,
+                             const json& layerJSON,
+                             int tileSize)
+{
+    auto& tileList = layers[layerNo].tiles;
+    tileList.clear();
+
+    const auto& jsonTiles = layerJSON["tiles"];
+
+    for (const auto& t : jsonTiles)
     {
         TileInfo info;
-        info.x     = t["x"];
-        info.y     = t["y"];
+        info.x = t["x"].get<int>();
+        info.y = t["y"].get<int>();
 
-        info.textureRect = sf::IntRect(t["tex_x"], t["tex_y"], tileSize, tileSize);
+        info.textureRect = sf::IntRect(
+            t["tex_x"].get<int>(),
+            t["tex_y"].get<int>(),
+            tileSize,
+            tileSize
+        );
 
         RenderizerParameters params{
             window,
@@ -52,23 +78,19 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
         info.object = new RenderableObject(params);
         info.object->renderizer.assignCamera(camera);
 
-        tiles.push_back(info);
-    }
+        tileList.push_back(info);
 
-    int width  = 200;
-    int height = 200;
-
-    levelLayout.assign(height, std::vector<int>(width, 0));
-
-    for (const auto& t : tiles) {
-        levelLayout[t.y][t.x] = 1;
+        if (layerNo == 0 && info.y < levelLayout.size() && info.x < levelLayout[0].size())
+            levelLayout[info.y][info.x] = 1;
     }
 }
 
-void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera,
+void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
                               int x, int y, sf::IntRect rect)
 {
     if (x < 0 || y < 0) return;
+
+    std::vector<TileInfo> tiles = layers[layerNo].tiles;
 
     for (auto& t : tiles)
     {
@@ -123,9 +145,11 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera,
     tiles.push_back(info);
 }
 
-void LevelManager::deleteTile(int x, int y)
+void LevelManager::deleteTile(int layerNo, int x, int y)
 {
     if (x < 0 || y < 0) return;
+
+    std::vector<TileInfo> tiles = layers[layerNo].tiles;
 
     tiles.erase(
         std::remove_if(tiles.begin(), tiles.end(),
@@ -151,20 +175,41 @@ void LevelManager::deleteTile(int x, int y)
 void LevelManager::saveLevel(const std::string& path)
 {
     json data;
+
     data["tile_size"] = Constants::TILE_SIZE;
     data["tileset"]   = Constants::TILESET_PATH;
 
-    for (const auto& info : tiles) {
-        data["tiles"].push_back({
-            {"x",     info.x},
-            {"y",     info.y},
-            {"tex_x", info.textureRect.left},
-            {"tex_y", info.textureRect.top}
-        });
+    data["layers"] = json::array();
+
+    for (const auto& layer : layers)
+    {
+        json layerJson;
+        layerJson["name"]     = layer.name;
+        layerJson["parallax"] = layer.paralax;
+
+        // Now save this layer's tiles
+        layerJson["tiles"] = json::array();
+        for (const auto& tile : layer.tiles)
+        {
+            layerJson["tiles"].push_back({
+                {"x",     tile.x},
+                {"y",     tile.y},
+                {"tex_x", tile.textureRect.left},
+                {"tex_y", tile.textureRect.top}
+            });
+        }
+
+        data["layers"].push_back(layerJson);
     }
 
     std::ofstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open " << path << " for writing!" << std::endl;
+        return;
+    }
+
     file << data.dump(4);
+    file.close();
 
     std::cout << "Level saved to " << path << std::endl;
 }

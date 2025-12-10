@@ -1,4 +1,6 @@
 
+#include "followPlayer.hpp"
+
 #include "GameCamera.hpp"
 #include "Constants.hpp"
 #include "InputManager.hpp"

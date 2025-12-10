@@ -1,0 +1,54 @@
+#include "UIButton.hpp"
+
+UIButton::UIButton(const sf::Vector2f& position,
+                   const sf::Vector2f& size,
+                   const std::string& text,
+                   sf::Font& font)
+{
+    box.setPosition(position);
+    box.setSize(size);
+    box.setFillColor(sf::Color(60, 60, 60));
+
+    label.setFont(font);
+    label.setString(text);
+    label.setCharacterSize(14);
+    label.setPosition(position.x + 10, position.y + 5);
+}
+
+void UIButton::setPosition(const sf::Vector2f& p)
+{
+    box.setPosition(p);
+    label.setPosition(p.x + 10, p.y + 5);
+}
+
+void UIButton::draw(sf::RenderWindow& window)
+{
+    sf::Vector2i mp = sf::Mouse::getPosition(window);
+    bool hover =
+        mp.x >= box.getPosition().x &&
+        mp.x <= box.getPosition().x + box.getSize().x &&
+        mp.y >= box.getPosition().y &&
+        mp.y <= box.getPosition().y + box.getSize().y;
+
+    box.setFillColor(hover ? sf::Color(90, 90, 90) : sf::Color(60, 60, 60));
+    window.draw(box);
+    window.draw(label);
+}
+
+bool UIButton::isClicked(const sf::Event& event, sf::RenderWindow& window)
+{
+    if (event.type != sf::Event::MouseButtonReleased)
+        return false;
+
+    if (event.mouseButton.button != sf::Mouse::Left)
+        return false;
+
+    sf::Vector2i mp = sf::Mouse::getPosition(window);
+
+    return (
+        mp.x >= box.getPosition().x &&
+        mp.x <= box.getPosition().x + box.getSize().x &&
+        mp.y >= box.getPosition().y &&
+        mp.y <= box.getPosition().y + box.getSize().y
+    );
+}

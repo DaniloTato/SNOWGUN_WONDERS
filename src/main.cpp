@@ -15,13 +15,13 @@
 #include "TilePicker.hpp"
 
 /*Camera Scripts*/
-#include "scripts/camera/followPlayer.cpp"
-#include "scripts/camera/dramaticZoom.cpp"
-#include "scripts/camera/cameraShake.cpp"
+#include "cameraShake.hpp"
+#include "dramaticZoom.hpp"
+#include "followPlayer.hpp"
 
 /*TangibleObject Scripts*/
-#include "scripts/tangible/movement.cpp"
-#include "scripts/tangible/tangibleAnimations.cpp"
+#include "movement.hpp"
+#include "tangibleAnimations.hpp"
 
 #include <iostream>
 
@@ -82,7 +82,7 @@ int main() {
                 Constants::TILE_SIZE
             );
 
-            LevelManager::getInstance().selectedTileRect = picker.open();
+            LevelManager::getInstance().selectedTileRect = picker.open(LevelManager::getInstance().layers, LevelManager::getInstance().activeLayer);
         }
 
         if(inputManager.isPressed("createTile")){
@@ -94,6 +94,7 @@ int main() {
             LevelManager::getInstance().createTile(
                 window,
                 GameState::getInstance().getMainCamera(),
+                0,
                 static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
                 static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE,
                 LevelManager::getInstance().selectedTileRect
@@ -107,6 +108,7 @@ int main() {
             );
 
             LevelManager::getInstance().deleteTile(
+                0,
                 static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
                 static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE
             );
