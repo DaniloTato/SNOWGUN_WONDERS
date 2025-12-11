@@ -2,9 +2,10 @@
 #include "UIButton.hpp"
 #include "UISlider.hpp"
 #include "LevelManager.hpp"
+#include "Constants.hpp"
 
 TilePicker::TilePicker(sf::Texture& tileset, int tileSize)
-    : tileset(tileset), tileSize(tileSize) {}
+    : tileset(tileset), tileSize(tileSize), selectedRect(sf::IntRect(0,0,Constants::TILE_SIZE,Constants::TILE_SIZE)) {}
 
 sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
     unsigned int winW = unsigned(tileset.getSize().x + 260);
@@ -46,28 +47,52 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
     while (window.isOpen())
     {
         sf::Event ev;
-        while (window.pollEvent(ev))
-        {
+        while (window.pollEvent(ev)){
             if (ev.type == sf::Event::Closed) {
                 window.close();
                 break;
             }
 
             if (ev.type == sf::Event::MouseButtonPressed &&
-                ev.mouseButton.button == sf::Mouse::Left)
-            {
+                ev.mouseButton.button == sf::Mouse::Left){
                 sf::Vector2i mp = sf::Mouse::getPosition(window);
                 if (mp.x >= 0 && mp.x < (int)tileset.getSize().x &&
                     mp.y >= 0 && mp.y < (int)tileset.getSize().y)
                 {
+                    dragging = true;
+                    dragStart = mp;
                     int tx = mp.x / tileSize;
                     int ty = mp.y / tileSize;
-                    selectedRect = sf::IntRect(
-                        tx * tileSize,
-                        ty * tileSize,
-                        tileSize,
-                        tileSize
-                    );
+                    selectedRect = sf::IntRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
+                }
+            }
+
+            if (ev.type == sf::Event::MouseMoved && dragging){
+                sf::Vector2i mp = sf::Mouse::getPosition(window);
+
+                mp.x = std::max(0, std::min(mp.x, int(tileset.getSize().x - 1)));
+                mp.y = std::max(0, std::min(mp.y, int(tileset.getSize().y - 1)));
+
+                int x1 = std::min(dragStart.x, mp.x) / tileSize * tileSize;
+                int y1 = std::min(dragStart.y, mp.y) / tileSize * tileSize;
+                int x2 = (std::max(dragStart.x, mp.x) / tileSize + 1) * tileSize;
+                int y2 = (std::max(dragStart.y, mp.y) / tileSize + 1) * tileSize;
+
+                selectedRect = sf::IntRect(x1, y1, x2 - x1, y2 - y1);
+            }
+
+            if (ev.type == sf::Event::MouseButtonReleased &&
+                ev.mouseButton.button == sf::Mouse::Left && dragging){
+                dragging = false;
+                sf::Vector2i mp = sf::Mouse::getPosition(window);
+
+                int dragWidth = std::abs(mp.x - dragStart.x);
+                int dragHeight = std::abs(mp.y - dragStart.y);
+                if (dragWidth < tileSize && dragHeight < tileSize)
+                {
+                    int tx = mp.x / tileSize;
+                    int ty = mp.y / tileSize;
+                    selectedRect = sf::IntRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
                 }
             }
 
@@ -118,7 +143,7 @@ void TilePicker::drawTileset(sf::RenderWindow& window, const sf::IntRect& select
 
     window.draw(lines.data(), lines.size(), sf::Lines);
 
-    sf::RectangleShape sel({ float(tileSize), float(tileSize) });
+    sf::RectangleShape sel({ float(selectedRect.width), float(selectedRect.height) });
     sel.setPosition(selectedRect.left, selectedRect.top);
     sel.setFillColor(sf::Color(0,0,0,0));
     sel.setOutlineColor(sf::Color::Yellow);

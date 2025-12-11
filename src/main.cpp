@@ -95,14 +95,32 @@ int main() {
                 LevelManager::getInstance().getLayerInfo(LevelManager::getInstance().activeLayer).paralax
             );
 
-            LevelManager::getInstance().createTile(
-                window,
-                GameState::getInstance().getMainCamera(),
-                LevelManager::getInstance().activeLayer,
-                static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
-                static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE,
-                LevelManager::getInstance().selectedTileRect
-            );
+            sf::IntRect& selRect = LevelManager::getInstance().selectedTileRect;
+            const int tileSize = Constants::TILE_SIZE;
+            int tilesWide = selRect.width / tileSize;
+            int tilesHigh = selRect.height / tileSize;
+            int baseTileX = static_cast<int>(mousePosToTilePos.x) / tileSize;
+            int baseTileY = static_cast<int>(mousePosToTilePos.y) / tileSize;
+
+            for (int y = 0; y < tilesHigh; y++) {
+                for (int x = 0; x < tilesWide; x++) {
+                    sf::IntRect subRect(
+                        selRect.left + x * tileSize,
+                        selRect.top + y * tileSize,
+                        tileSize,
+                        tileSize
+                    );
+
+                    LevelManager::getInstance().createTile(
+                        window,
+                        GameState::getInstance().getMainCamera(),
+                        LevelManager::getInstance().activeLayer,
+                        baseTileX + x,
+                        baseTileY + y,
+                        subRect
+                    );
+                }
+            }
         }
 
         if(inputManager.isPressed("deleteTile")){

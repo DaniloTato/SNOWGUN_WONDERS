@@ -34,6 +34,10 @@ private:
     sf::Texture& tileset;
     int tileSize;
 
+    bool dragging = false;
+    sf::Vector2i dragStart;
+    sf::IntRect selectedRect;
+
     static float clamp01(float v) {
         return (v < 0.f ? 0.f : (v > 1.f ? 1.f : v));
     }

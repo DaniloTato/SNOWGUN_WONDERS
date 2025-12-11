@@ -155,7 +155,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
                 GameObject::destroy(t.object);
             }
 
-            t.textureRect = sf::IntRect(rect.left, rect.top, Constants::TILE_SIZE, Constants::TILE_SIZE);
+            t.textureRect = rect;
 
             RenderizerParameters params{
                 window,
