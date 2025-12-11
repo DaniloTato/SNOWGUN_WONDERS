@@ -1,0 +1,79 @@
+#include "levelCreatorInputs.hpp"
+#include "InputManager.hpp"
+#include "LevelManager.hpp"
+#include "TilePicker.hpp"
+#include "Constants.hpp"
+#include "GameState.hpp"
+#include <iostream>
+
+namespace script {
+    void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx){
+
+        InputManager& inputManager = InputManager::getInstance();
+        LevelManager& levelManager = LevelManager::getInstance();
+
+        sf::RenderWindow& window = ctx.window;
+
+        if (inputManager.isJustPressed("tilePicker")){
+            TilePicker picker(
+                levelManager.getTilesheet(),
+                Constants::TILE_SIZE
+            );
+
+            levelManager.selectedTileRect = picker.open(levelManager.layers, levelManager.activeLayer);
+            levelManager.reloadAllLayers(window, GameState::getInstance().getMainCamera());
+        }
+
+        if(inputManager.isPressed("createTile")){
+            sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
+                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                levelManager.getLayerInfo(levelManager.activeLayer).paralax
+            );
+
+            sf::IntRect& selRect = levelManager.selectedTileRect;
+            const int tileSize = Constants::TILE_SIZE;
+            int tilesWide = selRect.width / tileSize;
+            int tilesHigh = selRect.height / tileSize;
+            int baseTileX = static_cast<int>(mousePosToTilePos.x) / tileSize;
+            int baseTileY = static_cast<int>(mousePosToTilePos.y) / tileSize;
+
+            for (int y = 0; y < tilesHigh; y++) {
+                for (int x = 0; x < tilesWide; x++) {
+                    sf::IntRect subRect(
+                        selRect.left + x * tileSize,
+                        selRect.top + y * tileSize,
+                        tileSize,
+                        tileSize
+                    );
+
+                    levelManager.createTile(
+                        window,
+                        GameState::getInstance().getMainCamera(),
+                        levelManager.activeLayer,
+                        baseTileX + x,
+                        baseTileY + y,
+                        subRect
+                    );
+                }
+            }
+        }
+
+        if(inputManager.isPressed("deleteTile")){
+            sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
+                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                levelManager.getLayerInfo(levelManager.activeLayer).paralax
+            );
+
+            levelManager.deleteTile(
+                levelManager.activeLayer,
+                static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
+                static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE
+            );
+        }
+
+        if(inputManager.isJustPressed("saveLevel")){
+            std::cout << "Saving level..." << std::endl;
+            levelManager.saveLevel("assets/level_data/level.json");
+        }
+    }
+}

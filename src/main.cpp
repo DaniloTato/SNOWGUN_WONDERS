@@ -8,12 +8,14 @@
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
 #include "Renderizer.hpp"
-#include "SFML/Window/Keyboard.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
-#include "Constants.hpp"
 #include "GameState.hpp"
-#include "TilePicker.hpp"
+#include "ScriptRunner.hpp"
+
+/*Namespaces*/
+#include "Constants.hpp"
+#include "ColorPalette.hpp"
 
 /*Camera Scripts*/
 #include "cameraShake.hpp"
@@ -24,11 +26,13 @@
 #include "movement.hpp"
 #include "tangibleAnimations.hpp"
 
-#include <iostream>
+/*General Scrits*/
+#include "levelCreatorInputs.hpp"
 
 int main() {
 
     InputManager& inputManager = InputManager::getInstance();
+    LevelManager& levelManager = LevelManager::getInstance();
 
     sf::RenderWindow window(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window");
     window.setFramerateLimit(Constants::FRAME_RATE);
@@ -61,10 +65,13 @@ int main() {
     player.scripter.addScript(script::tangibleAnimations);
     player.scripter.addScript(script::movement);
 
+    ScriptRunner scriptRunner;
+    scriptRunner.scripter.addScript(script::levelCreatorInputs);
+
     player.animator.loadFromAsepriteJSON("assets/json/snowman_animation.json");
     player.animator.setSpeedMultiplier(1.8f);
 
-    LevelManager::getInstance().loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.json");
+    levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.json");
 
     while (window.isOpen()) {
         sf::Event event;
@@ -77,76 +84,12 @@ int main() {
             inputManager.handleEvent(event);
         }
 
-        /*Level Creator Inputs*/
+        GeneralContext ctx = {
+        player.position,
+        window
+        };
 
-        if (inputManager.isJustPressed("tilePicker")){
-            TilePicker picker(
-                LevelManager::getInstance().getTilesheet(),
-                Constants::TILE_SIZE
-            );
-
-            LevelManager::getInstance().selectedTileRect = picker.open(LevelManager::getInstance().layers, LevelManager::getInstance().activeLayer);
-            LevelManager::getInstance().reloadAllLayers(window, GameState::getInstance().getMainCamera());
-        }
-
-        if(inputManager.isPressed("createTile")){
-            sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
-                LevelManager::getInstance().getLayerInfo(LevelManager::getInstance().activeLayer).paralax
-            );
-
-            sf::IntRect& selRect = LevelManager::getInstance().selectedTileRect;
-            const int tileSize = Constants::TILE_SIZE;
-            int tilesWide = selRect.width / tileSize;
-            int tilesHigh = selRect.height / tileSize;
-            int baseTileX = static_cast<int>(mousePosToTilePos.x) / tileSize;
-            int baseTileY = static_cast<int>(mousePosToTilePos.y) / tileSize;
-
-            for (int y = 0; y < tilesHigh; y++) {
-                for (int x = 0; x < tilesWide; x++) {
-                    sf::IntRect subRect(
-                        selRect.left + x * tileSize,
-                        selRect.top + y * tileSize,
-                        tileSize,
-                        tileSize
-                    );
-
-                    LevelManager::getInstance().createTile(
-                        window,
-                        GameState::getInstance().getMainCamera(),
-                        LevelManager::getInstance().activeLayer,
-                        baseTileX + x,
-                        baseTileY + y,
-                        subRect
-                    );
-                }
-            }
-        }
-
-        if(inputManager.isPressed("deleteTile")){
-            sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
-                LevelManager::getInstance().getLayerInfo(LevelManager::getInstance().activeLayer).paralax
-            );
-
-            LevelManager::getInstance().deleteTile(
-                LevelManager::getInstance().activeLayer,
-                static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
-                static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE
-            );
-        }
-
-        if(inputManager.isJustPressed("saveLevel")){
-            std::cout << "Saving level..." << std::endl;
-            LevelManager::getInstance().saveLevel("assets/level_data/level.json");
-        }
-
-        /*Level Creator Inputs*/
-
-        GeneralContext ctx;
-        ctx.playerPosition = player.position;
-
-        window.clear();
+        window.clear(ColorPalette::ElectricBlue);
 
         for (GameObject* gameObject : GameObject::getGameObjects()) {
             gameObject->update(ctx);

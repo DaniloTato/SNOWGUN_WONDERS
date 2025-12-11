@@ -40,8 +40,6 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
         layers[i].paralax = jsonLayers[i]["parallax"].get<float>();
         loadLayer(window, camera, i, jsonLayers[i], tileSize);
     }
-
-    std::cout << "totalLayers -> " << layers.size() << "\n";
 }
 
 void LevelManager::deleteLayerObjects(int layerNo) {
@@ -131,9 +129,6 @@ void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int
 
         t.object = new RenderableObject(params);
     }
-
-    std::cout << "Reloaded layer #" << layerNo << ", tiles: "
-              << tiles.size() << "\n";
 }
 
 void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
@@ -268,7 +263,6 @@ void LevelManager::saveLevel(const std::string& path)
 
     file << data.dump(4);
     file.close();
-    std::cout << "Level saved to " << path << std::endl;
 }
 
 const std::vector<std::vector<int>>& LevelManager::getLevelLayout() const {
