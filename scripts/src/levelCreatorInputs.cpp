@@ -46,7 +46,7 @@ namespace script {
                         tileSize
                     );
 
-                    levelManager.createTile(
+                    levelManager.queueCreateTile(
                         window,
                         GameState::getInstance().getMainCamera(),
                         levelManager.activeLayer,
@@ -64,7 +64,7 @@ namespace script {
                 levelManager.getLayerInfo(levelManager.activeLayer).paralax
             );
 
-            levelManager.deleteTile(
+            levelManager.queueDeleteTile(
                 levelManager.activeLayer,
                 static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
                 static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE

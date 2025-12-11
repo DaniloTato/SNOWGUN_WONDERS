@@ -7,6 +7,21 @@
 #include "RenderableObject.hpp"
 #include <nlohmann/json.hpp>
 
+struct TileCreationRequest {
+    sf::RenderWindow& window;
+    GameCamera* camera;
+    int layer;
+    int x;
+    int y;
+    sf::IntRect rect;
+};
+
+struct TileDeletionRequest {
+    int layer;
+    int x;
+    int y;
+};
+
 struct TileInfo {
     int x, y;
     sf::IntRect textureRect;
@@ -40,6 +55,10 @@ public:
     void reloadAllLayers(sf::RenderWindow& window, GameCamera* camera);
     void reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo);
 
+    void queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, int x, int y, const sf::IntRect& rect);
+    void queueDeleteTile(int layer, int x, int y);
+    void applyQueuedTileChanges();
+
     const LayerInfo getLayerInfo(int layerNo) const;
 
     const std::vector<std::vector<int>>& getLevelLayout() const;
@@ -55,6 +74,8 @@ private:
     sf::Texture tilesheet;
 
     std::vector<std::vector<int>> levelLayout;
+    std::vector<TileCreationRequest> createQueue;
+    std::vector<TileDeletionRequest> deleteQueue;
 
     LevelManager(const LevelManager&) = delete;
     LevelManager& operator=(const LevelManager&) = delete;

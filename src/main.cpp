@@ -29,6 +29,8 @@
 /*General Scrits*/
 #include "levelCreatorInputs.hpp"
 
+#include <iostream>
+
 int main() {
 
     InputManager& inputManager = InputManager::getInstance();
@@ -85,15 +87,22 @@ int main() {
         }
 
         GeneralContext ctx = {
-        player.position,
-        window
+            player.position,
+            window
         };
+
+        levelManager.applyQueuedTileChanges();
 
         window.clear(ColorPalette::ElectricBlue);
 
-        for (GameObject* gameObject : GameObject::getGameObjects()) {
+        for (GameObject* gameObject :  GameObject::getGameObjects()) {
+            if (!gameObject) {
+                std::cerr << "[Warning] Null GameObject pointer encountered during update. Skipping.\n";
+                continue;
+            }
             gameObject->update(ctx);
         }
+
         Renderizer::renderAll();
 
         window.display();
