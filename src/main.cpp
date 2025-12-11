@@ -51,7 +51,8 @@ int main() {
         playerRect,
         {16.f, 16.f},
         GameState::getInstance().getMainCamera(),
-        0.f
+        0.f,
+        1.f
     };
 
     TangibleObject player(params);
@@ -91,7 +92,7 @@ int main() {
         if(inputManager.isPressed("createTile")){
             sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
                 {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
-                 1.0f
+                LevelManager::getInstance().getLayerInfo(LevelManager::getInstance().activeLayer).paralax
             );
 
             LevelManager::getInstance().createTile(
@@ -107,7 +108,7 @@ int main() {
         if(inputManager.isPressed("deleteTile")){
             sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
                 {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
-                 1.0f
+                LevelManager::getInstance().getLayerInfo(LevelManager::getInstance().activeLayer).paralax
             );
 
             LevelManager::getInstance().deleteTile(

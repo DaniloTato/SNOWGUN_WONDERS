@@ -4,7 +4,7 @@
 std::vector<RenderEntry> Renderizer::registry;
 
 Renderizer::Renderizer(const RenderizerParameters& params)
-: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer) {
+: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.paralax) {
     sprite.setTexture(texture);
     sprite.setTextureRect(rect);
     
@@ -38,7 +38,7 @@ void Renderizer::render(GameObject* obj) {
         sprite.setPosition(position);
         sprite.setScale(1.f, 1.f);
     } else {
-        sf::Vector2f screenPos = assignedCamera->worldToScreen(position);
+        sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
         sprite.setPosition(screenPos);
         sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
     }

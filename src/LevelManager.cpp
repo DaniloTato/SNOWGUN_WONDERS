@@ -88,7 +88,8 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
                 float(info.y * tileSize)
             },
             camera,
-            static_cast<float>(layerNo)
+            static_cast<float>(layerNo),
+            layers[layerNo].paralax
         };
 
         info.object = new RenderableObject(params);
@@ -124,7 +125,8 @@ void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int
                 float(t.y * Constants::TILE_SIZE)
             },
             camera,
-            static_cast<float>(layerNo)
+            static_cast<float>(layerNo),
+            layers[layerNo].paralax
         };
 
         t.object = new RenderableObject(params);
@@ -164,7 +166,8 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
                     float(y * Constants::TILE_SIZE)
                 },
                 camera,
-                static_cast<float>(layerNo)
+                static_cast<float>(layerNo),
+                layers[layerNo].paralax
             };
 
             t.object = new RenderableObject(params);
@@ -192,7 +195,8 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
             float(y * Constants::TILE_SIZE)
         },
         camera,
-        static_cast<float>(layerNo)
+        static_cast<float>(layerNo),
+        layers[layerNo].paralax
     };
 
     info.object = new RenderableObject(params);
@@ -273,4 +277,8 @@ const std::vector<std::vector<int>>& LevelManager::getLevelLayout() const {
 
 sf::Texture& LevelManager::getTilesheet() {
     return tilesheet;
+}
+
+const LayerInfo LevelManager::getLayerInfo(int layerNo) const{
+    return layers[layerNo];
 }

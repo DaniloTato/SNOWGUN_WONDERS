@@ -40,6 +40,8 @@ public:
     void reloadAllLayers(sf::RenderWindow& window, GameCamera* camera);
     void reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo);
 
+    const LayerInfo getLayerInfo(int layerNo) const;
+
     const std::vector<std::vector<int>>& getLevelLayout() const;
 
     sf::Texture& getTilesheet();
