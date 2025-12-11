@@ -11,16 +11,28 @@ struct RenderizerParameters {
     sf::IntRect& rect;
     sf::Vector2f position = {0.f, 0.f};
     GameCamera* camera = nullptr;
+    float layer = 0;
+};
+
+struct RenderEntry {
+    GameObject* object;
+    class Renderizer* renderer;
 };
 
 class Renderizer {
 public:
     Renderizer(const RenderizerParameters& params);
-    ~Renderizer() = default;
+    ~Renderizer();
 
     void setRect(const sf::IntRect& newRect, int direction);
-    void render(sf::Vector2f position);
+    void render(GameObject* ob);
     void assignCamera(GameCamera* cam);
+    const float getLayer() const;
+
+    static void registerPair(GameObject* obj, Renderizer* rend);
+    static void unregisterPair(Renderizer* rend);
+
+    static void renderAll();
 
 private:
     sf::RenderWindow& window;
@@ -28,4 +40,7 @@ private:
     sf::Texture texture;
     sf::IntRect rect;
     GameCamera* assignedCamera;
+    float layer;
+
+    static std::vector<RenderEntry> registry;
 };

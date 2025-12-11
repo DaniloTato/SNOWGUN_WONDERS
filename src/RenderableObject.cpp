@@ -2,9 +2,9 @@
 #include "GeneralContext.hpp"
 
 RenderableObject::RenderableObject(RenderizerParameters params) : GameObject(params.position), renderizer(params) {
-    GameObject::getGameObjects().push_back(this);
+    Renderizer::registerPair(this, &renderizer);
 }
 
 void RenderableObject::update(const GeneralContext& ctx) {
-    renderizer.render(position);
+
 }

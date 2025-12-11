@@ -36,6 +36,10 @@ public:
     void deleteTile(int layerNo, int x, int y);
     void saveLevel(const std::string& path);
 
+    void deleteLayerObjects(int layerNo);
+    void reloadAllLayers(sf::RenderWindow& window, GameCamera* camera);
+    void reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo);
+
     const std::vector<std::vector<int>>& getLevelLayout() const;
 
     sf::Texture& getTilesheet();

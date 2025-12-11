@@ -7,6 +7,7 @@
 #include "GameCamera.hpp"
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
+#include "Renderizer.hpp"
 #include "SFML/Window/Keyboard.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
@@ -49,7 +50,8 @@ int main() {
         playerTexture,
         playerRect,
         {16.f, 16.f},
-        GameState::getInstance().getMainCamera()
+        GameState::getInstance().getMainCamera(),
+        0.f
     };
 
     TangibleObject player(params);
@@ -83,6 +85,7 @@ int main() {
             );
 
             LevelManager::getInstance().selectedTileRect = picker.open(LevelManager::getInstance().layers, LevelManager::getInstance().activeLayer);
+            LevelManager::getInstance().reloadAllLayers(window, GameState::getInstance().getMainCamera());
         }
 
         if(inputManager.isPressed("createTile")){
@@ -94,7 +97,7 @@ int main() {
             LevelManager::getInstance().createTile(
                 window,
                 GameState::getInstance().getMainCamera(),
-                0,
+                LevelManager::getInstance().activeLayer,
                 static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
                 static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE,
                 LevelManager::getInstance().selectedTileRect
@@ -108,7 +111,7 @@ int main() {
             );
 
             LevelManager::getInstance().deleteTile(
-                0,
+                LevelManager::getInstance().activeLayer,
                 static_cast<int>(mousePosToTilePos.x) / Constants::TILE_SIZE,
                 static_cast<int>(mousePosToTilePos.y) / Constants::TILE_SIZE
             );
@@ -125,9 +128,12 @@ int main() {
         ctx.playerPosition = player.position;
 
         window.clear();
+
         for (GameObject* gameObject : GameObject::getGameObjects()) {
             gameObject->update(ctx);
         }
+        Renderizer::renderAll();
+
         window.display();
     }
     

@@ -3,11 +3,12 @@
 UIButton::UIButton(const sf::Vector2f& position,
                    const sf::Vector2f& size,
                    const std::string& text,
-                   sf::Font& font)
-{
+                   sf::Font& font,
+                   const sf::Color& color)
+:color(color){
     box.setPosition(position);
     box.setSize(size);
-    box.setFillColor(sf::Color(60, 60, 60));
+    box.setFillColor(color);
 
     label.setFont(font);
     label.setString(text);
@@ -30,7 +31,7 @@ void UIButton::draw(sf::RenderWindow& window)
         mp.y >= box.getPosition().y &&
         mp.y <= box.getPosition().y + box.getSize().y;
 
-    box.setFillColor(hover ? sf::Color(90, 90, 90) : sf::Color(60, 60, 60));
+    box.setFillColor(hover ? sf::Color(color.r + 30, color.g + 30, color.b + 30) : color);
     window.draw(box);
     window.draw(label);
 }

@@ -1,6 +1,7 @@
 #include "TilePicker.hpp"
 #include "UIButton.hpp"
 #include "UISlider.hpp"
+#include "LevelManager.hpp"
 
 TilePicker::TilePicker(sf::Texture& tileset, int tileSize)
     : tileset(tileset), tileSize(tileSize) {}
@@ -24,12 +25,11 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
         font
     );
 
-    // Validate activeLayer
     if (layers.empty()) activeLayer = -1;
-    else if (activeLayer < 0 || activeLayer >= (int)layers.size())
+    else if (activeLayer < 0 || activeLayer >= (int)layers.size()){
         activeLayer = 0;
+    }
 
-    // Create a UISlider bound to the parallax value
     float dummyMin = 0.1f;
     float dummyMax = 3.0f;
     float* bound = (activeLayer >= 0 ? &layers[activeLayer].paralax : nullptr);
@@ -71,12 +71,8 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
                 }
             }
 
-            // -------------------------------
-            // Layer List
-            // -------------------------------
             drawLayerList(window, layers, activeLayer, font, ev);
 
-            // Update slider pointer if active layer changed
             if (activeLayer >= 0 && activeLayer < (int)layers.size())
                 parallaxSlider.bindTo(&layers[activeLayer].paralax);
 
@@ -84,9 +80,6 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
                 parallaxSlider.handleEvent(ev, window);
         }
 
-        // ============================================================================
-        // Draw
-        // ============================================================================
         window.clear(sf::Color(30, 30, 30));
 
         drawTileset(window, selectedRect);
@@ -104,12 +97,7 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
     return selectedRect;
 }
 
-
-// ============================================================================
-// Tileset
-// ============================================================================
-void TilePicker::drawTileset(sf::RenderWindow& window, const sf::IntRect& selectedRect)
-{
+void TilePicker::drawTileset(sf::RenderWindow& window, const sf::IntRect& selectedRect){
     sf::Sprite spr(tileset);
     window.draw(spr);
 
@@ -138,22 +126,16 @@ void TilePicker::drawTileset(sf::RenderWindow& window, const sf::IntRect& select
     window.draw(sel);
 }
 
-
-// ============================================================================
-// Layer List
-// ============================================================================
 void TilePicker::drawLayerList(
     sf::RenderWindow& window,
     std::vector<LayerInfo>& layers,
     int& activeLayer,
     sf::Font& font,
     const sf::Event& ev
-)
-{
+){
     float panelX = tileset.getSize().x + 10.f;
     float y = 10.f;
 
-    // Add button
     UIButton addBtn({ panelX, y }, { 240, 24 }, "+ Add Layer", font);
     addBtn.draw(window);
 
@@ -168,7 +150,6 @@ void TilePicker::drawLayerList(
 
     y += 40.f;
 
-    // Layer list
     for (int i = 0; i < (int)layers.size(); i++)
     {
         bool selected = (i == activeLayer);
@@ -182,7 +163,6 @@ void TilePicker::drawLayerList(
         t.setPosition(panelX + 10, y + 5);
         window.draw(t);
 
-        // Select click
         if (ev.type == sf::Event::MouseButtonReleased &&
             ev.mouseButton.button == sf::Mouse::Left)
         {
@@ -192,8 +172,7 @@ void TilePicker::drawLayerList(
                 activeLayer = i;
         }
 
-        // Up button
-        UIButton up({ panelX + 195, y }, { 20, 12 }, "↑", font);
+        UIButton up({ panelX + 195, y }, { 20, 12 }, "", font, sf::Color::Yellow);
         up.draw(window);
         if (up.isClicked(ev, window) && i > 0) {
             std::swap(layers[i], layers[i - 1]);
@@ -201,8 +180,7 @@ void TilePicker::drawLayerList(
             return;
         }
 
-        // Down button
-        UIButton down({ panelX + 195, y + 14 }, { 20, 12 }, "↓", font);
+        UIButton down({ panelX + 195, y + 14 }, { 20, 12 }, "", font, sf::Color::Yellow);
         down.draw(window);
         if (down.isClicked(ev, window) && i < (int)layers.size() - 1) {
             std::swap(layers[i], layers[i + 1]);
@@ -210,10 +188,10 @@ void TilePicker::drawLayerList(
             return;
         }
 
-        // Delete button
         UIButton del({ panelX + 220, y }, { 20, 24 }, "X", font);
         del.draw(window);
         if (del.isClicked(ev, window)) {
+            LevelManager::getInstance().deleteLayerObjects(i);
             layers.erase(layers.begin() + i);
             if (layers.empty()) activeLayer = -1;
             else if (activeLayer >= (int)layers.size()) activeLayer = layers.size() - 1;
@@ -224,11 +202,6 @@ void TilePicker::drawLayerList(
     }
 }
 
-
-
-// ============================================================================
-// Parallax UI using UISlider
-// ============================================================================
 void TilePicker::drawParallaxUI(
     sf::RenderWindow& window,
     LayerInfo& layer,
@@ -245,7 +218,6 @@ void TilePicker::drawParallaxUI(
 
     slider.draw(window);
 
-    // Value text
     float rounded = float(int(layer.paralax * 100)) / 100.f;
     sf::Text v(std::to_string(rounded), font, 12);
     v.setPosition(10.f, y + 22);

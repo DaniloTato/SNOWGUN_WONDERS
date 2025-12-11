@@ -9,7 +9,7 @@
 
 using json = nlohmann::json;
 
-LevelManager::LevelManager(): activeLayer(0){}
+LevelManager::LevelManager(): selectedTileRect(sf::IntRect(16,16,16,16)), activeLayer(0){}
 
 LevelManager& LevelManager::getInstance() {
     static LevelManager instance;
@@ -36,8 +36,22 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
     levelLayout.assign(height, std::vector<int>(width, 0));
 
     for (int i = 0; i < jsonLayers.size(); i++) {
+        layers[i].name = jsonLayers[i]["name"].get<std::string>();
         layers[i].paralax = jsonLayers[i]["parallax"].get<float>();
         loadLayer(window, camera, i, jsonLayers[i], tileSize);
+    }
+
+    std::cout << "totalLayers -> " << layers.size() << "\n";
+}
+
+void LevelManager::deleteLayerObjects(int layerNo) {
+    LayerInfo layer = layers[layerNo];
+
+    for (auto& tile : layer.tiles) {
+        if (tile.object) {
+            GameObject::destroy(tile.object);
+            tile.object = nullptr;
+        }
     }
 }
 
@@ -72,11 +86,12 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
             {
                 float(info.x * tileSize),
                 float(info.y * tileSize)
-            }
+            },
+            camera,
+            static_cast<float>(layerNo)
         };
 
         info.object = new RenderableObject(params);
-        info.object->renderizer.assignCamera(camera);
 
         tileList.push_back(info);
 
@@ -85,18 +100,54 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
     }
 }
 
+void LevelManager::reloadAllLayers(sf::RenderWindow& window, GameCamera* camera){
+    for (int i = 0; i < layers.size(); ++i)
+        reloadLayer(window, camera, i);
+}
+
+void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo){
+    auto& tiles = layers[layerNo].tiles;
+
+    for (auto& t : tiles)
+    {
+        if (t.object) {
+            GameObject::destroy(t.object);
+            t.object = nullptr;
+        }
+
+        RenderizerParameters params{
+            window,
+            tilesheet,
+            t.textureRect,
+            {
+                float(t.x * Constants::TILE_SIZE),
+                float(t.y * Constants::TILE_SIZE)
+            },
+            camera,
+            static_cast<float>(layerNo)
+        };
+
+        t.object = new RenderableObject(params);
+    }
+
+    std::cout << "Reloaded layer #" << layerNo << ", tiles: "
+              << tiles.size() << "\n";
+}
+
 void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
                               int x, int y, sf::IntRect rect)
 {
     if (x < 0 || y < 0) return;
 
-    std::vector<TileInfo> tiles = layers[layerNo].tiles;
+    std::vector<TileInfo>& tiles = layers[layerNo].tiles;
 
     for (auto& t : tiles)
     {
         if (t.x == x && t.y == y)
         {
-            levelLayout[y][x] = 1;
+            if(layerNo == 0){
+                levelLayout[y][x] = 1;
+            }
 
             if (t.object) {
                 GameObject::destroy(t.object);
@@ -111,11 +162,12 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
                 {
                     float(x * Constants::TILE_SIZE),
                     float(y * Constants::TILE_SIZE)
-                }
+                },
+                camera,
+                static_cast<float>(layerNo)
             };
 
             t.object = new RenderableObject(params);
-            t.object->renderizer.assignCamera(camera);
 
             return;
         }
@@ -127,7 +179,9 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
 
     info.textureRect = sf::IntRect(rect.left, rect.top, Constants::TILE_SIZE, Constants::TILE_SIZE);
 
-    levelLayout[y][x] = 1;
+    if(layerNo == 0){
+        levelLayout[y][x] = 1;
+    }
 
     RenderizerParameters params{
         window,
@@ -136,20 +190,20 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
         {
             float(x * Constants::TILE_SIZE),
             float(y * Constants::TILE_SIZE)
-        }
+        },
+        camera,
+        static_cast<float>(layerNo)
     };
 
     info.object = new RenderableObject(params);
     info.object->renderizer.assignCamera(camera);
-
     tiles.push_back(info);
 }
 
-void LevelManager::deleteTile(int layerNo, int x, int y)
-{
+void LevelManager::deleteTile(int layerNo, int x, int y){
     if (x < 0 || y < 0) return;
 
-    std::vector<TileInfo> tiles = layers[layerNo].tiles;
+    std::vector<TileInfo>& tiles = layers[layerNo].tiles;
 
     tiles.erase(
         std::remove_if(tiles.begin(), tiles.end(),
@@ -167,7 +221,7 @@ void LevelManager::deleteTile(int layerNo, int x, int y)
         tiles.end()
     );
 
-    if (y < levelLayout.size() && x < levelLayout[y].size()){
+    if (layerNo == 0 && y < levelLayout.size() && x < levelLayout[y].size()){
         levelLayout[y][x] = 0;
     }
 }
@@ -210,7 +264,6 @@ void LevelManager::saveLevel(const std::string& path)
 
     file << data.dump(4);
     file.close();
-
     std::cout << "Level saved to " << path << std::endl;
 }
 

@@ -7,7 +7,8 @@ public:
     UIButton(const sf::Vector2f& position,
              const sf::Vector2f& size,
              const std::string& text,
-             sf::Font& font);
+             sf::Font& font,
+             const sf::Color& color = sf::Color(60,60,60));
 
     void draw(sf::RenderWindow& window);
     bool isClicked(const sf::Event& event, sf::RenderWindow& window);
@@ -18,4 +19,5 @@ public:
 private:
     sf::RectangleShape box;
     sf::Text label;
+    sf::Color color;
 };
