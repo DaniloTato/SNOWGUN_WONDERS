@@ -8,7 +8,7 @@
 struct RenderizerParameters {
     sf::RenderWindow& window;
     sf::Texture& texture;
-    sf::IntRect& rect;
+    sf::IntRect rect;
     sf::Vector2f position = {0.f, 0.f};
     GameCamera* camera = nullptr;
     float layer = 0.f;
@@ -26,7 +26,7 @@ public:
     ~Renderizer();
 
     void setRect(const sf::IntRect& newRect, int direction);
-    void render(GameObject* ob);
+    virtual void render(GameObject* ob);
     void assignCamera(GameCamera* cam);
     const float getLayer() const;
 
@@ -35,10 +35,10 @@ public:
 
     static void renderAll();
 
-private:
+protected:
     sf::RenderWindow& window;
     sf::Sprite sprite;
-    sf::Texture texture;
+    sf::Texture& texture;
     sf::IntRect rect;
     GameCamera* assignedCamera;
     float layer;

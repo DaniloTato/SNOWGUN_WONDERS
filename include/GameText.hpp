@@ -1,0 +1,95 @@
+#pragma once
+#include "GameObject.hpp"
+#include "SFML/System/Vector2.hpp"
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <string>
+#include <vector>
+#include <map>
+#include "TextRenderizer.hpp"
+#include "Glyph.hpp"
+
+class GameText: public GameObject {
+public:
+    enum class Align { 
+        Left,
+        Center,
+        Right 
+    };
+
+    enum class Effect {
+        None,
+        Typewriter
+     };
+
+    GameText(RenderizerParameters params);
+    ~GameText();
+
+    virtual void update(const GeneralContext& ctx) override;
+
+    void setFontAtlas(sf::Texture& texture, int glyphW, int glyphH, int cols, int firstChar = 32);
+
+    // Load text using "markup" string. Header directives are processed from lines starting '#'.
+    // Example header lines:
+    // #effect typewriter 0.04
+    // #position 30 50
+    // #boundary 300
+    // #soundpool {"s1.wav","s2.wav"}
+    // #alignment center
+    void loadFromMarkup(const std::string& markup);
+
+    void setPosition(const sf::Vector2f& p) { origin = p; rebuildLayout(); }
+    void setBoundary(float rightBoundary) { boundary = rightBoundary; rebuildLayout(); }
+    void setAlignment(Align a) { alignment = a; rebuildLayout(); }
+    void setTypewriter(bool enabled, float delayPerChar = 0.05f) { effect = enabled ? Effect::Typewriter : Effect::None; typeDelay = delayPerChar; resetTypewriter(); }
+    void setSoundPool(const std::vector<std::string>& files); // loads soundbuffers
+
+    void resetTypewriter();
+    void forceRevealAll();
+
+    void getRenderGlyphs();
+
+    size_t totalChars() const { return glyphs.size(); }
+    size_t visibleChars() const { return revealedCount; }
+
+private:
+    void parseHeaderLine(const std::string& line);
+    void parseBody(const std::string& body);
+    void pushTextChar(char c, const sf::Color& color, Glyph::Anim anim, float animParam);
+    sf::Color parseColorSpec(const std::string& s) const;
+    void rebuildLayout();
+    float measureLineWidth(const std::vector<size_t>& lineIndices) const;
+
+    void advanceTypewriter(float dt);
+    void playTypeSound();
+
+    sf::Texture* fontTex = nullptr;
+    int glyphW;
+    int glyphH;
+    int atlasCols;
+    int atlasFirstChar;
+
+    sf::Vector2f origin = {0.f, 0.f};
+    float boundary = 10000.f;
+    Align alignment = Align::Left;
+
+    Effect effect = Effect::None;
+    float typeDelay = 0.04f;
+    size_t revealedCount = 0;
+    float typeTimer = 0.f;
+
+    std::vector<sf::SoundBuffer> soundBuffers;
+    std::vector<sf::Sound> soundPlayers;
+    size_t soundPlayIndex = 0;
+    bool useSoundPool = false;
+    bool playSoundOnChars = true;
+
+    std::vector<Glyph> glyphs;
+    std::vector<RenderGlyph> renderGlyphs;
+    std::vector<std::vector<size_t>> lines;
+
+    float globalTime = 0.f;
+
+    std::map<std::string, sf::Color> colorNameMap;
+    TextRenderizer renderizer;
+};
