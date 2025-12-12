@@ -1,7 +1,6 @@
 #include "PolyRenderizer.hpp"
 #include "Renderizer.hpp"
 #include <limits>
-#include <iostream>
 
 PolyRenderizer::PolyRenderizer(const RenderizerParameters& params): Renderizer(params){}
 
