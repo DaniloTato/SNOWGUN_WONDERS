@@ -1,11 +1,11 @@
 #pragma once
+#include <limits>
 #include <vector>
 #include <SFML/Graphics.hpp>
 
 #include "GameObject.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
-#include "RenderizerParameters.hpp"
 
 class ParticleManager: GameObject {
 public:
@@ -28,11 +28,13 @@ public:
 
         float shakeIntensity;
 
+        float parallax = 1.f;
+
         sf::Color color;
         sf::IntRect texRect;
     };
 
-    static ParticleManager& getInstance(const RenderizerParameters& params);
+    static ParticleManager& getInstance();
 
     void emitSnow(const sf::Vector2f& pos);
     void emitDust(const sf::Vector2f& pos);
@@ -44,13 +46,15 @@ public:
 
     virtual void update(const GeneralContext& ctx) override;
 
+    void attachPolyRederizer(PolyRenderizer* polyRenderizer);
+
     void destroyAll();
 
 private:
-    ParticleManager(const RenderizerParameters& params);
+    ParticleManager();
 
     std::vector<Particle> particles;
-    PolyRenderizer renderizer;
+    PolyRenderizer* attachedRenderizer;
     sf::Vector2f wind = {0.f, 0.f};
 
     std::vector<RenderCommand> renderCommandBuffer;

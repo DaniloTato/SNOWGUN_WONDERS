@@ -3,10 +3,10 @@
 #include <sstream>
 #include <iostream>
 
-DialogueManager::DialogueManager(RenderizerParameters& gameTextParams):gameTextParams(gameTextParams){}
+DialogueManager::DialogueManager(){}
 
-DialogueManager& DialogueManager::getInstance(RenderizerParameters& gameTextParams) {
-    static DialogueManager dm(gameTextParams);
+DialogueManager& DialogueManager::getInstance() {
+    static DialogueManager dm;
     return dm;
 }
 
@@ -78,7 +78,9 @@ void DialogueManager::onTrigger(GameObject* obj) {
         return;
     }
 
-    queueCreateText(gameTextParams, markup);
+    if(attachedTextParams){
+        queueCreateText(*attachedTextParams, markup);
+    }
 }
 
 void DialogueManager::queueCreateText(const RenderizerParameters& params, const std::string* markup){
@@ -90,4 +92,8 @@ void DialogueManager::applyQueuedTextChanges(){
         createText(createReq.params, createReq.markup);
     }
     createQueue.clear();
+}
+
+void  DialogueManager::attachTextParams(RenderizerParameters* params){
+    attachedTextParams = params;
 }

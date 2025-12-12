@@ -1,5 +1,7 @@
 #include "PolyRenderizer.hpp"
 #include "Renderizer.hpp"
+#include <limits>
+#include <iostream>
 
 PolyRenderizer::PolyRenderizer(const RenderizerParameters& params): Renderizer(params){}
 
@@ -14,7 +16,13 @@ void PolyRenderizer::render(GameObject* obj){
     for(const RenderCommand& command: renderCommands){
         sprite.setTextureRect(command.rect);
         sprite.setColor(command.color);
-        sf::Vector2f screenPos = assignedCamera->worldToScreen(command.pos, paralax);
+
+        float finalParalax = paralax;
+        if(command.overrideParalax != std::numeric_limits<float>::max()){
+            finalParalax = command.overrideParalax;
+        }
+
+        sf::Vector2f screenPos = assignedCamera->worldToScreen(command.pos, finalParalax);
         sprite.setPosition(screenPos);
         sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
         window.draw(sprite);

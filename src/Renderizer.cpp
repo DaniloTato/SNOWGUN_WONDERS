@@ -4,7 +4,7 @@
 std::vector<RenderEntry> Renderizer::registry;
 
 Renderizer::Renderizer(const RenderizerParameters& params)
-: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.paralax) {
+: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.parallax) {
     sprite.setTexture(texture);
     sprite.setTextureRect(rect);
     

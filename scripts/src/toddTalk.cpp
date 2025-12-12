@@ -18,7 +18,7 @@ namespace script{
         TangibleObject* player = ctx.player;
         if(!tc.count && BasicCollider::tangibleAndRenderableCollision(player, &renderable)){
             tc.count = 1;
-            DialogueManager::getInstance(ctx.textParams).onTrigger(&renderable);
+            DialogueManager::getInstance().onTrigger(&renderable);
         }
     }
 

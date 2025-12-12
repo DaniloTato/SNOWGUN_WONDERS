@@ -18,7 +18,7 @@ struct TextDeletionRequest{
 
 class DialogueManager {
 public:
-    static DialogueManager& getInstance(RenderizerParameters& gameTextParams);
+    static DialogueManager& getInstance();
 
     bool loadDialoguesFromFile(const std::string& filename);
 
@@ -29,17 +29,21 @@ public:
     void onTrigger(GameObject* object);
 
     void applyQueuedTextChanges();
+    void attachTextParams(RenderizerParameters* params);
 
 private:
-    std::vector<TextCreationRequest> createQueue;
-    std::vector<TextDeletionRequest> deleteQueue;
 
-    DialogueManager(RenderizerParameters& gameTextParams);
+    DialogueManager();
+
     std::unordered_map<std::string, std::string> dialogues;
     std::unordered_map<GameObject*, std::string> assigned;
+
     std::vector<GameText*> activeTexts;
 
-    RenderizerParameters& gameTextParams;
+    RenderizerParameters* attachedTextParams = nullptr;
+
+    std::vector<TextCreationRequest> createQueue;
+    std::vector<TextDeletionRequest> deleteQueue;
 
     DialogueManager(const DialogueManager&) = delete;
     DialogueManager& operator=(const DialogueManager&) = delete;

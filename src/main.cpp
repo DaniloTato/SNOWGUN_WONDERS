@@ -8,6 +8,7 @@
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
 #include "ParticleManager.hpp"
+#include "PolyRenderizer.hpp"
 #include "RenderableObject.hpp"
 #include "Renderizer.hpp"
 #include "TangibleObject.hpp"
@@ -27,10 +28,12 @@
 
 /*TangibleObject Scripts*/
 #include "movement.hpp"
+#include "particleGeneration.hpp"
 #include "tangibleAnimations.hpp"
 
 /*General Scrits*/
 #include "levelCreatorInputs.hpp"
+#include "particleGeneration.hpp"
 #include "toddTalk.hpp"
 
 #include <cstdlib>
@@ -57,15 +60,20 @@ int main() {
     /*Particles*/
     sf::Texture snowTexture;
     snowTexture.loadFromFile("assets/snow.png");
+        //as of now. Particles ignore texture, rect, position and parallax
     RenderizerParameters particleParams{
         window,
         snowTexture,
-        sf::IntRect(0,0,1,1),
+        sf::IntRect(0,0,0,0),
         {0.f, 0.f},
         GameState::getInstance().getMainCamera(),
         -1.f,
         0.7f
     };
+
+    PolyRenderizer particleRenderizer(particleParams);
+    ParticleManager& particleManager = ParticleManager::getInstance();
+    particleManager.attachPolyRederizer(&particleRenderizer); //Imperative attatchment of rendenderizer.
     /*Particles*/
 
     /*Dialogues*/
@@ -80,7 +88,10 @@ int main() {
         -2.f,
         1.f
     };
-    DialogueManager::getInstance(textParams).loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+    DialogueManager& dialogueManager = DialogueManager::getInstance();
+    dialogueManager.attachTextParams(&textParams);
+    dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+
     /*Dialogues*/
 
     sf::Texture toddTexture;
@@ -97,7 +108,7 @@ int main() {
     };
     RenderableObject todd(toddParams);
     todd.scripter.addScript(script::toddTalk);
-    DialogueManager::getInstance(textParams).assignDialogue(&todd, "Greeting");
+    dialogueManager.assignDialogue(&todd, "Greeting");
 
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/snowman_animation.png");
@@ -120,6 +131,7 @@ int main() {
 
     ScriptRunner scriptRunner;
     scriptRunner.scripter.addScript(script::levelCreatorInputs);
+    scriptRunner.scripter.addScript(script::particleGeneration);
 
     player.animator.loadFromAsepriteJSON("assets/json/snowman_animation.json");
     player.animator.setSpeedMultiplier(1.8f);
@@ -137,14 +149,6 @@ int main() {
             inputManager.handleEvent(event);
         }
 
-        const float snowSpawnRange =  5;
-        ParticleManager::getInstance(particleParams).emitSnow(
-            GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5) ,-50},
-                1.f
-            )
-        );
-
         GeneralContext ctx = {
             player.position,
             window,
@@ -153,7 +157,7 @@ int main() {
         };
 
         levelManager.applyQueuedTileChanges();
-        DialogueManager::getInstance(particleParams).applyQueuedTextChanges();
+        dialogueManager.applyQueuedTextChanges();
 
         window.clear(ColorPalette::Black);
 

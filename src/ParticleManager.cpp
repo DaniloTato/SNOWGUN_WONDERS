@@ -4,20 +4,30 @@
 #include "RenderCommand.hpp"
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
+#include <iostream>
 
-ParticleManager::ParticleManager(const RenderizerParameters& params): renderizer(params){
-    Renderizer::registerPair(this, &renderizer);
+ParticleManager::ParticleManager(){}
+
+ParticleManager& ParticleManager::getInstance() {
+    static ParticleManager instance;
+    return instance;
 }
 
-ParticleManager& ParticleManager::getInstance(const RenderizerParameters& params) {
-    static ParticleManager instance(params);
-    return instance;
+void ParticleManager::attachPolyRederizer(PolyRenderizer* polyRenderizer){
+    attachedRenderizer = polyRenderizer;
+    Renderizer::registerPair(this, polyRenderizer);
 }
 
 void ParticleManager::update(const GeneralContext& ctx){
     updateParticles();
     updateRenderCommandBuffer();
-    renderizer.updateRenderCommands(renderCommandBuffer);
+
+    if(attachedRenderizer){
+        attachedRenderizer -> updateRenderCommands(renderCommandBuffer);
+    } else{
+        std::cout << "[ParticleManager] Warning: No Renderizer Attached.\n";
+    }
 }
 
 void ParticleManager::emitSnow(const sf::Vector2f& pos) {
@@ -28,6 +38,8 @@ void ParticleManager::emitSnow(const sf::Vector2f& pos) {
     p.vel = { (float)(rand()%20 - 10) * 0.1f, 30.f };
 
     p.gravity = 5.f;
+
+    p.parallax = (5 + rand() % 5)*0.1;
 
     p.sinAmplitude = 1.f;
     p.sinFrequency = 5.f;
@@ -107,6 +119,7 @@ void ParticleManager::updateRenderCommandBuffer() {
         cmd.rect = p.texRect;
         cmd.pos = p.pos;
         cmd.color = p.color;
+        cmd.overrideParalax = p.parallax;
 
         if (p.type == Type::Dust && p.shakeIntensity > 0.f) {
             float t = (p.maxLifetime - p.lifetime) * 30.f;
