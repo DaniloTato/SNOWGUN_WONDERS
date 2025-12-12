@@ -1,22 +1,37 @@
 #pragma once
-
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
-#include "SFML/System/Vector2.hpp"
 
-class BasicCollider{
+class TangibleObject;
+class RenderableObject;
+
+class BasicCollider {
+
 public:
-    BasicCollider() = default;
-    void calculateCollisionGrid(sf::Vector2f position);
-    bool isColliding(sf::Vector2f position1, sf::Vector2f size1, sf::Vector2f position2, sf::Vector2f size2);
-    bool isCollidingWithLevel(sf::Vector2f position, int i);
-    bool horizontalLevelCollision(sf::Vector2f& position);
-    bool verticalLevelCollision(sf::Vector2f& position);
-    void setSize(sf::Vector2f newSize);
+    BasicCollider();
+
+    void setSize(const sf::Vector2f& newSize);
     void setOffset(const sf::Vector2f& newOffset);
-protected:
-    std::vector<int> collisionGrid;
-    sf::Vector2f positionLastFrame;
-    int directionLastCollision = 1;
-    sf::Vector2f size;
-    sf::Vector2f offset;
+
+    const sf::Vector2f& getSize() const { return size; }
+    const sf::Vector2f& getOffset() const { return offset; }
+
+    sf::FloatRect getCollisionRect(const sf::Vector2f& objectPos) const;
+    bool horizontalLevelCollision(sf::Vector2f& objectPos);
+    bool verticalLevelCollision(sf::Vector2f& objectPos);
+    void computeCollisionGrid(const sf::Vector2f& objectPos);
+    void debugRender(sf::RenderWindow& window, const sf::Vector2f& objectPos);
+
+    static bool objectsColliding(TangibleObject* object1, TangibleObject* object2);
+    static bool isCollidingRect(const sf::FloatRect& a, const sf::FloatRect& b);
+    static bool tangibleAndRenderableCollision(TangibleObject* tangibleObject, RenderableObject* renderableObject);
+
+private:
+    sf::Vector2f size = {16.f, 16.f};
+    sf::Vector2f offset = {0.f, 0.f};
+
+    sf::Vector2f lastFramePos{0.f, 0.f};
+
+    std::vector<sf::Vector2i> tileCoords;
 };

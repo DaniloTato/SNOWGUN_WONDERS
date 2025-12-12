@@ -66,3 +66,7 @@ void Renderizer::renderAll(){
     for (auto& e : registry)
         e.renderer->render(e.object);
 }
+
+const sf::IntRect& Renderizer::getRect() const {
+    return rect;
+}

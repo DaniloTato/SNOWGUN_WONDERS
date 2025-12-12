@@ -1,5 +1,6 @@
 #include "toddTalk.hpp"
 
+#include "BasicCollider.hpp"
 #include "RenderableObject.hpp"
 #include "DialogueManager.hpp"
 #include "TangibleObject.hpp"
@@ -13,12 +14,11 @@ namespace script{
 
     static TalkCount tc;
 
-    void toddTalk(RenderableObject& tangible, const GeneralContext& ctx) {
-        //Create an imCollidingWith(*collider) imCollidingWith(position,size) function;
+    void toddTalk(RenderableObject& renderable, const GeneralContext& ctx) {
         TangibleObject* player = ctx.player;
-        if(!tc.count && ctx.player -> collider.isColliding(player->position, {17,17}, tangible.position, {16,16})){
+        if(!tc.count && BasicCollider::tangibleAndRenderableCollision(player, &renderable)){
             tc.count = 1;
-            DialogueManager::getInstance(ctx.textParams).onTrigger(&tangible);
+            DialogueManager::getInstance(ctx.textParams).onTrigger(&renderable);
         }
     }
 

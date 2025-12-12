@@ -7,7 +7,7 @@ TangibleObject::TangibleObject(RenderizerParameters params) : GameObject(params.
 }
 
 void TangibleObject::update(const GeneralContext& ctx) {
-    collider.calculateCollisionGrid(position);
+    collider.computeCollisionGrid(position);
     scripter.runScripts(*this, ctx);
     animator.update(1.f / Constants::FRAME_RATE);
     renderizer.setRect(animator.getCurrentFrame(), direction);

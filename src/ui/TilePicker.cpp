@@ -40,8 +40,7 @@ sf::IntRect TilePicker::open(std::vector<LayerInfo>& layers, int& activeLayer){
         200.f,
         dummyMin,
         dummyMax,
-        bound,
-        font
+        bound
     );
 
     while (window.isOpen())

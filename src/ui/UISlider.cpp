@@ -4,15 +4,13 @@ UISlider::UISlider(const sf::Vector2f& position,
                    float width,
                    float minValue,
                    float maxValue,
-                   float* boundValue,
-                   sf::Font& font)
+                   float* boundValue)
     : pos(position),
       width(width),
       minValue(minValue),
       maxValue(maxValue),
       valuePtr(boundValue),
-      internalValue(boundValue ? *boundValue : minValue),
-      fontRef(font)
+      internalValue(boundValue ? *boundValue : minValue)
 {
     // track
     track.setPosition(pos);

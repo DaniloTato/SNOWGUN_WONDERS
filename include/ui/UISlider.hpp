@@ -7,8 +7,7 @@ public:
              float width,
              float minValue,
              float maxValue,
-             float* boundValue,
-             sf::Font& font);
+             float* boundValue);
 
     void draw(sf::RenderWindow& window);
 
@@ -40,6 +39,4 @@ private:
     sf::CircleShape knob;
 
     bool dragging = false;
-
-    sf::Font& fontRef;
 };

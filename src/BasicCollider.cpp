@@ -1,13 +1,33 @@
 #include "BasicCollider.hpp"
-#include "Constants.hpp"
-#include "SFML/System/Vector2.hpp"
 #include "LevelManager.hpp"
+#include "Constants.hpp"
+#include "TangibleObject.hpp"
+#include <cmath>
 
-#include <vector>
+BasicCollider::BasicCollider() { }
 
-//may want to rewrite some of this
+bool BasicCollider::objectsColliding(TangibleObject* object1, TangibleObject* object2){
+    //maybe add dependecy collider-gameObject?
+    return isCollidingRect(object1->collider.getCollisionRect(object1->position), object2->collider.getCollisionRect(object2->position));
+}
 
-void BasicCollider::setSize(sf::Vector2f newSize){
+bool BasicCollider::tangibleAndRenderableCollision(TangibleObject* tangibleObject, RenderableObject* renderableObject){
+    return isCollidingRect(
+            tangibleObject->collider.getCollisionRect(tangibleObject->position),
+            sf::FloatRect(
+                renderableObject -> position.x,
+                renderableObject -> position.y,
+                renderableObject -> renderizer.getRect().width,
+                renderableObject -> renderizer.getRect().height
+                )
+            );
+}
+
+bool BasicCollider::isCollidingRect(const sf::FloatRect& a, const sf::FloatRect& b){
+    return a.intersects(b);
+}
+
+void BasicCollider::setSize(const sf::Vector2f& newSize) {
     size = newSize;
 }
 
@@ -15,94 +35,120 @@ void BasicCollider::setOffset(const sf::Vector2f& newOffset) {
     offset = newOffset;
 }
 
-void BasicCollider::calculateCollisionGrid(sf::Vector2f position) {
-    collisionGrid.clear();
-
-    const int TILE_SIZE = Constants::TILE_SIZE;
-    const int COLLISION_GRID_WIDTH = Constants::COLLISION_GRID_WIDTH;
-    const int COLLISION_GRID_HEIGHT = Constants::COLLISION_GRID_HEIGHT;
- 
-    for (int j = 0; j < COLLISION_GRID_WIDTH * COLLISION_GRID_HEIGHT; j++){
-        int square_x = ((int) position.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE * j - COLLISION_GRID_WIDTH * TILE_SIZE * ((int) j / COLLISION_GRID_WIDTH) - TILE_SIZE;
-        int square_y = ((int) position.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE * ((int) j / COLLISION_GRID_WIDTH) - TILE_SIZE;
-        collisionGrid.push_back(square_x / TILE_SIZE);
-        collisionGrid.push_back(square_y / TILE_SIZE);
-    }
+sf::FloatRect BasicCollider::getCollisionRect(const sf::Vector2f& objectPos) const {
+    return sf::FloatRect(
+        objectPos.x + offset.x,
+        objectPos.y + offset.y,
+        size.x,
+        size.y
+    );
 }
 
-bool BasicCollider::isColliding(sf::Vector2f position1, sf::Vector2f size1, sf::Vector2f position2, sf::Vector2f size2){
-    bool horizontal = (position1.x + size1.x > position2.x && position1.x < position2.x + size2.x);
-    bool vertical = (position1.y + size1.y > position2.y && position1.y < position2.y + size2.y);
-    return (horizontal && vertical);
+void BasicCollider::computeCollisionGrid(const sf::Vector2f& objectPos) {
+    tileCoords.clear();
+    const int TILE = Constants::TILE_SIZE;
+
+    sf::FloatRect box = getCollisionRect(objectPos);
+
+    int x0 = std::floor(box.left / TILE);
+    int y0 = std::floor(box.top / TILE);
+    int x1 = std::floor((box.left + box.width) / TILE);
+    int y1 = std::floor((box.top + box.height) / TILE);
+
+    for (int y = y0; y <= y1; ++y)
+        for (int x = x0; x <= x1; ++x)
+            tileCoords.emplace_back(x, y);
 }
 
-bool BasicCollider::isCollidingWithLevel(sf::Vector2f position, int i){
-    const int TILE_SIZE = Constants::TILE_SIZE;
-    return isColliding(position, size, sf::Vector2f(collisionGrid[i * 2] * TILE_SIZE, collisionGrid[i * 2 + 1] * TILE_SIZE), sf::Vector2f(TILE_SIZE, TILE_SIZE));
-}
+bool BasicCollider::horizontalLevelCollision(sf::Vector2f& objectPos) {
 
-bool BasicCollider::horizontalLevelCollision(sf::Vector2f& position){
+    auto& level = LevelManager::getInstance().getLevelLayout();
+    const int TILE = Constants::TILE_SIZE;
 
-    const std::vector<std::vector<int>>& levelLayout = LevelManager::getInstance().getLevelLayout();
-    const int TILE_SIZE = Constants::TILE_SIZE;
+    computeCollisionGrid(objectPos);
 
-    bool didCollisionHappen = false;
-    
-    int movementDirection = -1 + (positionLastFrame.x < position.x)*2;
+    sf::FloatRect rect = getCollisionRect(objectPos);
+    bool collided = false;
 
-    for (int i = 0; i < (collisionGrid.size() * 0.5); i++){
-        if(collisionGrid[i * 2 + 1] < levelLayout.size()){
-            if (collisionGrid [i * 2] < levelLayout[collisionGrid[i * 2 + 1]].size()){
+    for (auto& t : tileCoords) {
+        int tx = t.x, ty = t.y;
 
-                if(levelLayout[collisionGrid[i * 2 + 1]][collisionGrid[i * 2]] != 0 && isCollidingWithLevel(position, i)){
-                    directionLastCollision = movementDirection;
-                    didCollisionHappen = true;
-                    positionLastFrame.x = position.x;
-                    //spdx = 0;
-                    if(movementDirection > 0){
-                        position.x -= (position.x + size.x) - collisionGrid[i * 2] * TILE_SIZE;
-                    } else{
-                        position.x += (collisionGrid[i * 2] * TILE_SIZE + TILE_SIZE) - position.x;
-                    }
+        if (ty < 0 || ty >= level.size()) continue;
+        if (tx < 0 || tx >= level[ty].size()) continue;
+
+        if (level[ty][tx] != 0) {
+            sf::FloatRect tileBox(tx * TILE, ty * TILE, TILE, TILE);
+
+            if (rect.intersects(tileBox)) {
+                collided = true;
+
+                bool movingRight = objectPos.x > lastFramePos.x;
+
+                if (movingRight) {
+                    objectPos.x = tileBox.left - size.x - offset.x;
+                } else {
+                    objectPos.x = tileBox.left + TILE - offset.x;
                 }
+
+                rect = getCollisionRect(objectPos);
             }
         }
     }
 
-    positionLastFrame.x = position.x;
-    
-    return didCollisionHappen;
+    lastFramePos.x = objectPos.x;
+    return collided;
 }
 
-bool BasicCollider::verticalLevelCollision(sf::Vector2f& position){
+bool BasicCollider::verticalLevelCollision(sf::Vector2f& objectPos) {
 
-    const std::vector<std::vector<int>>& levelLayout = LevelManager::getInstance().getLevelLayout();
-    const int TILE_SIZE = Constants::TILE_SIZE;
-    bool didCollisionHappen = false;
-    //_time_on_air++;
+    auto& level = LevelManager::getInstance().getLevelLayout();
+    const int TILE = Constants::TILE_SIZE;
 
-    int movementDirection = -1 + (positionLastFrame.y < position.y)*2;
+    computeCollisionGrid(objectPos);
 
-    for (int i = 0; i < (collisionGrid.size() * 0.5); i++){
-        if(collisionGrid[i * 2 + 1] < levelLayout.size()){
-            if (collisionGrid [i * 2] < levelLayout[collisionGrid[i * 2 + 1]].size()){
+    sf::FloatRect rect = getCollisionRect(objectPos);
+    bool collided = false;
 
-                if(levelLayout[collisionGrid[i * 2 + 1]][collisionGrid[i * 2]] != 0 && isCollidingWithLevel(position, i)){
-                    didCollisionHappen = true;
-                    //spdy = 0;
-                    positionLastFrame.y = position.y;
-                    if(movementDirection > 0){
-                        position.y -= (position.y + size.y) - collisionGrid[i * 2 + 1] * TILE_SIZE;
-                        //_time_on_air = 0;
-                    } else{
-                        position.y += (collisionGrid[i * 2 + 1] * TILE_SIZE + TILE_SIZE) - position.y;
-                    }
+    for (auto& t : tileCoords) {
+        int tx = t.x, ty = t.y;
+
+        if (ty < 0 || ty >= level.size()) continue;
+        if (tx < 0 || tx >= level[ty].size()) continue;
+
+        if (level[ty][tx] != 0) {
+
+            sf::FloatRect tileBox(tx * TILE, ty * TILE, TILE, TILE);
+
+            if (rect.intersects(tileBox)) {
+
+                collided = true;
+                bool movingDown = objectPos.y > lastFramePos.y;
+
+                if (movingDown) {
+                    objectPos.y = tileBox.top - size.y - offset.y;
+                } else {
+                    objectPos.y = tileBox.top + TILE - offset.y;
                 }
+
+                rect = getCollisionRect(objectPos);
             }
         }
     }
 
-    positionLastFrame.y = position.y;
+    lastFramePos.y = objectPos.y;
+    return collided;
+}
 
-    return didCollisionHappen;
+void BasicCollider::debugRender(sf::RenderWindow& window, const sf::Vector2f& objectPos) {
+
+    sf::FloatRect box = getCollisionRect(objectPos);
+
+    sf::RectangleShape rect;
+    rect.setPosition(box.left, box.top);
+    rect.setSize({box.width, box.height});
+    rect.setFillColor(sf::Color(255, 0, 0, 80));
+    rect.setOutlineColor(sf::Color(255, 0, 0, 150));
+    rect.setOutlineThickness(1.f);
+
+    window.draw(rect);
 }

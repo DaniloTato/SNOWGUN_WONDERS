@@ -5,5 +5,5 @@
 
 namespace script {
 
-    void toddTalk(RenderableObject& tangible, const GeneralContext& ctx);
+    void toddTalk(RenderableObject& renderable, const GeneralContext& ctx);
 }

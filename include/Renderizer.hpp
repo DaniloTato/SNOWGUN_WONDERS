@@ -18,6 +18,7 @@ public:
     ~Renderizer();
 
     void setRect(const sf::IntRect& newRect, int direction);
+    const sf::IntRect& getRect() const;
     virtual void render(GameObject* ob);
     void assignCamera(GameCamera* cam);
     const float getLayer() const;
