@@ -4,4 +4,5 @@
 
 namespace ColorPalette {
     inline const sf::Color ElectricBlue = sf::Color(0,0,252);
+    inline const sf::Color Black = sf::Color(0,0,0);
 }

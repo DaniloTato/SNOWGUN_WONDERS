@@ -1,6 +1,7 @@
 #pragma once
-#include "GeneralContext.hpp"
 #include <vector>
+
+struct GeneralContext;
 
 template <typename OwnerType>
 class Scripter {

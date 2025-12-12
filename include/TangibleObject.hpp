@@ -1,5 +1,4 @@
 #pragma once
-#include "GeneralContext.hpp"
 #include "GameObject.hpp"
 #include "Renderizer.hpp"
 #include "BasicCollider.hpp"

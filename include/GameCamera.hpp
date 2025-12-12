@@ -2,8 +2,10 @@
 #include "GameObject.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
-#include "GeneralContext.hpp"
 #include <SFML/Graphics.hpp>
+#include "RenderizerParameters.hpp"
+
+struct GeneralContext;
 
 class GameCamera: public GameObject {
 public:

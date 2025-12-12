@@ -8,6 +8,7 @@
 #include <map>
 #include "TextRenderizer.hpp"
 #include "Glyph.hpp"
+#include "RenderizerParameters.hpp"
 
 class GameText: public GameObject {
 public:

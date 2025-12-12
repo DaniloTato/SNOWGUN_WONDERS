@@ -10,6 +10,7 @@
         "saveLevel": "Num0",
         "createTile": "Space",
         "deleteTile": "LShift",
-        "tilePicker": "T"
+        "tilePicker": "T",
+        "textTest": "Num3"
     }
 }

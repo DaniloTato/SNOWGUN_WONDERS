@@ -6,5 +6,5 @@ RenderableObject::RenderableObject(RenderizerParameters params) : GameObject(par
 }
 
 void RenderableObject::update(const GeneralContext& ctx) {
-
+    scripter.runScripts(*this, ctx);
 }

@@ -1,0 +1,16 @@
+[Key=Greeting]
+#position 128 -30
+#boundary 500
+#effect typewriter 0.05
+#alignment left
+
+Hello <color=yellow><anim=sin>World</anim></color>!<ln>
+The name's <anim=shake:2>TODD</anim>.
+<color=red><anim=sin>This is my house.</anim></color>
+
+[Key=NPC1]
+#position 0 200
+#boundary 400
+#alignment center
+
+Hola!!!!!!

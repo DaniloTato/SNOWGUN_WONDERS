@@ -7,12 +7,13 @@
 #include "GameCamera.hpp"
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
+#include "RenderableObject.hpp"
 #include "Renderizer.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 #include "GameState.hpp"
 #include "ScriptRunner.hpp"
-#include "GameText.hpp"
+#include "DialogueManager.hpp"
 
 /*Namespaces*/
 #include "Constants.hpp"
@@ -29,6 +30,7 @@
 
 /*General Scrits*/
 #include "levelCreatorInputs.hpp"
+#include "toddTalk.hpp"
 
 #include <iostream>
 #include <ctime>
@@ -45,23 +47,13 @@ int main() {
 
     inputManager.loadBindingsFromJsonFile("./config/control_config.json");
 
-    sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets/snowman_animation.png");
-
-    sf::IntRect playerRect(0, 0, 17, 17);
-
     GameState::getInstance().getMainCamera()->zoomTo(3.f);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::followPlayer);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraShake);
 
-    /*GameText*/
     sf::Texture fontTexture;
     fontTexture.loadFromFile("assets/font.png");
-
-    //May need to rework the structure of Renderizer Parameters
-    //Or maybe create a TextRenderizerParameters struct appart.
-    //In this case, rect and position params are unnecesary
     RenderizerParameters textParams{
         window,
         fontTexture,
@@ -70,33 +62,39 @@ int main() {
         GameState::getInstance().getMainCamera(),
         -1.f,
         1.f
-    }; //layer negative so it appears in front of everything
+    };
+    DialogueManager::getInstance(textParams).loadDialoguesFromFile("assets/dialogues/dialogues.txt");
 
-    GameText text(textParams);
-    text.setFontAtlas(fontTexture, 9, 8, 95, 32);
-    std::string markup = R"(
-        #position 0 0
-        #boundary 500
-        #effect typewriter 0.05
-        #alignment left
+    sf::Texture toddTexture;
+    toddTexture.loadFromFile("assets/todd.png");
 
-        Hello <color=yellow><anim=sin>World</anim></color>!<ln>
-        This is <anim=shake:2>shaky</anim> text.
-    )";
-    text.loadFromMarkup(markup);
-    /*GameText*/
+    RenderizerParameters toddParams{
+        window,
+        toddTexture,
+        {0,0,16,16},
+        {128.f, 0.f},
+        GameState::getInstance().getMainCamera(),
+        0.f,
+        1.f
+    };
+    RenderableObject todd(toddParams);
+    todd.scripter.addScript(script::toddTalk);
+    DialogueManager::getInstance(textParams).assignDialogue(&todd, "Greeting");
 
-    RenderizerParameters params{
+    sf::Texture playerTexture;
+    playerTexture.loadFromFile("assets/snowman_animation.png");
+
+    RenderizerParameters playerParams{
         window,
         playerTexture,
-        playerRect,
+        {0,0,17,17},
         {16.f, 16.f},
         GameState::getInstance().getMainCamera(),
         0.f,
         1.f
     };
 
-    TangibleObject player(params);
+    TangibleObject player(playerParams);
     player.collider.setSize({18.f, 18.f});
 
     player.scripter.addScript(script::tangibleAnimations);
@@ -123,12 +121,14 @@ int main() {
 
         GeneralContext ctx = {
             player.position,
-            window
+            window,
+            textParams,
+            &player
         };
 
         levelManager.applyQueuedTileChanges();
 
-        window.clear(ColorPalette::ElectricBlue);
+        window.clear(ColorPalette::Black);
 
         for (GameObject* gameObject :  GameObject::getGameObjects()) {
             if (!gameObject) {

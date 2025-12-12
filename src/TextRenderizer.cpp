@@ -1,8 +1,6 @@
 #include "TextRenderizer.hpp"
 #include "Renderizer.hpp"
 
-#include <iostream>
-
 TextRenderizer::TextRenderizer(const RenderizerParameters& params): Renderizer(params){}
 
 void TextRenderizer::updateRenderGlyphs(std::vector<RenderGlyph>& newRenderGlyphs){
