@@ -7,6 +7,15 @@
 #include "GameObject.hpp"
 #include "RenderizerParameters.hpp"
 
+struct TextCreationRequest{
+    const RenderizerParameters& params;
+    const std::string* markup;
+};
+
+struct TextDeletionRequest{
+
+};
+
 class DialogueManager {
 public:
     static DialogueManager& getInstance(RenderizerParameters& gameTextParams);
@@ -15,11 +24,16 @@ public:
 
     const std::string* getDialogue(const std::string& key) const;
     void assignDialogue(GameObject* object, const std::string& key);
+    void createText(const RenderizerParameters& params, const std::string* markup);
+    void queueCreateText(const RenderizerParameters& params, const std::string* markup);
     void onTrigger(GameObject* object);
-    void queueDestroyAll();
-    void destroyAll();
+
+    void applyQueuedTextChanges();
 
 private:
+    std::vector<TextCreationRequest> createQueue;
+    std::vector<TextDeletionRequest> deleteQueue;
+
     DialogueManager(RenderizerParameters& gameTextParams);
     std::unordered_map<std::string, std::string> dialogues;
     std::unordered_map<GameObject*, std::string> assigned;

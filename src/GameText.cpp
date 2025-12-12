@@ -4,6 +4,7 @@
 #include <cctype>
 #include <iostream>
 #include "Constants.hpp"
+#include "RenderCommand.hpp"
 #include "Renderizer.hpp"
 
 std::string trimLeadingSpace(std::string s) {
@@ -33,9 +34,9 @@ GameText::~GameText() {}
 void GameText::update(const GeneralContext& ctx){
     float dt = 1.f/Constants::FRAME_RATE;
     globalTime += dt;
-    advanceTypewriter(dt);
-    getRenderGlyphs();
-    renderizer.updateRenderGlyphs(renderGlyphs);
+    advanceTypewriter();
+    updateRenderCommandBuffer();
+    renderizer.updateRenderCommands(renderCommandBuffer);
 }
 
 void GameText::setFontAtlas(sf::Texture& texture, int gW, int gH, int cols, int firstChar) {
@@ -346,7 +347,8 @@ void GameText::forceRevealAll() {
     revealedCount = glyphs.size();
 }
 
-void GameText::advanceTypewriter(float dt) {
+void GameText::advanceTypewriter() {
+    float dt = 1.f/Constants::FRAME_RATE;
     if (effect != Effect::Typewriter) return;
     if (revealedCount >= glyphs.size()) return;
     typeTimer += dt;
@@ -364,9 +366,9 @@ void GameText::playTypeSound() {
     soundPlayIndex = (soundPlayIndex + 1) % soundPlayers.size();
 }
 
-void GameText::getRenderGlyphs() {
+void GameText::updateRenderCommandBuffer() {
 
-    renderGlyphs.clear();
+    renderCommandBuffer.clear();
 
     size_t visible = (effect == Effect::Typewriter) ? std::min(revealedCount, glyphs.size()) : glyphs.size();
 
@@ -391,7 +393,7 @@ void GameText::getRenderGlyphs() {
             pos.y += jitterY;
         }
 
-        RenderGlyph render = {g.texRect, pos, g.color};
-        renderGlyphs.push_back(render);
+        RenderCommand render = {g.texRect, pos, g.color};
+        renderCommandBuffer.push_back(render);
     }
 }

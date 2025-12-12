@@ -14,8 +14,6 @@ namespace script{
     static TalkCount tc;
 
     void toddTalk(RenderableObject& tangible, const GeneralContext& ctx) {
-        //were going to have to implement a queueCreateTextFunction
-        //Let's remember creating a getSize Method for collider
         //Create an imCollidingWith(*collider) imCollidingWith(position,size) function;
         TangibleObject* player = ctx.player;
         if(!tc.count && ctx.player -> collider.isColliding(player->position, {17,17}, tangible.position, {16,16})){

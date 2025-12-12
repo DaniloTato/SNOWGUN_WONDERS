@@ -11,13 +11,17 @@ void BasicCollider::setSize(sf::Vector2f newSize){
     size = newSize;
 }
 
+void BasicCollider::setOffset(const sf::Vector2f& newOffset) {
+    offset = newOffset;
+}
+
 void BasicCollider::calculateCollisionGrid(sf::Vector2f position) {
     collisionGrid.clear();
 
     const int TILE_SIZE = Constants::TILE_SIZE;
     const int COLLISION_GRID_WIDTH = Constants::COLLISION_GRID_WIDTH;
     const int COLLISION_GRID_HEIGHT = Constants::COLLISION_GRID_HEIGHT;
-
+ 
     for (int j = 0; j < COLLISION_GRID_WIDTH * COLLISION_GRID_HEIGHT; j++){
         int square_x = ((int) position.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE * j - COLLISION_GRID_WIDTH * TILE_SIZE * ((int) j / COLLISION_GRID_WIDTH) - TILE_SIZE;
         int square_y = ((int) position.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE * ((int) j / COLLISION_GRID_WIDTH) - TILE_SIZE;

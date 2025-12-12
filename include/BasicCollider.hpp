@@ -12,9 +12,11 @@ public:
     bool horizontalLevelCollision(sf::Vector2f& position);
     bool verticalLevelCollision(sf::Vector2f& position);
     void setSize(sf::Vector2f newSize);
+    void setOffset(const sf::Vector2f& newOffset);
 protected:
     std::vector<int> collisionGrid;
     sf::Vector2f positionLastFrame;
     int directionLastCollision = 1;
     sf::Vector2f size;
+    sf::Vector2f offset;
 };

@@ -6,12 +6,24 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "TextRenderizer.hpp"
-#include "Glyph.hpp"
+#include "PolyRenderizer.hpp"
+#include "RenderCommand.hpp"
 #include "RenderizerParameters.hpp"
 
 class GameText: public GameObject {
 public:
+
+    struct Glyph {
+    char c;
+        sf::IntRect texRect;
+        sf::Vector2f basePos;
+        sf::Color color;
+        enum Anim { None, Sin, Shake } anim = None;
+        float animParam = 0.f; // for shake intensity or sin amplitude/freq if needed
+        float phase = 0.f;     // per-glyph phase for wave offset
+        int appearIndex = -1;  // index order for typewriter reveal
+    };
+
     enum class Align { 
         Left,
         Center,
@@ -48,7 +60,7 @@ public:
     void resetTypewriter();
     void forceRevealAll();
 
-    void getRenderGlyphs();
+    void updateRenderCommandBuffer();
 
     size_t totalChars() const { return glyphs.size(); }
     size_t visibleChars() const { return revealedCount; }
@@ -61,7 +73,7 @@ private:
     void rebuildLayout();
     float measureLineWidth(const std::vector<size_t>& lineIndices) const;
 
-    void advanceTypewriter(float dt);
+    void advanceTypewriter();
     void playTypeSound();
 
     sf::Texture* fontTex = nullptr;
@@ -86,11 +98,12 @@ private:
     bool playSoundOnChars = true;
 
     std::vector<Glyph> glyphs;
-    std::vector<RenderGlyph> renderGlyphs;
     std::vector<std::vector<size_t>> lines;
 
     float globalTime = 0.f;
 
+    std::vector<RenderCommand> renderCommandBuffer;
+
     std::map<std::string, sf::Color> colorNameMap;
-    TextRenderizer renderizer;
+    PolyRenderizer renderizer;
 };

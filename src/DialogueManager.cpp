@@ -55,6 +55,14 @@ void DialogueManager::assignDialogue(GameObject* obj, const std::string& key) {
     assigned[obj] = key;
 }
 
+void DialogueManager::createText(const RenderizerParameters& params, const std::string* markup){
+    GameText* gt = new GameText(params);
+    gt->setFontAtlas(params.texture, 9, 8, 95, 32);
+    gt->loadFromMarkup(*markup);
+
+    activeTexts.push_back(gt);
+}
+
 void DialogueManager::onTrigger(GameObject* obj) {
     auto it = assigned.find(obj);
     if (it == assigned.end()) {
@@ -70,13 +78,16 @@ void DialogueManager::onTrigger(GameObject* obj) {
         return;
     }
 
-    GameText* gt = new GameText(gameTextParams);
-    gt->setFontAtlas(gameTextParams.texture, 9, 8, 95, 32);
-    gt->loadFromMarkup(*markup);
-
-    activeTexts.push_back(gt);
+    queueCreateText(gameTextParams, markup);
 }
 
-void DialogueManager::destroyAll() {
-    activeTexts.clear();
+void DialogueManager::queueCreateText(const RenderizerParameters& params, const std::string* markup){
+    createQueue.push_back({params,markup});
+}
+
+void DialogueManager::applyQueuedTextChanges(){
+    for (const auto& createReq : createQueue) {
+        createText(createReq.params, createReq.markup);
+    }
+    createQueue.clear();
 }

@@ -7,6 +7,7 @@
 #include "GameCamera.hpp"
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
+#include "ParticleManager.hpp"
 #include "RenderableObject.hpp"
 #include "Renderizer.hpp"
 #include "TangibleObject.hpp"
@@ -32,6 +33,7 @@
 #include "levelCreatorInputs.hpp"
 #include "toddTalk.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <ctime>
 
@@ -52,6 +54,21 @@ int main() {
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraShake);
 
+    /*Particles*/
+    sf::Texture snowTexture;
+    snowTexture.loadFromFile("assets/snow.png");
+    RenderizerParameters particleParams{
+        window,
+        snowTexture,
+        sf::IntRect(0,0,1,1),
+        {0.f, 0.f},
+        GameState::getInstance().getMainCamera(),
+        -1.f,
+        0.7f
+    };
+    /*Particles*/
+
+    /*Dialogues*/
     sf::Texture fontTexture;
     fontTexture.loadFromFile("assets/font.png");
     RenderizerParameters textParams{
@@ -60,10 +77,11 @@ int main() {
         sf::IntRect(),
         {0.f, 0.f},
         GameState::getInstance().getMainCamera(),
-        -1.f,
+        -2.f,
         1.f
     };
     DialogueManager::getInstance(textParams).loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+    /*Dialogues*/
 
     sf::Texture toddTexture;
     toddTexture.loadFromFile("assets/todd.png");
@@ -119,6 +137,14 @@ int main() {
             inputManager.handleEvent(event);
         }
 
+        const float snowSpawnRange =  5;
+        ParticleManager::getInstance(particleParams).emitSnow(
+            GameState::getInstance().getMainCamera()->screenToWorld(
+                {static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5) ,-50},
+                1.f
+            )
+        );
+
         GeneralContext ctx = {
             player.position,
             window,
@@ -127,6 +153,7 @@ int main() {
         };
 
         levelManager.applyQueuedTileChanges();
+        DialogueManager::getInstance(particleParams).applyQueuedTextChanges();
 
         window.clear(ColorPalette::Black);
 
