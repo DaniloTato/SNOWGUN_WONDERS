@@ -24,6 +24,8 @@ public:
 
     const sf::IntRect& getCurrentFrame() const;
 
+    bool animationFinished() const;
+
 private:
     std::unordered_map<std::string, Animation> animations;
 
@@ -34,4 +36,5 @@ private:
     size_t currentFrame = 0;
 
     float speedMultiplier = 1.f;
+    bool finished = false;
 };

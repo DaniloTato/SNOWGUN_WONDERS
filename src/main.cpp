@@ -1,6 +1,8 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
+#include "Bullet.hpp"
+#include "BulletManager.hpp"
 #include "GeneralContext.hpp"
 
 /*Engine Objects*/
@@ -11,6 +13,7 @@
 #include "PolyRenderizer.hpp"
 #include "RenderableObject.hpp"
 #include "Renderizer.hpp"
+#include "SFML/System/Vector2.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 #include "GameState.hpp"
@@ -57,6 +60,10 @@ int main() {
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraShake);
 
+    ScriptRunner scriptRunner;
+    scriptRunner.scripter.addScript(script::levelCreatorInputs);
+    scriptRunner.scripter.addScript(script::particleGeneration);
+
     /*Particles*/
     sf::Texture snowTexture;
     snowTexture.loadFromFile("assets/snow.png");
@@ -91,7 +98,6 @@ int main() {
     DialogueManager& dialogueManager = DialogueManager::getInstance();
     dialogueManager.attachTextParams(&textParams);
     dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
-
     /*Dialogues*/
 
     sf::Texture toddTexture;
@@ -110,6 +116,7 @@ int main() {
     todd.scripter.addScript(script::toddTalk);
     dialogueManager.assignDialogue(&todd, "Greeting");
 
+    /*Player*/
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/snowman_animation.png");
 
@@ -129,12 +136,14 @@ int main() {
     player.scripter.addScript(script::tangibleAnimations);
     player.scripter.addScript(script::movement);
 
-    ScriptRunner scriptRunner;
-    scriptRunner.scripter.addScript(script::levelCreatorInputs);
-    scriptRunner.scripter.addScript(script::particleGeneration);
-
     player.animator.loadFromAsepriteJSON("assets/json/snowman_animation.json");
     player.animator.setSpeedMultiplier(1.8f);
+    /*Player*/
+
+    /*Bullet*/
+    sf::Texture bulletTexture;
+    bulletTexture.loadFromFile("assets/bullet.png");
+    /*Bullet*/
 
     levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.json");
 
@@ -149,6 +158,28 @@ int main() {
             inputManager.handleEvent(event);
         }
 
+        RenderizerParameters bulletParams{
+        window,
+        bulletTexture,
+        {0,0,15,15},
+        player.position,
+        GameState::getInstance().getMainCamera(),
+        0.f,
+        1.f
+    };
+
+        if(inputManager.isJustPressed("shoot")){
+            BulletManager::getInstance().queueSpawn(
+                bulletParams,
+                BulletType::BubbleGun,
+                sf::Vector2f(3.f * player.direction,0.f),
+                sf::Vector2f(0.f,0.f),
+                8.f,
+                800.f
+            );
+        }
+
+        //yet to modify general context
         GeneralContext ctx = {
             player.position,
             window,
@@ -158,6 +189,7 @@ int main() {
 
         levelManager.applyQueuedTileChanges();
         dialogueManager.applyQueuedTextChanges();
+        BulletManager::getInstance().applyQueuedBulletChanges();
 
         window.clear(ColorPalette::Black);
 

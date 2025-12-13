@@ -28,7 +28,7 @@ void Animator::loadFromAsepriteJSON(const std::string& filename) {
 
     for (auto& tag : j["meta"]["frameTags"]) {
         Animation anim;
-        anim.loop = true;
+        anim.loop = tag["name"].get<std::string>().find("_once") == std::string::npos;
 
         int from = tag["from"];
         int to   = tag["to"];
@@ -67,10 +67,11 @@ void Animator::setState(const std::string& name) {
     currentState = name;
     currentFrame = 0;
     timer = 0.f;
+    finished = false;
 }
 
 void Animator::update(float dt) {
-    if (!currentAnim) return;
+    if (!currentAnim || finished) return;
 
     timer += dt * speedMultiplier;
 
@@ -79,8 +80,13 @@ void Animator::update(float dt) {
 
         if (currentFrame + 1 < currentAnim->frames.size()) {
             currentFrame++;
-        } else if (currentAnim->loop) {
-            currentFrame = 0;
+        }
+        else {
+            if (currentAnim->loop) {
+                currentFrame = 0;
+            } else {
+                finished = true;
+            }
         }
     }
 }
@@ -91,4 +97,8 @@ const sf::IntRect& Animator::getCurrentFrame() const {
 
 void Animator::setSpeedMultiplier(float multiplier) {
     speedMultiplier = multiplier;
+}
+
+bool Animator::animationFinished() const {
+    return finished;
 }

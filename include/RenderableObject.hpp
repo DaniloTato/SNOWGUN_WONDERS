@@ -6,7 +6,7 @@
 
 class RenderableObject: public GameObject {
 public:
-    RenderableObject(RenderizerParameters params);
+    RenderableObject(const RenderizerParameters& params);
     void update(const GeneralContext& ctx) override;
     Renderizer renderizer;
     Scripter<RenderableObject> scripter;

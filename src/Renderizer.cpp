@@ -1,6 +1,8 @@
 #include "Renderizer.hpp"
 #include "SFML/System/Vector2.hpp"
 
+#include <iostream>
+
 std::vector<RenderEntry> Renderizer::registry;
 
 Renderizer::Renderizer(const RenderizerParameters& params)

@@ -4,9 +4,9 @@
 #effect typewriter 0.05
 #alignment left
 
-Hello <color=yellow><anim=sin>World</anim></color>!<ln>
-The name's <anim=shake:2>TODD</anim>.
-<color=red><anim=sin>This is my house.</anim></color>
+Today's a beautiful 
+<anim=shake:1> snowy </anim> day!
+<anim=sin><color=yellow>Day <color=red> 6 </color> of developing</color><ln><color=green> this game.</color></anim>
 
 [Key=NPC1]
 #position 0 200
