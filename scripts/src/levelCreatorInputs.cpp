@@ -9,13 +9,15 @@
 
 namespace script {
 
-    struct StoredSelection{
-        sf::IntRect selectedTileRect;
-        std::string selectedEnemyId;
-        PickerMode mode;
-    };
+    namespace {
+        struct StoredSelection{
+            sf::IntRect selectedTileRect;
+            std::string selectedEnemyId;
+            PickerMode mode;
+        };
 
-    static StoredSelection storedSelection;
+        StoredSelection storedSelection;
+    }
 
     void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx){
 

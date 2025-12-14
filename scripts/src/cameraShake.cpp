@@ -8,43 +8,45 @@
 
 namespace script {
 
-    class ScreenShake {
-    public:
-        ScreenShake()
-            : shakeDuration(0.f), shakeIntensity(0.f), generator(std::random_device{}()),
-              distribution(-1.f, 1.f) {}
+    namespace{
+        class ScreenShake {
+        public:
+            ScreenShake()
+                : shakeDuration(0.f), shakeIntensity(0.f), generator(std::random_device{}()),
+                distribution(-1.f, 1.f) {}
 
-        void start(float duration, float intensity) {
-            shakeDuration = duration;
-            shakeIntensity = intensity;
-            elapsed = 0.f;
-        }
-
-        void update(GameCamera& camera, const GeneralContext& ctx, float deltaTime) {
-            if (shakeDuration <= 0.f) return;
-
-            elapsed += deltaTime;
-            if (elapsed >= shakeDuration) {
-                shakeDuration = 0.f;
-                camera.setCameraShakePosition({0.f, 0.f});
-                return;
+            void start(float duration, float intensity) {
+                shakeDuration = duration;
+                shakeIntensity = intensity;
+                elapsed = 0.f;
             }
 
-            float offsetX = distribution(generator) * shakeIntensity;
-            float offsetY = distribution(generator) * shakeIntensity;
+            void update(GameCamera& camera, const GeneralContext& ctx, float deltaTime) {
+                if (shakeDuration <= 0.f) return;
 
-            camera.setCameraShakePosition({offsetX, offsetY});
-        }
+                elapsed += deltaTime;
+                if (elapsed >= shakeDuration) {
+                    shakeDuration = 0.f;
+                    camera.setCameraShakePosition({0.f, 0.f});
+                    return;
+                }
 
-    private:
-        float shakeDuration;
-        float shakeIntensity;
-        float elapsed = 0.f;
-        std::mt19937 generator;
-        std::uniform_real_distribution<float> distribution;
-    };
+                float offsetX = distribution(generator) * shakeIntensity;
+                float offsetY = distribution(generator) * shakeIntensity;
 
-    static ScreenShake screenShake;
+                camera.setCameraShakePosition({offsetX, offsetY});
+            }
+
+        private:
+            float shakeDuration;
+            float shakeIntensity;
+            float elapsed = 0.f;
+            std::mt19937 generator;
+            std::uniform_real_distribution<float> distribution;
+        };
+
+        ScreenShake screenShake;
+    }
 
     void cameraShake(GameCamera& camera, const GeneralContext& ctx) {
         constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
