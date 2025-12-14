@@ -18,6 +18,7 @@
 #include "GameState.hpp"
 #include "ScriptRunner.hpp"
 #include "DialogueManager.hpp"
+#include "EnemyManager.hpp"
 
 /*Namespaces*/
 #include "Constants.hpp"
@@ -26,7 +27,6 @@
 /*Camera Scripts*/
 #include "cameraShake.hpp"
 #include "dramaticZoom.hpp"
-#include "enemyPatrol.hpp"
 #include "followPlayer.hpp"
 
 /*TangibleObject Scripts*/
@@ -34,10 +34,13 @@
 #include "particleGeneration.hpp"
 #include "tangibleAnimations.hpp"
 
-/*General Scrits*/
+/*General Scripts*/
 #include "levelCreatorInputs.hpp"
 #include "particleGeneration.hpp"
 #include "toddTalk.hpp"
+
+/*Blueprints*/
+#include "toy.hpp"
 
 #include <cstddef>
 #include <cstdlib>
@@ -48,8 +51,10 @@ int main() {
 
     InputManager& inputManager = InputManager::getInstance();
     LevelManager& levelManager = LevelManager::getInstance();
+    GameState& gameState = GameState::getInstance();
+    EnemyManager& enemyManager = EnemyManager::getInstance();
 
-    sf::RenderWindow window(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window");
+    sf::RenderWindow& window = *gameState.getMainWindow();
     window.setFramerateLimit(Constants::FRAME_RATE);
 
     sf::Clock clock;
@@ -118,26 +123,9 @@ int main() {
     dialogueManager.assignDialogue(&todd, "Greeting");
 
     /*Enemy*/
-    sf::Texture toyTexture;
-    toyTexture.loadFromFile("assets/toy.png");
-
-    RenderizerParameters toyParams{
-        window,
-        toyTexture,
-        {0,0,17,17},
-        {16.f, 16.f},
-        GameState::getInstance().getMainCamera(),
-        0.f,
-        1.f
-    };
-
-    TangibleObject toy(toyParams);
-    toy.collider.setOffset({5.f, 2.f});
-    toy.collider.setSize({15.f, 14.f});
-
-    toy.animator.loadFromAsepriteJSON("assets/json/toy.json");
-
-    toy.scripter.addScript(script::enemyPatrol);
+    enemyManager.loadTexture("toy", "assets/toy.png");
+    enemyManager.registerTemplate("toy", blueprint::toy);
+    enemyManager.queueCreateEnemy("toy", {16.f,16.f});
     /*Enemy*/
 
     /*Player*/
@@ -195,6 +183,7 @@ int main() {
         levelManager.applyQueuedTileChanges();
         dialogueManager.applyQueues();
         bulletManager.getInstance().applyQueues();
+        enemyManager.getInstance().applyQueues();
 
         window.clear(ColorPalette::Black);
 
@@ -207,8 +196,6 @@ int main() {
         }
 
         Renderizer::renderAll();
-
-        toy.collider.debugRender(window, *GameState::getInstance().getMainCamera(), toy.position);
 
         window.display();
     }

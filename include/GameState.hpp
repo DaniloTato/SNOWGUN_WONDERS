@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "GameCamera.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
 
 class GameState {
 public:
@@ -11,6 +12,7 @@ public:
     void removeCamera(GameCamera* camera);
     const std::vector<GameCamera*>& getActiveCameras() const;
     GameCamera* getMainCamera() const;
+    sf::RenderWindow* getMainWindow() const;
     void clearCameras();
 
 private:
@@ -24,4 +26,5 @@ private:
     GameState& operator=(GameState&&) = delete;
 
     std::vector<GameCamera*> activeCameras;
+    std::vector<sf::RenderWindow*> activeWindows;
 };
