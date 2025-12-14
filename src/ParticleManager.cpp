@@ -1,13 +1,21 @@
 #include "ParticleManager.hpp"
+#include "Animator.hpp"
 #include "Constants.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
+#include "ColorPalette.hpp"
 #include <cmath>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
 
-ParticleManager::ParticleManager(){}
+static float _toggleRand(float min, float max) {
+    return min + ((float)rand() / RAND_MAX) * (max - min);
+}
+
+ParticleManager::ParticleManager(){
+    cachedAnimations = Animator::getAsepriteJSONAnimations("assets/json/particles.json");
+}
 
 ParticleManager& ParticleManager::getInstance() {
     static ParticleManager instance;
@@ -53,7 +61,7 @@ void ParticleManager::emitSnow(const sf::Vector2f& pos) {
     p.maxLifetime = 7.f;
     p.lifetime = p.maxLifetime;
 
-    particles.push_back(p);
+    particles.push_back(std::move(p));
 }
 
 void ParticleManager::emitDust(const sf::Vector2f& pos) {
@@ -76,7 +84,29 @@ void ParticleManager::emitDust(const sf::Vector2f& pos) {
     p.maxLifetime = 1.5f;
     p.lifetime = p.maxLifetime;
 
-    particles.push_back(p);
+    particles.push_back(std::move(p));
+}
+
+void ParticleManager::emitExplosion(const sf::Vector2f& pos, int count)
+{
+    for (int i = 0; i < count; i++) {
+        Particle p;
+        p.type = Type::Explosion;
+        p.pos = pos + sf::Vector2f(_toggleRand(-16, 16), _toggleRand(-16, 16));
+
+        const auto& palette = ColorPalette::EXPLOSION_COLORS;
+        p.color = *palette[rand() % palette.size()];
+        
+        p.animator = std::make_unique<Animator>();
+        p.animator->setAnimations(cachedAnimations);
+        p.animator->setState("small_explosion_once");
+        p.texRect = sf::IntRect(8, 8, 8, 8);
+
+        p.maxLifetime = 0.6f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
 }
 
 void ParticleManager::setWind(const sf::Vector2f& windVec) {
@@ -88,6 +118,16 @@ void ParticleManager::updateParticles() {
     float dt = 1.f/Constants::FRAME_RATE;
 
     for (auto& p : particles) {
+
+        if(p.animator){
+            p.animator->update();
+            p.texRect = p.animator->getCurrentFrame();
+            
+            if(p.animator->animationFinished()){
+                p.forceDeath = true;
+            }
+        }
+
         p.lifetime -= dt;
         if (p.lifetime <= 0.f) continue;
 
@@ -96,15 +136,20 @@ void ParticleManager::updateParticles() {
         p.pos += p.vel * dt;
 
         if (p.type == Type::Snow) {
-            float offset = std::sin((p.maxLifetime - p.lifetime) * p.sinFrequency + p.sinPhase) 
-                           * p.sinAmplitude;
+            float offset = std::sin((p.maxLifetime - p.lifetime) * p.sinFrequency + p.sinPhase)
+                        * p.sinAmplitude;
             p.pos.x += offset * dt * 60.f;
+        }
+
+        if (p.type == Type::Explosion) {
+            float alpha = p.lifetime / p.maxLifetime;
+            p.color.a = static_cast<sf::Uint8>(255 * alpha);
         }
     }
 
     particles.erase(
         std::remove_if(particles.begin(), particles.end(),
-            [](const Particle& p){ return p.lifetime <= 0.f; }),
+            [](const Particle& p){ return p.lifetime <= 0.f || p.forceDeath; }),
         particles.end()
     );
 }
@@ -115,6 +160,7 @@ void ParticleManager::updateRenderCommandBuffer() {
     renderCommandBuffer.clear();
 
     for (auto& p : particles) {
+
         RenderCommand cmd;
         cmd.rect = p.texRect;
         cmd.pos = p.pos;

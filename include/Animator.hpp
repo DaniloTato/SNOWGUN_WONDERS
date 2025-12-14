@@ -15,12 +15,14 @@ public:
     Animator();
 
     void addAnimation(const std::string& name, const Animation& anim);
+    void setAnimations(std::unordered_map<std::string, Animation>& newAnimations);
     void setState(const std::string& name);
-    void update(float dt);
+    void update();
 
     void setSpeedMultiplier(float multiplier);
 
     void loadFromAsepriteJSON(const std::string& filename);
+    static std::unordered_map<std::string, Animation> getAsepriteJSONAnimations(const std::string& filename);
 
     const sf::IntRect& getCurrentFrame() const;
 

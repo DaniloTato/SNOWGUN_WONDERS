@@ -1,10 +1,11 @@
 #include "Renderizer.hpp"
+#include "GameState.hpp"
 #include "SFML/System/Vector2.hpp"
 
 std::vector<RenderEntry> Renderizer::registry;
 
 Renderizer::Renderizer(const RenderizerParameters& params)
-: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.parallax) {
+: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.parallax), show(true), showCountDown(0.f) {
     sprite.setTexture(texture);
     sprite.setTextureRect(rect);
     
@@ -21,7 +22,7 @@ void Renderizer::registerPair(GameObject* obj, Renderizer* rend){
 void Renderizer::unregisterPair(Renderizer* rend){
     registry.erase(
         std::remove_if(registry.begin(), registry.end(),
-                       [&](const RenderEntry& e){ return e.renderer == rend; }),
+                       [&](const RenderEntry& e){ return e.renderizer == rend; }),
         registry.end()
     );
 }
@@ -32,7 +33,7 @@ void Renderizer::assignCamera(GameCamera* cam) {
 
 void Renderizer::render(GameObject* obj) {
 
-    sf::Vector2f position = obj->position;
+    sf::Vector2f position = obj->position + obj->offset;
 
     if (!assignedCamera) {
         sprite.setPosition(position);
@@ -59,14 +60,28 @@ void Renderizer::setRect(const sf::IntRect& newRect, int direction) {
 void Renderizer::renderAll(){
     std::stable_sort(registry.begin(), registry.end(),
         [](const RenderEntry& a, const RenderEntry& b) {
-            return a.renderer->getLayer() > b.renderer->getLayer();
+            return a.renderizer->getLayer() > b.renderizer->getLayer();
         }
     );
 
-    for (auto& e : registry)
-        e.renderer->render(e.object);
+    for (auto& entry : registry)
+        if(entry.renderizer -> shouldIRender()){
+            entry.renderizer->render(entry.object);
+        }
 }
 
 const sf::IntRect& Renderizer::getRect() const {
     return rect;
+}
+
+void Renderizer::toggleShowEvery(float time){
+    showCountDown -= GameState::getInstance().dt();
+    if(showCountDown <= 0){
+        show = !show;
+        showCountDown = time;
+    }
+}
+
+bool Renderizer::shouldIRender(){
+    return show;
 }

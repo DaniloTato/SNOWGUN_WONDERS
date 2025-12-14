@@ -14,6 +14,7 @@ public:
     GameCamera* getMainCamera() const;
     sf::RenderWindow* getMainWindow() const;
     void clearCameras();
+    const float dt();
 
 private:
     GameState();

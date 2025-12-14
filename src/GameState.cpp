@@ -42,3 +42,7 @@ sf::RenderWindow* GameState::getMainWindow() const {
 void GameState::clearCameras() {
     activeCameras.clear();
 }
+
+const float GameState::dt(){
+    return 1.f/Constants::FRAME_RATE;
+}

@@ -60,7 +60,7 @@ Bullet* BulletManager::isCollidingWithBullet(TangibleObject& object) {
     for (Bullet* bullet : objects) {
         if (!bullet) continue;
 
-        if (BasicCollider::objectsColliding(&object, bullet)) {
+        if (!bullet->isDead() && BasicCollider::objectsColliding(&object, bullet)) {
             return bullet;
         }
     }

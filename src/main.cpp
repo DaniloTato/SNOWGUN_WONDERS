@@ -71,12 +71,12 @@ int main() {
     scriptRunner.scripter.addScript(script::particleGeneration);
 
     /*Particles*/
-    sf::Texture snowTexture;
-    snowTexture.loadFromFile("assets/snow.png");
+    sf::Texture particleTexture;
+    particleTexture.loadFromFile("assets/particles.png");
         //as of now. Particles ignore texture, rect, position and parallax
     RenderizerParameters particleParams{
         window,
-        snowTexture,
+        particleTexture,
         sf::IntRect(0,0,0,0),
         {0.f, 0.f},
         GameState::getInstance().getMainCamera(),

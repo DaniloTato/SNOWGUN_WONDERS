@@ -9,7 +9,7 @@ struct RenderizerParameters;
 
 struct RenderEntry {
     GameObject* object;
-    class Renderizer* renderer;
+    class Renderizer* renderizer;
 };
 
 class Renderizer {
@@ -22,6 +22,8 @@ public:
     virtual void render(GameObject* ob);
     void assignCamera(GameCamera* cam);
     const float getLayer() const;
+    void toggleShowEvery(float time);
+    bool shouldIRender();
 
     static void registerPair(GameObject* obj, Renderizer* rend);
     static void unregisterPair(Renderizer* rend);
@@ -36,6 +38,9 @@ protected:
     GameCamera* assignedCamera;
     float layer;
     float paralax;
+
+    bool show;
+    float showCountDown;
 
     static std::vector<RenderEntry> registry;
 };

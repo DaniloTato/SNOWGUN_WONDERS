@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <unordered_map>
+#include <any>
 
 struct GeneralContext;
 
@@ -7,6 +9,8 @@ template <typename OwnerType>
 class Scripter {
 public:
     using ScriptFunc = void(*)(OwnerType&, const GeneralContext&);
+
+    std::unordered_map<std::string, std::any> scriptState;
 
     void addScript(ScriptFunc func) {
         scripts.push_back(func);

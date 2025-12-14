@@ -12,7 +12,7 @@
         "deleteTile": "LShift",
         "tilePicker": "T",
         "textTest": "Num3",
-        "shoot": "E",
+        "shoot": "N",
         "crash": "U",
         "spawnEnemy": "R"
     }

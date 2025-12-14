@@ -52,8 +52,7 @@ void Bullet::update(const GeneralContext& ctx) {
         updateBehavior(ctx);
         checkLifetime(ctx);
     } else {
-        const float dt = 1.f/Constants::FRAME_RATE;
-        animator.update(dt);
+        animator.update();
         if (animator.animationFinished()) {
             dead = true;
         }
@@ -65,11 +64,11 @@ void Bullet::update(const GeneralContext& ctx) {
 void Bullet::updateBehavior(const GeneralContext& ctx) {
     physics.setSpeed(physics.getSpeed() + acceleration);
 
-    physics.updateX(position);
-    if (collider.horizontalLevelCollision(position)){
+    physics.updateY(position);
+    if (collider.verticalLevelCollision(position)) {
         if (type == BulletType::BubbleGun) {
             bounceCount++;
-            physics.setSpdx(-physics.getSpdx() * 0.9f);
+            physics.setSpdy(-physics.getSpdy() * 0.9f);
 
             if (bounceCount >= maxBounces)
                 die();
@@ -79,11 +78,11 @@ void Bullet::updateBehavior(const GeneralContext& ctx) {
         }
     }
 
-    physics.updateY(position);
-    if (collider.verticalLevelCollision(position)) {
+    physics.updateX(position);
+    if (collider.horizontalLevelCollision(position)){
         if (type == BulletType::BubbleGun) {
             bounceCount++;
-            physics.setSpdy(-physics.getSpdy() * 0.9f);
+            physics.setSpdx(-physics.getSpdx() * 0.9f);
 
             if (bounceCount >= maxBounces)
                 die();

@@ -154,7 +154,6 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
     for (auto& t : tiles)
     {
         if (t.x == x && t.y == y){
-            // Destroy the old object, but do NOT erase the tile from the vector!
             if (t.object) {
                 GameObject::destroy(t.object);
                 t.object = nullptr;

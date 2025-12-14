@@ -1,4 +1,5 @@
 #include "Animator.hpp"
+#include "GameState.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -53,6 +54,12 @@ void Animator::loadFromAsepriteJSON(const std::string& filename) {
     }
 }
 
+std::unordered_map<std::string, Animator::Animation> Animator::getAsepriteJSONAnimations(const std::string& filename){
+    static Animator tempAnimator;
+    tempAnimator.loadFromAsepriteJSON(filename);
+    return tempAnimator.animations;
+}
+
 void Animator::addAnimation(const std::string& name, const Animation& anim) {
     animations[name] = anim;
 
@@ -61,6 +68,10 @@ void Animator::addAnimation(const std::string& name, const Animation& anim) {
         currentState = name;
         currentFrame = 0;
     }
+}
+
+void Animator::setAnimations(std::unordered_map<std::string, Animator::Animation>& newAnimations){
+    animations = newAnimations;
 }
 
 void Animator::setState(const std::string& name) {
@@ -76,10 +87,10 @@ void Animator::setState(const std::string& name) {
     finished = false;
 }
 
-void Animator::update(float dt) {
+void Animator::update() {
     if (!currentAnim || finished) return;
 
-    timer += dt * speedMultiplier;
+    timer += GameState::getInstance().dt() * speedMultiplier;
 
     if (timer >= currentAnim->frameTime) {
         timer = 0.f;

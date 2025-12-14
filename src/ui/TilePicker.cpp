@@ -31,11 +31,11 @@ PickerSelection TilePicker::open(
         activeLayer = 0;
 
     float dummyMin = 0.1f;
-    float dummyMax = 3.0f;
+    float dummyMax = 50.0f;
 
     UISlider parallaxSlider(
         { 10.f, float(tileset.getSize().y) + 100.f },
-        200.f,
+        300.f,
         dummyMin,
         dummyMax,
         activeLayer >= 0 ? &layers[activeLayer].paralax : nullptr

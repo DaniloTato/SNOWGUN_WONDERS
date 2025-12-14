@@ -15,6 +15,7 @@ public:
     static void destroy(GameObject* g);
     
     sf::Vector2f position;
+    sf::Vector2f offset;
 
 protected:
     static std::vector<GameObject*> s_gameObjects;
