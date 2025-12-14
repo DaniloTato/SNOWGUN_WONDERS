@@ -9,7 +9,7 @@
 
 using json = nlohmann::json;
 
-LevelManager::LevelManager(): selectedTileRect(sf::IntRect(16,16,16,16)), activeLayer(0){}
+LevelManager::LevelManager(): activeLayer(0){}
 
 LevelManager& LevelManager::getInstance() {
     static LevelManager instance;

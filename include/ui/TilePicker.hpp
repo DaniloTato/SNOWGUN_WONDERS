@@ -1,15 +1,27 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 #include "UISlider.hpp"
-#include "LevelManager.hpp" 
+#include "LevelManager.hpp"
+
+enum class PickerMode {
+    Tiles,
+    Enemies
+};
+
+struct PickerSelection {
+    PickerMode mode = PickerMode::Tiles;
+    sf::IntRect tileRect;
+    std::string enemyId;
+};
 
 class TilePicker
 {
 public:
     TilePicker(sf::Texture& tileset, int tileSize);
 
-    sf::IntRect open(std::vector<LayerInfo>& layers, int& activeLayer);
+    PickerSelection open(std::vector<LayerInfo>& layers, int& activeLayer);
 
 private:
     void drawTileset(sf::RenderWindow& window, const sf::IntRect& selectedRect);
@@ -30,15 +42,16 @@ private:
         const sf::Event& ev
     );
 
+    void drawModeTabs(sf::RenderWindow& window, sf::Font& font, const sf::Event& ev);
+    void drawEnemyPicker(sf::RenderWindow& window, sf::Font& font, const sf::Event& ev);
+
 private:
     sf::Texture& tileset;
     int tileSize;
 
+    PickerSelection selection;
+
     bool dragging = false;
     sf::Vector2i dragStart;
     sf::IntRect selectedRect;
-
-    static float clamp01(float v) {
-        return (v < 0.f ? 0.f : (v > 1.f ? 1.f : v));
-    }
 };

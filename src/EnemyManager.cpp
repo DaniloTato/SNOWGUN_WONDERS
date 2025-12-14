@@ -56,3 +56,14 @@ TangibleObject* EnemyManager::createFromRequest(
 void EnemyManager::destroyObject(TangibleObject* obj) {
     GameObject::destroy(obj);
 }
+
+std::vector<std::string> EnemyManager::getEnemyList() const {
+    std::vector<std::string> result;
+    result.reserve(templates.size());
+
+    for (const auto& pair : templates) {
+        result.push_back(pair.first);
+    }
+
+    return result;
+}

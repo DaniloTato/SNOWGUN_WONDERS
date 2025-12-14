@@ -13,6 +13,7 @@
         "tilePicker": "T",
         "textTest": "Num3",
         "shoot": "E",
-        "crash": "U"
+        "crash": "U",
+        "spawnEnemy": "R"
     }
 }

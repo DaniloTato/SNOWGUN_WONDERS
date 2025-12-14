@@ -1,4 +1,5 @@
 #include "levelCreatorInputs.hpp"
+#include "EnemyManager.hpp"
 #include "InputManager.hpp"
 #include "LevelManager.hpp"
 #include "TilePicker.hpp"
@@ -7,6 +8,15 @@
 #include <iostream>
 
 namespace script {
+
+    struct StoredSelection{
+        sf::IntRect selectedTileRect;
+        std::string selectedEnemyId;
+        PickerMode mode;
+    };
+
+    static StoredSelection storedSelection;
+
     void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx){
 
         InputManager& inputManager = InputManager::getInstance();
@@ -20,41 +30,75 @@ namespace script {
                 Constants::TILE_SIZE
             );
 
-            levelManager.selectedTileRect = picker.open(levelManager.layers, levelManager.activeLayer);
+            PickerSelection selection = picker.open(levelManager.layers, levelManager.activeLayer);
+            storedSelection.selectedTileRect = selection.tileRect;
+            storedSelection.selectedEnemyId = selection.enemyId;
+            storedSelection.mode = selection.mode;
             levelManager.reloadAllLayers(window, GameState::getInstance().getMainCamera());
         }
 
-        if(inputManager.isPressed("createTile")){
-            sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
-                levelManager.getLayerInfo(levelManager.activeLayer).paralax
+        if (inputManager.isJustPressed("spawnEnemy")){
+            EnemyManager::getInstance().queueCreateEnemy(
+                storedSelection.selectedEnemyId,
+                GameState::getInstance().getMainCamera()->screenToWorld(
+                    {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                    1.f
+                )
             );
+        }
 
-            sf::IntRect& selRect = levelManager.selectedTileRect;
-            const int tileSize = Constants::TILE_SIZE;
-            int tilesWide = selRect.width / tileSize;
-            int tilesHigh = selRect.height / tileSize;
-            int baseTileX = static_cast<int>(mousePosToTilePos.x) / tileSize;
-            int baseTileY = static_cast<int>(mousePosToTilePos.y) / tileSize;
+        if(storedSelection.mode == PickerMode::Tiles){
+            if(inputManager.isPressed("createTile")){
+                sf::Vector2f mousePosToTilePos = GameState::getInstance().getMainCamera()->screenToWorld(
+                    {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                    levelManager.getLayerInfo(levelManager.activeLayer).paralax
+                );
 
-            for (int y = 0; y < tilesHigh; y++) {
-                for (int x = 0; x < tilesWide; x++) {
-                    sf::IntRect subRect(
-                        selRect.left + x * tileSize,
-                        selRect.top + y * tileSize,
-                        tileSize,
-                        tileSize
-                    );
+                sf::IntRect& selRect = storedSelection.selectedTileRect;
+                const int tileSize = Constants::TILE_SIZE;
+                int tilesWide = selRect.width / tileSize;
+                int tilesHigh = selRect.height / tileSize;
+                int baseTileX = static_cast<int>(mousePosToTilePos.x) / tileSize;
+                int baseTileY = static_cast<int>(mousePosToTilePos.y) / tileSize;
 
-                    levelManager.queueCreateTile(
-                        window,
-                        GameState::getInstance().getMainCamera(),
-                        levelManager.activeLayer,
-                        baseTileX + x,
-                        baseTileY + y,
-                        subRect
-                    );
+                for (int y = 0; y < tilesHigh; y++) {
+                    for (int x = 0; x < tilesWide; x++) {
+                        sf::IntRect subRect(
+                            selRect.left + x * tileSize,
+                            selRect.top + y * tileSize,
+                            tileSize,
+                            tileSize
+                        );
+
+                        levelManager.queueCreateTile(
+                            window,
+                            GameState::getInstance().getMainCamera(),
+                            levelManager.activeLayer,
+                            baseTileX + x,
+                            baseTileY + y,
+                            subRect
+                        );
+                    }
                 }
+            }
+        } else if(storedSelection.mode == PickerMode::Enemies){
+            if(inputManager.isJustPressed("createTile")){
+                sf::Vector2f mousePosToEnemyPos = GameState::getInstance().getMainCamera()->screenToWorld(
+                    {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                    1.f
+                );
+                sf::Vector2i EnemyPosInt = {
+                    static_cast<int>(mousePosToEnemyPos.x),
+                    static_cast<int>(mousePosToEnemyPos.y)
+                };
+
+                EnemyPosInt /= Constants::TILE_SIZE;
+                EnemyPosInt *= Constants::TILE_SIZE;
+
+                EnemyManager::getInstance().queueCreateEnemy(
+                    storedSelection.selectedEnemyId,
+                    {static_cast<float>(EnemyPosInt.x), static_cast<float>(EnemyPosInt.y)}
+                );
             }
         }
 

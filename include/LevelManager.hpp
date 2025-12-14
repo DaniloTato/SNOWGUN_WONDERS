@@ -64,7 +64,6 @@ public:
     const std::vector<std::vector<int>>& getLevelLayout() const;
 
     sf::Texture& getTilesheet();
-    sf::IntRect selectedTileRect;
     std::vector<LayerInfo> layers;
     int activeLayer;
 

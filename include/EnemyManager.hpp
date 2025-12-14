@@ -31,6 +31,8 @@ public:
 
     void queueDeleteEnemy(TangibleObject* enemy);
 
+    std::vector<std::string> getEnemyList() const;
+
 protected:
     TangibleObject* createFromRequest(const EnemyCreationRequest& req) override;
     void destroyObject(TangibleObject* obj) override;
