@@ -20,8 +20,7 @@ namespace script {
         Bullet* hit = BulletManager::getInstance().isCollidingWithBullet(tangible);
 
         if (hit) {
-            //tangible.takeDamage(hit->getDamage());
-            BulletManager::getInstance().queueDeletion(hit);
+            hit->die();
         }
     }
 }

@@ -40,6 +40,9 @@ Bullet::Bullet(
             physics.setGravity(0.f);
             break;
     }
+
+    collider.horizontalLevelCollision(position);
+    collider.verticalLevelCollision(position);
 }
 
 void Bullet::update(const GeneralContext& ctx) {

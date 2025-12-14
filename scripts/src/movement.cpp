@@ -43,7 +43,7 @@ namespace script{
         if(InputManager::getInstance().isJustPressed("shoot")){
             BulletManager::getInstance().queueSpawn(
                 bulletParams,
-                BulletType::Normal,
+                BulletType::BubbleGun,
                 sf::Vector2f(4.f * tangible.direction,0.f),
                 sf::Vector2f(0.f,0.f),
                 8.f,

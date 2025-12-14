@@ -21,11 +21,11 @@ public:
     void update(const GeneralContext& ctx) override;
 
     bool isDead() const { return dead; }
+    void die();
 
 private:
     void updateBehavior(const GeneralContext& ctx);
     void checkLifetime(const GeneralContext& ctx);
-    void die();
 
 private:
     BulletType type;
