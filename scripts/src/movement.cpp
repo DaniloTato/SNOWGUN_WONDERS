@@ -3,6 +3,9 @@
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 #include "PhysicsComponent.hpp"
+#include "GameState.hpp"
+#include "InputManager.hpp"
+#include "BulletManager.hpp"
 
 namespace script{
 
@@ -25,6 +28,27 @@ namespace script{
         tangible.physics.updateY(tangible.position);
         if(tangible.collider.verticalLevelCollision(tangible.position)){
             tangible.physics.setSpdy(0.f);
+        }
+
+        RenderizerParameters bulletParams{
+            ctx.window,
+            ctx.bulletTexture,
+            {0,0,15,15},
+            tangible.position,
+            GameState::getInstance().getMainCamera(),
+            0.f,
+            1.f
+        };
+
+        if(InputManager::getInstance().isJustPressed("shoot")){
+            BulletManager::getInstance().queueSpawn(
+                bulletParams,
+                BulletType::Normal,
+                sf::Vector2f(4.f * tangible.direction,0.f),
+                sf::Vector2f(0.f,0.f),
+                8.f,
+                800.f
+            );
         }
     }
 

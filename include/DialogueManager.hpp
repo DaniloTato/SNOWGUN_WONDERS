@@ -1,22 +1,20 @@
 #pragma once
-#include <string>
 #include <unordered_map>
-#include <vector>
+#include <string>
 
+#include "QueuedManager.hpp"
 #include "GameText.hpp"
 #include "GameObject.hpp"
 #include "RenderizerParameters.hpp"
 
-struct TextCreationRequest{
-    const RenderizerParameters& params;
+struct TextCreationRequest {
+    RenderizerParameters params;
     const std::string* markup;
 };
 
-struct TextDeletionRequest{
-
-};
-
-class DialogueManager {
+class DialogueManager
+    : public QueuedManager<GameText, TextCreationRequest>
+{
 public:
     static DialogueManager& getInstance();
 
@@ -24,30 +22,23 @@ public:
 
     const std::string* getDialogue(const std::string& key) const;
     void assignDialogue(GameObject* object, const std::string& key);
-    void createText(const RenderizerParameters& params, const std::string* markup);
-    void queueCreateText(const RenderizerParameters& params, const std::string* markup);
+
     void onTrigger(GameObject* object);
 
-    void applyQueuedTextChanges();
     void attachTextParams(RenderizerParameters* params);
 
 private:
-
     DialogueManager();
+    ~DialogueManager() = default;
+
+    GameText* createFromRequest(const TextCreationRequest& req) override;
+    void destroyObject(GameText* text) override;
 
     std::unordered_map<std::string, std::string> dialogues;
     std::unordered_map<GameObject*, std::string> assigned;
 
-    std::vector<GameText*> activeTexts;
-
     RenderizerParameters* attachedTextParams = nullptr;
-
-    std::vector<TextCreationRequest> createQueue;
-    std::vector<TextDeletionRequest> deleteQueue;
 
     DialogueManager(const DialogueManager&) = delete;
     DialogueManager& operator=(const DialogueManager&) = delete;
-
-    DialogueManager(DialogueManager&&) = delete;
-    DialogueManager& operator=(DialogueManager&&) = delete;
 };

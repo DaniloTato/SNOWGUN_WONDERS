@@ -1,7 +1,6 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
-#include "Bullet.hpp"
 #include "BulletManager.hpp"
 #include "GeneralContext.hpp"
 
@@ -27,6 +26,7 @@
 /*Camera Scripts*/
 #include "cameraShake.hpp"
 #include "dramaticZoom.hpp"
+#include "enemyPatrol.hpp"
 #include "followPlayer.hpp"
 
 /*TangibleObject Scripts*/
@@ -39,6 +39,7 @@
 #include "particleGeneration.hpp"
 #include "toddTalk.hpp"
 
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
@@ -116,6 +117,29 @@ int main() {
     todd.scripter.addScript(script::toddTalk);
     dialogueManager.assignDialogue(&todd, "Greeting");
 
+    /*Enemy*/
+    sf::Texture toyTexture;
+    toyTexture.loadFromFile("assets/toy.png");
+
+    RenderizerParameters toyParams{
+        window,
+        toyTexture,
+        {0,0,17,17},
+        {16.f, 16.f},
+        GameState::getInstance().getMainCamera(),
+        0.f,
+        1.f
+    };
+
+    TangibleObject toy(toyParams);
+    toy.collider.setOffset({5.f, 2.f});
+    toy.collider.setSize({15.f, 14.f});
+
+    toy.animator.loadFromAsepriteJSON("assets/json/toy.json");
+
+    toy.scripter.addScript(script::enemyPatrol);
+    /*Enemy*/
+
     /*Player*/
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/snowman_animation.png");
@@ -143,6 +167,7 @@ int main() {
     /*Bullet*/
     sf::Texture bulletTexture;
     bulletTexture.loadFromFile("assets/bullet.png");
+    BulletManager& bulletManager = BulletManager::getInstance();
     /*Bullet*/
 
     levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.json");
@@ -158,38 +183,18 @@ int main() {
             inputManager.handleEvent(event);
         }
 
-        RenderizerParameters bulletParams{
-        window,
-        bulletTexture,
-        {0,0,15,15},
-        player.position,
-        GameState::getInstance().getMainCamera(),
-        0.f,
-        1.f
-    };
-
-        if(inputManager.isJustPressed("shoot")){
-            BulletManager::getInstance().queueSpawn(
-                bulletParams,
-                BulletType::BubbleGun,
-                sf::Vector2f(3.f * player.direction,0.f),
-                sf::Vector2f(0.f,0.f),
-                8.f,
-                800.f
-            );
-        }
-
         //yet to modify general context
         GeneralContext ctx = {
             player.position,
             window,
             textParams,
-            &player
+            &player,
+            bulletTexture
         };
 
         levelManager.applyQueuedTileChanges();
-        dialogueManager.applyQueuedTextChanges();
-        BulletManager::getInstance().applyQueuedBulletChanges();
+        dialogueManager.applyQueues();
+        bulletManager.getInstance().applyQueues();
 
         window.clear(ColorPalette::Black);
 
@@ -202,6 +207,8 @@ int main() {
         }
 
         Renderizer::renderAll();
+
+        toy.collider.debugRender(window, *GameState::getInstance().getMainCamera(), toy.position);
 
         window.display();
     }

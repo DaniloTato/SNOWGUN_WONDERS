@@ -1,6 +1,7 @@
 #include "BasicCollider.hpp"
 #include "LevelManager.hpp"
 #include "Constants.hpp"
+#include "SFML/System/Vector2.hpp"
 #include "TangibleObject.hpp"
 #include <cmath>
 
@@ -139,13 +140,19 @@ bool BasicCollider::verticalLevelCollision(sf::Vector2f& objectPos) {
     return collided;
 }
 
-void BasicCollider::debugRender(sf::RenderWindow& window, const sf::Vector2f& objectPos) {
+void BasicCollider::debugRender(sf::RenderWindow& window, GameCamera& camera, const sf::Vector2f& objectPos) {
 
-    sf::FloatRect box = getCollisionRect(objectPos);
+    sf::Vector2f posWithCamera = camera.worldToScreen(objectPos + offset);
+    sf::FloatRect box = sf::FloatRect(
+        posWithCamera.x,
+        posWithCamera.y,
+        size.x,
+        size.y
+    );
 
     sf::RectangleShape rect;
     rect.setPosition(box.left, box.top);
-    rect.setSize({box.width, box.height});
+    rect.setSize({box.width * camera.getZoom(), box.height * camera.getZoom()});
     rect.setFillColor(sf::Color(255, 0, 0, 80));
     rect.setOutlineColor(sf::Color(255, 0, 0, 150));
     rect.setOutlineThickness(1.f);

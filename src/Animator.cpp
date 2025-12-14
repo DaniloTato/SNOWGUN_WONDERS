@@ -3,7 +3,8 @@
 #include <fstream>
 #include <iostream>
 
-Animator::Animator() {}
+Animator::Animator() {
+}
 
 using json = nlohmann::json;
 
@@ -26,6 +27,7 @@ void Animator::loadFromAsepriteJSON(const std::string& filename) {
         allDurations.push_back(frameData["duration"].get<float>() / 1000.f);
     }
 
+    bool animationLoaded = false;
     for (auto& tag : j["meta"]["frameTags"]) {
         Animation anim;
         anim.loop = tag["name"].get<std::string>().find("_once") == std::string::npos;
@@ -44,6 +46,10 @@ void Animator::loadFromAsepriteJSON(const std::string& filename) {
 
         std::string name = tag["name"];
         addAnimation(name, anim);
+        animationLoaded = true;
+    }
+    if(!animationLoaded){
+        std::cerr << "[Animator] WARNING. No animation was loaded from file: " << filename << "\n";
     }
 }
 
@@ -92,6 +98,10 @@ void Animator::update(float dt) {
 }
 
 const sf::IntRect& Animator::getCurrentFrame() const {
+    static sf::IntRect dummy{0,0,0,0};
+    if (!currentAnim || currentAnim->frames.empty()){
+        return dummy;
+    }
     return currentAnim->frames[currentFrame];
 }
 

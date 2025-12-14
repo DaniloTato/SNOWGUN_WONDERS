@@ -2,6 +2,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "GameCamera.hpp"
 
 class TangibleObject;
 class RenderableObject;
@@ -21,7 +22,7 @@ public:
     bool horizontalLevelCollision(sf::Vector2f& objectPos);
     bool verticalLevelCollision(sf::Vector2f& objectPos);
     void computeCollisionGrid(const sf::Vector2f& objectPos);
-    void debugRender(sf::RenderWindow& window, const sf::Vector2f& objectPos);
+    void debugRender(sf::RenderWindow& window, GameCamera& camera, const sf::Vector2f& objectPos);
 
     static bool objectsColliding(TangibleObject* object1, TangibleObject* object2);
     static bool isCollidingRect(const sf::FloatRect& a, const sf::FloatRect& b);

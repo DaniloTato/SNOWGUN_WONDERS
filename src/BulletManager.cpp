@@ -1,31 +1,10 @@
 #include "BulletManager.hpp"
+#include "BasicCollider.hpp"
+#include "SFML/System/Vector2.hpp"
 
 BulletManager& BulletManager::getInstance() {
     static BulletManager instance;
     return instance;
-}
-
-void BulletManager::spawn(
-    RenderizerParameters& params,
-    BulletType type,
-    const sf::Vector2f& speed,
-    const sf::Vector2f& accel,
-    float damageRadius,
-    float range
-) {
-    Bullet* bullet = new Bullet(
-        params,
-        type,
-        speed,
-        accel,
-        damageRadius,
-        range
-    );
-
-    bullet -> animator.loadFromAsepriteJSON("assets/json/bullet.json");
-    bullet -> animator.setSpeedMultiplier(1.5f);
-
-    getInstance().bullets.push_back(bullet);
 }
 
 void BulletManager::queueSpawn(
@@ -35,7 +14,7 @@ void BulletManager::queueSpawn(
     const sf::Vector2f& accel,
     float damageRadius,
     float range
-){
+) {
     createQueue.push_back({
         params,
         type,
@@ -50,49 +29,40 @@ void BulletManager::queueDeletion(Bullet* bullet) {
     deleteQueue.push_back(bullet);
 }
 
-void BulletManager::update(const GeneralContext& ctx) {
+Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
+    Bullet* bullet = new Bullet(
+        req.params,
+        req.type,
+        req.speed,
+        req.accel,
+        req.damageRadius,
+        req.range
+    );
 
-    for(Bullet* bullet: bullets){
-        if(bullet -> isDead()){
+    bullet->animator.loadFromAsepriteJSON("assets/json/bullet.json");
+    return bullet;
+}
+
+void BulletManager::destroyObject(Bullet* bullet) {
+    GameObject::destroy(bullet);
+}
+
+void BulletManager::update(const GeneralContext& ctx) {
+    for (Bullet* bullet : objects) {
+        if (bullet->isDead()) {
             queueDeletion(bullet);
         }
     }
 }
 
-void BulletManager::deleteBullet(Bullet* bullet) {
-    bullets.erase(
-        std::remove_if(
-            bullets.begin(),
-            bullets.end(),
-            [&](Bullet* b) {
-                if (b == bullet) {
-                    GameObject::destroy(b);
-                    return true;
-                }
-                return false;
-            }
-        ),
-        bullets.end()
-    );
-}
+Bullet* BulletManager::isCollidingWithBullet(TangibleObject& object) {
 
-void BulletManager::applyQueuedBulletChanges() {
-    BulletManager& mgr = getInstance();
+    for (Bullet* bullet : objects) {
+        if (!bullet) continue;
 
-    for (auto& req : mgr.deleteQueue) {
-        mgr.deleteBullet(req);
+        if (BasicCollider::objectsColliding(&object, bullet)) {
+            return bullet;
+        }
     }
-    mgr.deleteQueue.clear();
-
-    for (auto& req : mgr.createQueue) {
-        mgr.spawn(
-            req.params,
-            req.type,
-            req.speed,
-            req.accel,
-            req.damageRadius,
-            req.range
-        );
-    }
-    mgr.createQueue.clear();
+    return nullptr;
 }

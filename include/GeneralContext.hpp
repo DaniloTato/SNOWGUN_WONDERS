@@ -10,4 +10,5 @@ struct GeneralContext {
     sf::RenderWindow& window;
     RenderizerParameters& textParams;
     TangibleObject* player;
+    sf::Texture& bulletTexture;
 };

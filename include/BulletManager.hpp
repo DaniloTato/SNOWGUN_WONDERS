@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
+#include "QueuedManager.hpp"
 #include "Bullet.hpp"
 #include "GameObject.hpp"
+#include "BasicCollider.hpp"
 
 struct BulletCreationRequest {
     RenderizerParameters params;
@@ -12,18 +13,12 @@ struct BulletCreationRequest {
     float range;
 };
 
-class BulletManager: GameObject {
+class BulletManager
+    : public GameObject
+    , public QueuedManager<Bullet, BulletCreationRequest>
+{
 public:
     static BulletManager& getInstance();
-
-    void spawn(
-        RenderizerParameters& params,
-        BulletType type,
-        const sf::Vector2f& speed,
-        const sf::Vector2f& accel,
-        float damageRadius,
-        float range
-    );
 
     void queueSpawn(
         RenderizerParameters& params,
@@ -34,16 +29,15 @@ public:
         float range
     );
 
-    void queueDeletion(Bullet*);
+    void queueDeletion(Bullet* bullet);
 
-    virtual void update(const GeneralContext& ctx) override;
-    static void applyQueuedBulletChanges();
-    void deleteBullet(Bullet* bullet);
-    //definitely will need to implement a queueing object
+    void update(const GeneralContext& ctx) override;
+
+    Bullet* isCollidingWithBullet(TangibleObject& object);
 
 private:
-    std::vector<BulletCreationRequest> createQueue;
-    std::vector<Bullet*> deleteQueue;
     BulletManager() = default;
-    std::vector<Bullet*> bullets;
+
+    Bullet* createFromRequest(const BulletCreationRequest& req) override;
+    void destroyObject(Bullet* bullet) override;
 };
