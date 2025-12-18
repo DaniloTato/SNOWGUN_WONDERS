@@ -1,6 +1,7 @@
 #include <fstream>
 #include "LevelManager.hpp"
 #include "RenderableObject.hpp"
+#include "ColorPalette.hpp"
 #include "SFML/Graphics/Rect.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Constants.hpp"
@@ -9,11 +10,15 @@
 
 using json = nlohmann::json;
 
-LevelManager::LevelManager(): activeLayer(0){}
+LevelManager::LevelManager(): activeLayer(0), cameraPlayerRelation(Constants::STARTING_PLAYER_CAMERA_RELATION), backgroundColor(ColorPalette::DarkCyanBlue){}
 
 LevelManager& LevelManager::getInstance() {
     static LevelManager instance;
     return instance;
+}
+
+sf::Color& LevelManager::getBackgroundColor() {
+    return backgroundColor;
 }
 
 void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const std::string& path){
@@ -119,8 +124,8 @@ void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int
             tilesheet,
             t.textureRect,
             {
-                float(t.x * Constants::TILE_SIZE),
-                float(t.y * Constants::TILE_SIZE)
+                float(t.x * Constants::TILE_SIZE + 1),
+                float(t.y * Constants::TILE_SIZE + 1)
             },
             camera,
             static_cast<float>(layerNo),
@@ -139,14 +144,16 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
         return;
     }
 
-    if (x < 0 || y < 0) {
-        std::cerr << "[createTile] ERROR: Negative tile coordinates: (" << x << ", " << y << ")\n";
-        return;
-    }
+    if(layerNo == 0){
+        if (x < 0 || y < 0) {
+            std::cerr << "[createTile] ERROR: Negative tile coordinates: (" << x << ", " << y << ")\n";
+            return;
+        }
 
-    if (layerNo == 0 && (y >= (int)levelLayout.size() || x >= (int)levelLayout[y].size())) {
-        std::cerr << "[createTile] ERROR: Tile coordinates out of levelLayout bounds: (" << x << ", " << y << ")\n";
-        return;
+        if ((y >= (int)levelLayout.size() || x >= (int)levelLayout[y].size())) {
+            std::cerr << "[createTile] ERROR: Tile coordinates out of levelLayout bounds: (" << x << ", " << y << ")\n";
+            return;
+        }
     }
 
     std::vector<TileInfo>& tiles = layers[layerNo].tiles;
@@ -170,8 +177,8 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
                 tilesheet,
                 t.textureRect,
                 {
-                    float(x * Constants::TILE_SIZE),
-                    float(y * Constants::TILE_SIZE)
+                    float(x * Constants::TILE_SIZE + 1),
+                    float(y * Constants::TILE_SIZE + 1)
                 },
                 camera,
                 static_cast<float>(layerNo),
@@ -198,8 +205,8 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
         tilesheet,
         info.textureRect,
         {
-            float(x * Constants::TILE_SIZE),
-            float(y * Constants::TILE_SIZE)
+            float(x * Constants::TILE_SIZE + 1),
+            float(y * Constants::TILE_SIZE + 1)
         },
         camera,
         static_cast<float>(layerNo),
@@ -213,7 +220,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
 }
 
 void LevelManager::deleteTile(int layerNo, int x, int y){
-    if (x < 0 || y < 0) return;
+    if (layerNo == 0 && (x < 0 || y < 0)) return;
 
     std::vector<TileInfo>& tiles = layers[layerNo].tiles;
 
@@ -253,7 +260,6 @@ void LevelManager::saveLevel(const std::string& path)
         layerJson["name"]     = layer.name;
         layerJson["parallax"] = layer.paralax;
 
-        // Now save this layer's tiles
         layerJson["tiles"] = json::array();
         for (const auto& tile : layer.tiles)
         {
@@ -308,4 +314,8 @@ void LevelManager::applyQueuedTileChanges() {
         createTile(createReq.window, createReq.camera, createReq.layer, createReq.x, createReq.y, createReq.rect);
     }
     createQueue.clear();
+}
+
+const sf::Vector2f& LevelManager::getCameraPlayerRelation() const{
+    return cameraPlayerRelation;
 }

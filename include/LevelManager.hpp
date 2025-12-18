@@ -59,6 +59,10 @@ public:
     void queueDeleteTile(int layer, int x, int y);
     void applyQueuedTileChanges();
 
+    const sf::Vector2f& getCameraPlayerRelation() const;
+
+    sf::Color& getBackgroundColor();
+
     const LayerInfo getLayerInfo(int layerNo) const;
 
     const std::vector<std::vector<int>>& getLevelLayout() const;
@@ -71,10 +75,13 @@ private:
     LevelManager();
 
     sf::Texture tilesheet;
+    sf::Vector2f cameraPlayerRelation;
 
     std::vector<std::vector<int>> levelLayout;
     std::vector<TileCreationRequest> createQueue;
     std::vector<TileDeletionRequest> deleteQueue;
+
+    sf::Color backgroundColor;
 
     LevelManager(const LevelManager&) = delete;
     LevelManager& operator=(const LevelManager&) = delete;

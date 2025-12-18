@@ -1,127 +1,201 @@
 { "frames": {
    "snowman_animation #idle 0.aseprite": {
-    "frame": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 0, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #idle 1.aseprite": {
-    "frame": { "x": 18, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 26, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #idle 2.aseprite": {
-    "frame": { "x": 36, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 52, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #idle 3.aseprite": {
-    "frame": { "x": 54, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 78, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #idle 4.aseprite": {
-    "frame": { "x": 72, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 104, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #idle 5.aseprite": {
-    "frame": { "x": 90, "y": 0, "w": 18, "h": 18 },
+    "frame": { "x": 130, "y": 0, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 150
    },
    "snowman_animation #walk 0.aseprite": {
-    "frame": { "x": 0, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 0, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 1.aseprite": {
-    "frame": { "x": 18, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 26, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 2.aseprite": {
-    "frame": { "x": 36, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 52, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 3.aseprite": {
-    "frame": { "x": 54, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 78, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 4.aseprite": {
-    "frame": { "x": 72, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 104, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 5.aseprite": {
-    "frame": { "x": 90, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 130, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 6.aseprite": {
-    "frame": { "x": 108, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 156, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    },
    "snowman_animation #walk 7.aseprite": {
-    "frame": { "x": 126, "y": 18, "w": 18, "h": 18 },
+    "frame": { "x": 182, "y": 20, "w": 26, "h": 20 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
-    "sourceSize": { "w": 18, "h": 18 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 100
+   },
+   "snowman_animation #jump_once 0.aseprite": {
+    "frame": { "x": 0, "y": 40, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 300
+   },
+   "snowman_animation #jump_once 1.aseprite": {
+    "frame": { "x": 26, "y": 40, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 100
+   },
+   "snowman_animation #kick_once 0.aseprite": {
+    "frame": { "x": 0, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 1.aseprite": {
+    "frame": { "x": 26, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 2.aseprite": {
+    "frame": { "x": 52, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 3.aseprite": {
+    "frame": { "x": 78, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 4.aseprite": {
+    "frame": { "x": 104, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 5.aseprite": {
+    "frame": { "x": 130, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
+    "duration": 75
+   },
+   "snowman_animation #kick_once 6.aseprite": {
+    "frame": { "x": 156, "y": 60, "w": 26, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 20 },
+    "sourceSize": { "w": 26, "h": 20 },
     "duration": 100
    }
  },
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.3.15.5-arm64",
+  "version": "1.3.16.1-arm64",
   "image": "snowman_animation.png",
   "format": "RGBA8888",
-  "size": { "w": 144, "h": 36 },
+  "size": { "w": 208, "h": 80 },
   "scale": "1",
   "frameTags": [
    { "name": "idle", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
-   { "name": "walk", "from": 6, "to": 13, "direction": "forward", "color": "#000000ff" }
+   { "name": "walk", "from": 6, "to": 13, "direction": "forward", "color": "#000000ff" },
+   { "name": "jump_once", "from": 14, "to": 15, "direction": "forward", "color": "#000000ff" },
+   { "name": "kick_once", "from": 16, "to": 22, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },

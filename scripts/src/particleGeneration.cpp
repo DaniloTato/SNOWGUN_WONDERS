@@ -11,13 +11,13 @@ namespace script{
 
         //Particles are not GameObjcts. Hence, they do not need queueing when trying to create them.
         
-        const float snowSpawnRange =  5;
-        ParticleManager::getInstance().emitSnow(
-            GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5) ,-50},
-                1.f
-            )
-        );
+        // const float snowSpawnRange =  5;
+        // ParticleManager::getInstance().emitSnow(
+        //     GameState::getInstance().getMainCamera()->screenToWorld(
+        //         {static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5) ,-50},
+        //         1.f
+        //     )
+        // );
     }
 
 }

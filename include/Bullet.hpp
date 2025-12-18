@@ -1,34 +1,39 @@
 #pragma once
 #include "TangibleObject.hpp"
 
-enum class BulletType {
-    Normal,
-    BubbleGun,
-    Bazooka
-};
-
 class Bullet : public TangibleObject {
 public:
+
+    enum class Type {
+        Normal,
+        BubbleGun,
+        Bazooka
+    };
+
     Bullet(
         RenderizerParameters params,
-        BulletType type,
+        Type type,
         const sf::Vector2f& initSpeed,
         const sf::Vector2f& acceleration,
         float damageRadius,
-        float maxRange
+        float maxRange,
+        bool shotByPlayer
     );
 
     void update(const GeneralContext& ctx) override;
 
     bool isDead() const { return dead; }
+    bool isDying() const { return dying; }
     void die();
+
+    bool isShotByPlayer();
 
 private:
     void updateBehavior(const GeneralContext& ctx);
     void checkLifetime(const GeneralContext& ctx);
 
 private:
-    BulletType type;
+    Type type;
 
     sf::Vector2f acceleration;
     float damageRadius;
@@ -44,4 +49,6 @@ private:
 
     bool dying = false;
     bool dead = false;
+
+    bool shotByPlayer;
 };

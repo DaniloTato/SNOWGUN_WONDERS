@@ -1,31 +1,36 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
+#include <vector>
 
 class PhysicsComponent {
 public:
+
+    enum class SpeedType{
+        MOVEMENT,
+        KICK,
+        COUNT
+    };
+
     PhysicsComponent();
     PhysicsComponent(float gravity);
 
     void updateX(sf::Vector2f& position);
     void updateY(sf::Vector2f& position);
 
-    const sf::Vector2f& getSpeed() const { return speed; }
-    float getSpdx() const { return speed.x; }
-    float getSpdy() const { return speed.y; }
+    const sf::Vector2f& getSpeed(SpeedType type) const;
+    float getSpdx(SpeedType type) const;
+    float getSpdy(SpeedType type) const;
 
-    void setSpeed(const sf::Vector2f& newSpeed) { speed = newSpeed; }
-    void setSpdx(float x) { speed.x = x; }
-    void setSpdy(float y) { speed.y = y; }
-    void setXFriction(float newFriction) { xFriction = newFriction; }
-
-    float getGravity() const { return gravity; }
-    void setGravity(float g) { gravity = g; }
+    void setSpeed(const sf::Vector2f& newSpeed, SpeedType type);
+    void setSpdx(float x, SpeedType type);
+    void setSpdy(float y, SpeedType type);
 
     void turnOffFriction();
 
-private:
-    sf::Vector2f speed;
     float gravity;
     float xFriction;
+
+private:
+    std::vector<sf::Vector2f> speeds;
     bool hasFriction;
 };

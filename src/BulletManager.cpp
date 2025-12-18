@@ -9,11 +9,12 @@ BulletManager& BulletManager::getInstance() {
 
 void BulletManager::queueSpawn(
     RenderizerParameters& params,
-    BulletType type,
+    Bullet::Type type,
     const sf::Vector2f& speed,
     const sf::Vector2f& accel,
     float damageRadius,
-    float range
+    float range,
+    bool shotByPlayer
 ) {
     createQueue.push_back({
         params,
@@ -21,7 +22,8 @@ void BulletManager::queueSpawn(
         speed,
         accel,
         damageRadius,
-        range
+        range,
+        shotByPlayer
     });
 }
 
@@ -36,10 +38,12 @@ Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
         req.speed,
         req.accel,
         req.damageRadius,
-        req.range
+        req.range,
+        req.shotByPlayer
     );
 
-    bullet->animator.loadFromAsepriteJSON("assets/json/bullet.json");
+    bullet->animator.loadAsepriteAnimations("assets/json/bullet.json");
+    bullet->animator.play("fly");
     return bullet;
 }
 
@@ -55,12 +59,14 @@ void BulletManager::update(const GeneralContext& ctx) {
     }
 }
 
-Bullet* BulletManager::isCollidingWithBullet(TangibleObject& object) {
+Bullet* BulletManager::isCollidingWithBullet(TangibleObject& object, bool amIPlayer) {
 
     for (Bullet* bullet : objects) {
-        if (!bullet) continue;
 
-        if (!bullet->isDead() && BasicCollider::objectsColliding(&object, bullet)) {
+        if (!bullet->isDying() && 
+            BasicCollider::objectsColliding(&object, bullet) &&
+            ((amIPlayer && !bullet->isShotByPlayer()) || (!amIPlayer && bullet->isShotByPlayer()))
+        ) {
             return bullet;
         }
     }

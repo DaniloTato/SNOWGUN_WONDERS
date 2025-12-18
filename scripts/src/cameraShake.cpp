@@ -3,7 +3,7 @@
 #include "cameraShake.hpp"
 
 #include "GameCamera.hpp"
-#include "Constants.hpp"
+#include "GameState.hpp"
 #include "InputManager.hpp"
 
 namespace script {
@@ -37,6 +37,10 @@ namespace script {
                 camera.setCameraShakePosition({offsetX, offsetY});
             }
 
+            const float& getShakeDuration() const{
+                return shakeDuration;
+            }
+
         private:
             float shakeDuration;
             float shakeIntensity;
@@ -44,16 +48,29 @@ namespace script {
             std::mt19937 generator;
             std::uniform_real_distribution<float> distribution;
         };
+    }
 
-        ScreenShake screenShake;
+    namespace ShakeFunctions{
+        bool isShaking(GameCamera& camera){
+            auto it = camera.scripter.scriptState.find("damageable");
+            if (it == camera.scripter.scriptState.end()) return false;
+
+            const auto& state = std::any_cast<const ScreenShake&>(it->second);
+            return state.getShakeDuration() != 0.f;
+        }
     }
 
     void cameraShake(GameCamera& camera, const GeneralContext& ctx) {
-        constexpr float deltaTime = 1.f / Constants::FRAME_RATE;
-        screenShake.update(camera, ctx, deltaTime);
+        auto& stateAny = camera.scripter.scriptState["cameraShake"];
+        if (!stateAny.has_value()) {
+            stateAny = ScreenShake{};
+        }
+        auto& state = std::any_cast<ScreenShake&>(stateAny);
+
+        state.update(camera, ctx, GameState::getInstance().dt());
 
         if(InputManager::getInstance().isJustPressed("shakeCamera")){
-            screenShake.start(0.5f, 40.f);
+            state.start(0.5f, 40.f);
         }
     }
 

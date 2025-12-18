@@ -30,8 +30,10 @@
 #include "followPlayer.hpp"
 
 /*TangibleObject Scripts*/
+#include "reindeer.hpp"
 #include "movement.hpp"
 #include "particleGeneration.hpp"
+#include "reindeer.hpp"
 #include "tangibleAnimations.hpp"
 
 /*General Scripts*/
@@ -73,7 +75,7 @@ int main() {
     /*Particles*/
     sf::Texture particleTexture;
     particleTexture.loadFromFile("assets/particles.png");
-        //as of now. Particles ignore texture, rect, position and parallax
+        //as of now. Particles ignore rect, position and parallax
     RenderizerParameters particleParams{
         window,
         particleTexture,
@@ -125,7 +127,11 @@ int main() {
     /*Enemy*/
     enemyManager.loadTexture("toy", "assets/toy.png");
     enemyManager.registerTemplate("toy", blueprint::toy);
-    enemyManager.queueCreateEnemy("toy", {16.f,16.f});
+    //enemyManager.queueCreateEnemy("toy", {16.f,16.f});
+
+    enemyManager.loadTexture("reindeer", "assets/reindeer.png");
+    enemyManager.registerTemplate("reindeer", blueprint::reindeer);
+    //enemyManager.queueCreateEnemy("reindeer", {-200.f,32.f});
     /*Enemy*/
 
     /*Player*/
@@ -136,9 +142,9 @@ int main() {
         window,
         playerTexture,
         {0,0,17,17},
-        {16.f, 16.f},
+        {16.f * 100, 16.f * 98},
         GameState::getInstance().getMainCamera(),
-        0.f,
+        -0.1f,
         1.f
     };
 
@@ -148,7 +154,7 @@ int main() {
     player.scripter.addScript(script::tangibleAnimations);
     player.scripter.addScript(script::movement);
 
-    player.animator.loadFromAsepriteJSON("assets/json/snowman_animation.json");
+    player.animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
     player.animator.setSpeedMultiplier(1.8f);
     /*Player*/
 
@@ -158,7 +164,7 @@ int main() {
     BulletManager& bulletManager = BulletManager::getInstance();
     /*Bullet*/
 
-    levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/level.json");
+    levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), Constants::STARTING_LEVEL_PATH);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -185,7 +191,7 @@ int main() {
         bulletManager.getInstance().applyQueues();
         enemyManager.getInstance().applyQueues();
 
-        window.clear(ColorPalette::Black);
+        window.clear(levelManager.getBackgroundColor());
 
         for (GameObject* gameObject :  GameObject::getGameObjects()) {
             if (!gameObject) {

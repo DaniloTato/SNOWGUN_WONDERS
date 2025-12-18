@@ -87,8 +87,7 @@ void ParticleManager::emitDust(const sf::Vector2f& pos) {
     particles.push_back(std::move(p));
 }
 
-void ParticleManager::emitExplosion(const sf::Vector2f& pos, int count)
-{
+void ParticleManager::emitExplosion(const sf::Vector2f& pos, int count){
     for (int i = 0; i < count; i++) {
         Particle p;
         p.type = Type::Explosion;
@@ -99,10 +98,31 @@ void ParticleManager::emitExplosion(const sf::Vector2f& pos, int count)
         
         p.animator = std::make_unique<Animator>();
         p.animator->setAnimations(cachedAnimations);
-        p.animator->setState("small_explosion_once");
+        p.animator->play("small_explosion_once");
         p.texRect = sf::IntRect(8, 8, 8, 8);
 
         p.maxLifetime = 0.6f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
+}
+
+void ParticleManager::emitStars(const sf::Vector2f& pos, int count){
+    for (int i = 0; i < count; i++) {
+        Particle p;
+        p.type = Type::Stars;
+        p.pos = pos;
+        p.vel = sf::Vector2f(_toggleRand(-100, 100), _toggleRand(-100, 100));
+
+        p.color = sf::Color::White;
+        
+        p.animator = std::make_unique<Animator>();
+        p.animator->setAnimations(cachedAnimations);
+        p.animator->play("star_once");
+        p.texRect = sf::IntRect(0, 0, 16, 16);
+
+        p.maxLifetime = 1.f;
         p.lifetime = p.maxLifetime;
 
         particles.push_back(std::move(p));

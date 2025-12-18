@@ -12,7 +12,8 @@ public:
     enum class Type {
         Snow,
         Dust,
-        Explosion
+        Explosion,
+        Stars
     };
 
     struct Particle {
@@ -43,6 +44,7 @@ public:
     void emitSnow(const sf::Vector2f& pos);
     void emitDust(const sf::Vector2f& pos);
     void emitExplosion(const sf::Vector2f& pos, int count = 12);
+    void emitStars(const sf::Vector2f& pos, int count = 1);
 
     void setWind(const sf::Vector2f& windVec);
 

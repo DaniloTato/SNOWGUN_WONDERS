@@ -1,7 +1,16 @@
 #include "GameCamera.hpp"
 #include "Constants.hpp"
 #include "GameObject.hpp"
+#include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
+
+sf::Vector2i Vec2fTo2i(sf::Vector2f vec){
+    return {static_cast<int>(vec.x), static_cast<int>(vec.y)};
+}
+
+sf::Vector2f Vec2iTo2f(sf::Vector2i vec){
+    return {static_cast<float>(vec.x), static_cast<float>(vec.y)};
+}
 
 GameCamera::GameCamera()
     : GameObject({0,0}), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {}
@@ -40,7 +49,7 @@ const sf::Vector2f GameCamera::worldToScreen(const sf::Vector2f& worldPos, float
 
     sf::Vector2f parallaxOffset(parallaxOffsetX, parallaxOffsetY);
 
-    return base + zoomOffset + parallaxOffset;
+    return Vec2iTo2f(Vec2fTo2i(base + zoomOffset + parallaxOffset));
 }
 
 const sf::Vector2f GameCamera::screenToWorld(const sf::Vector2f& screenPos, float parallax) const{

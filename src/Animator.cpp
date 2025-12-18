@@ -9,99 +9,139 @@ Animator::Animator() {
 
 using json = nlohmann::json;
 
-void Animator::loadFromAsepriteJSON(const std::string& filename) {
+namespace {
+    struct RawFrame {
+        int index;
+        sf::IntRect rect;
+        float duration;
+    };
+}
+
+void Animator::loadAsepriteAnimations(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        std::cerr << "[Animator] ERROR: Could not open JSON: " << filename << "\n";
+        std::cerr << "[Animator] ERROR: Cannot open " << filename << "\n";
         return;
     }
 
     json j;
     file >> j;
 
-    std::vector<sf::IntRect> allFrames;
-    std::vector<float> allDurations;
+    animations.clear();
+
+    struct ParsedFrame {
+        int index;
+        sf::IntRect rect;
+        float duration;
+    };
+
+    std::unordered_map<std::string, std::vector<ParsedFrame>> grouped;
 
     for (auto& [key, frameData] : j["frames"].items()) {
+
+
+        size_t hash = key.find('#');
+        size_t space = key.find(' ', hash);
+        size_t dot = key.rfind('.');
+
+        if (hash == std::string::npos || space == std::string::npos)
+            continue;
+
+        std::string animName = key.substr(hash + 1, space - hash - 1);
+        int frameIndex = std::stoi(key.substr(space + 1, dot - space - 1));
+
         auto f = frameData["frame"];
-        allFrames.push_back(sf::IntRect(f["x"], f["y"], f["w"], f["h"]));
-        allDurations.push_back(frameData["duration"].get<float>() / 1000.f);
+
+        grouped[animName].push_back({
+            frameIndex,
+            sf::IntRect(f["x"], f["y"], f["w"], f["h"]),
+            frameData["duration"].get<float>() / 1000.f
+        });
     }
 
-    bool animationLoaded = false;
-    for (auto& tag : j["meta"]["frameTags"]) {
+    // ------------------------------------------------------------
+    // Build animations
+    // ------------------------------------------------------------
+    for (auto& [name, frames] : grouped) {
         Animation anim;
-        anim.loop = tag["name"].get<std::string>().find("_once") == std::string::npos;
+        anim.loop = name.find("_once") == std::string::npos;
 
-        int from = tag["from"];
-        int to   = tag["to"];
+        // Sort by local frame index
+        std::sort(frames.begin(), frames.end(),
+            [](const ParsedFrame& a, const ParsedFrame& b) {
+                return a.index < b.index;
+            });
 
-        float totalTime = 0.f;
-        for (int i = from; i <= to; i++)
-            totalTime += allDurations[i];
+        int expectedRow = -1;
+        bool rowMismatch = false;
 
-        anim.frameTime = totalTime / (to - from + 1);
+        for (auto& pf : frames) {
+            anim.frames.push_back({ pf.rect, pf.duration });
 
-        for (int i = from; i <= to; i++)
-            anim.frames.push_back(allFrames[i]);
+            if (expectedRow == -1)
+                expectedRow = pf.rect.top;
+            else if (pf.rect.top != expectedRow)
+                rowMismatch = true;
+        }
 
-        std::string name = tag["name"];
-        addAnimation(name, anim);
-        animationLoaded = true;
-    }
-    if(!animationLoaded){
-        std::cerr << "[Animator] WARNING. No animation was loaded from file: " << filename << "\n";
+        if (rowMismatch)
+            std::cout << "    ⚠️ WARNING: Animation spans multiple sprite rows!\n";
+
+        animations[name] = anim;
     }
 }
 
 std::unordered_map<std::string, Animator::Animation> Animator::getAsepriteJSONAnimations(const std::string& filename){
     static Animator tempAnimator;
-    tempAnimator.loadFromAsepriteJSON(filename);
+    tempAnimator.loadAsepriteAnimations(filename);
     return tempAnimator.animations;
 }
 
 void Animator::addAnimation(const std::string& name, const Animation& anim) {
     animations[name] = anim;
-
-    if (!currentAnim) {
-        currentAnim = &animations[name];
-        currentState = name;
-        currentFrame = 0;
-    }
 }
 
 void Animator::setAnimations(std::unordered_map<std::string, Animator::Animation>& newAnimations){
     animations = newAnimations;
 }
 
-void Animator::setState(const std::string& name) {
-    if (currentState == name) return;
+void Animator::play(const std::string& name) {
+    if (currentState == name)
+        return;
 
     auto it = animations.find(name);
-    if (it == animations.end()) return;
+    if (it == animations.end()){
+        std::cout << "⚠️ animation name not found: " << name << "\n";
+        return;
+    }
 
     currentAnim = &it->second;
     currentState = name;
-    currentFrame = 0;
+    index = 0;
     timer = 0.f;
     finished = false;
 }
 
 void Animator::update() {
-    if (!currentAnim || finished) return;
+    if (!currentAnim || finished)
+        return;
 
-    timer += GameState::getInstance().dt() * speedMultiplier;
+    if (currentAnim->frames.empty())
+        return;
 
-    if (timer >= currentAnim->frameTime) {
-        timer = 0.f;
+    timer += speedMultiplier * GameState::getInstance().dt();
 
-        if (currentFrame + 1 < currentAnim->frames.size()) {
-            currentFrame++;
-        }
-        else {
+    const Frame& frame = currentAnim->frames[index];
+
+    if (timer >= frame.duration) {
+        timer -= frame.duration;
+        index++;
+
+        if (index >= currentAnim->frames.size()) {
             if (currentAnim->loop) {
-                currentFrame = 0;
+                index = 0;
             } else {
+                index = currentAnim->frames.size() - 1;
                 finished = true;
             }
         }
@@ -109,11 +149,14 @@ void Animator::update() {
 }
 
 const sf::IntRect& Animator::getCurrentFrame() const {
-    static sf::IntRect dummy{0,0,0,0};
-    if (!currentAnim || currentAnim->frames.empty()){
+    static sf::IntRect dummy{0, 0, 0, 0};
+
+    if (!currentAnim || currentAnim->frames.empty())
+        // std::cout << "returned nothing" << "\n";
+        // std::cout << currentAnim << "\n";
         return dummy;
-    }
-    return currentAnim->frames[currentFrame];
+
+    return currentAnim->frames[index].rect;
 }
 
 void Animator::setSpeedMultiplier(float multiplier) {

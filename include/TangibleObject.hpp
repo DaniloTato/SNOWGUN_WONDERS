@@ -6,6 +6,13 @@
 #include "Animator.hpp"
 #include "PhysicsComponent.hpp"
 
+struct AttackHitbox {
+    BasicCollider collider;
+    bool active = false;
+    int damage = 1;
+    float remainingTime = 0.f;
+};
+
 class TangibleObject: public GameObject {
 public:
     TangibleObject(RenderizerParameters params);
@@ -16,4 +23,5 @@ public:
     Animator animator;
     PhysicsComponent physics;
     int direction = 1;
+    std::optional<AttackHitbox> attackHitbox;
 };

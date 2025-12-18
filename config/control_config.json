@@ -2,18 +2,21 @@
     "bindings": {
         "left": "A",
         "right": "D",
-        "jump": "W",
+        "up": "W",
+        "down": "S",
+        "jump": "M",
         "zoomIn": "O",
         "zoomOut": "L",
         "shakeCamera": "Num1",
         "dramaticZoom": "Num2",
         "saveLevel": "Num0",
         "createTile": "Space",
-        "deleteTile": "LShift",
+        "deleteTile": "LControl",
         "tilePicker": "T",
         "textTest": "Num3",
         "shoot": "N",
         "crash": "U",
-        "spawnEnemy": "R"
+        "spawnEnemy": "R",
+        "kick": "LShift"
     }
 }

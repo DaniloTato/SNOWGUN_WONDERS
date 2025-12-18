@@ -119,7 +119,7 @@ namespace script {
 
         if(inputManager.isJustPressed("saveLevel")){
             std::cout << "Saving level..." << std::endl;
-            levelManager.saveLevel("assets/level_data/level.json");
+            levelManager.saveLevel(Constants::STARTING_LEVEL_PATH);
         }
     }
 }

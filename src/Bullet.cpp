@@ -1,43 +1,45 @@
 #include "Bullet.hpp"
 #include "Constants.hpp"
+#include "PhysicsComponent.hpp"
 
 Bullet::Bullet(
     RenderizerParameters params,
-    BulletType t,
+    Bullet::Type t,
     const sf::Vector2f& initSpeed,
     const sf::Vector2f& accel,
     float dmgRadius,
-    float range
+    float range,
+    bool shotByPlayer
 )
 : TangibleObject(params),
   type(t),
   acceleration(accel),
   damageRadius(dmgRadius),
   maxRange(range),
-  spawnPos(params.position)
+  spawnPos(params.position),
+  shotByPlayer(shotByPlayer)
 {
 
-    physics.setSpeed(initSpeed);
-    if(type != BulletType::BubbleGun){
+    physics.setSpeed(initSpeed, PhysicsComponent::SpeedType::MOVEMENT);
+    if(type != Bullet::Type::BubbleGun){
         physics.turnOffFriction();
     }else{
-        physics.setXFriction(0.99f);
+        physics.xFriction = 0.99f;
     }
-    animator.setState("fly");
 
     switch (type) {
-        case BulletType::Normal:
-            physics.setGravity(0.f);
+        case Bullet::Type::Normal:
+            physics.gravity = 0.f;
             break;
 
-        case BulletType::BubbleGun:
-            physics.setGravity(0.3f);
+        case Bullet::Type::BubbleGun:
+            physics.gravity = 0.3f;
             maxBounces = 10;
             maxLifeTime = 8.f;
             break;
 
-        case BulletType::Bazooka:
-            physics.setGravity(0.f);
+        case Bullet::Type::Bazooka:
+            physics.gravity = 0.f;
             break;
     }
 
@@ -62,13 +64,13 @@ void Bullet::update(const GeneralContext& ctx) {
 }
 
 void Bullet::updateBehavior(const GeneralContext& ctx) {
-    physics.setSpeed(physics.getSpeed() + acceleration);
+    physics.setSpeed(physics.getSpeed(PhysicsComponent::SpeedType::MOVEMENT) + acceleration, PhysicsComponent::SpeedType::MOVEMENT);
 
     physics.updateY(position);
     if (collider.verticalLevelCollision(position)) {
-        if (type == BulletType::BubbleGun) {
+        if (type == Bullet::Type::BubbleGun) {
             bounceCount++;
-            physics.setSpdy(-physics.getSpdy() * 0.9f);
+            physics.setSpdy(-physics.getSpdy(PhysicsComponent::SpeedType::MOVEMENT) * 0.9f, PhysicsComponent::SpeedType::MOVEMENT);
 
             if (bounceCount >= maxBounces)
                 die();
@@ -80,9 +82,9 @@ void Bullet::updateBehavior(const GeneralContext& ctx) {
 
     physics.updateX(position);
     if (collider.horizontalLevelCollision(position)){
-        if (type == BulletType::BubbleGun) {
+        if (type == Bullet::Type::BubbleGun) {
             bounceCount++;
-            physics.setSpdx(-physics.getSpdx() * 0.9f);
+            physics.setSpdx(-physics.getSpdx(PhysicsComponent::SpeedType::MOVEMENT) * 0.9f, PhysicsComponent::SpeedType::MOVEMENT);
 
             if (bounceCount >= maxBounces)
                 die();
@@ -112,8 +114,12 @@ void Bullet::die() {
     if (dying) return;
 
     dying = true;
-    animator.setState("die_once");
+    animator.play("die_once");
 
     collider.setSize({ damageRadius * 2.f, damageRadius * 2.f });
     collider.setOffset({ -damageRadius, -damageRadius });
+}
+
+bool Bullet::isShotByPlayer(){
+    return shotByPlayer;
 }

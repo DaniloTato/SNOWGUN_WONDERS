@@ -7,4 +7,8 @@ namespace script {
 
     void cameraShake(GameCamera& camera, const GeneralContext& ctx);
 
+    namespace ShakeFunctions{
+        bool isShaking(GameCamera& camera);
+    }
+
 }

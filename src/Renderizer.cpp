@@ -1,11 +1,21 @@
 #include "Renderizer.hpp"
 #include "GameState.hpp"
+#include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/System/Vector2.hpp"
 
 std::vector<RenderEntry> Renderizer::registry;
 
 Renderizer::Renderizer(const RenderizerParameters& params)
-: window(params.window), texture(params.texture), rect(params.rect), assignedCamera(params.camera), layer(params.layer), paralax(params.parallax), show(true), showCountDown(0.f) {
+: window(params.window),
+texture(params.texture), 
+rect(params.rect),
+color(sf::Color::White), 
+assignedCamera(params.camera), 
+layer(params.layer), 
+paralax(params.parallax), 
+show(true), 
+showCountDown(0.f)
+{
     sprite.setTexture(texture);
     sprite.setTextureRect(rect);
     
@@ -15,8 +25,8 @@ Renderizer::~Renderizer(){
     unregisterPair(this);
 }
 
-void Renderizer::registerPair(GameObject* obj, Renderizer* rend){
-    registry.push_back({ obj, rend });
+void Renderizer::registerPair(GameObject* obj, Renderizer* rend, bool isRectShape){
+    registry.push_back({ obj, rend, isRectShape});
 }
 
 void Renderizer::unregisterPair(Renderizer* rend){
@@ -43,7 +53,31 @@ void Renderizer::render(GameObject* obj) {
         sprite.setPosition(screenPos);
         sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
     }
+
     window.draw(sprite);
+}
+
+void Renderizer::renderRectShape(GameObject* obj) {
+
+    sf::Vector2f position = obj->position + obj->offset;
+
+    sf::RectangleShape rectShape;
+    rectShape.setFillColor(color);
+
+    if (!assignedCamera) {
+        rectShape.setPosition(position);
+        rectShape.setSize(static_cast<sf::Vector2f>(rect.getSize()));
+    } else{
+        sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
+        sprite.setPosition(screenPos);
+        rectShape.setSize(static_cast<sf::Vector2f>(rect.getSize()) * assignedCamera->getZoom());
+    }
+
+    window.draw(sprite);
+}
+
+void Renderizer::setColor(sf::Color newColor){
+    color = newColor;
 }
 
 const float Renderizer::getLayer() const{
