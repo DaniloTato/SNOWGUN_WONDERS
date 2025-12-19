@@ -13,10 +13,13 @@ public:
 
     static std::vector<GameObject*>& getGameObjects();
     static void destroy(GameObject* g);
+
+    static void destroySceneObjects();
     
     sf::Vector2f position;
     sf::Vector2f offset;
 
 protected:
+    bool persistentAcrossScenes = false;
     static std::vector<GameObject*> s_gameObjects;
 };

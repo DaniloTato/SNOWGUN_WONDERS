@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "SceneAware.hpp"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/Graphics/Rect.hpp"
 #include "GameCamera.hpp"
@@ -34,7 +35,9 @@ struct LayerInfo {
     std::vector<TileInfo> tiles;
 };
 
-class LevelManager {
+class LevelManager
+    : public SceneAware
+{
 public:
     static LevelManager& getInstance();
 
@@ -58,6 +61,8 @@ public:
     void queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, int x, int y, const sf::IntRect& rect);
     void queueDeleteTile(int layer, int x, int y);
     void applyQueuedTileChanges();
+
+    void onSceneUnload() override;
 
     const sf::Vector2f& getCameraPlayerRelation() const;
 

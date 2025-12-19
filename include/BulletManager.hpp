@@ -1,9 +1,7 @@
 #pragma once
 #include "QueuedManager.hpp"
 #include "Bullet.hpp"
-#include "GameObject.hpp"
 #include "BasicCollider.hpp"
-#include "SceneAware.hpp"
 
 struct BulletCreationRequest {
     RenderizerParameters params;
@@ -16,8 +14,7 @@ struct BulletCreationRequest {
 };
 
 class BulletManager
-    : public GameObject
-    , public QueuedManager<Bullet, BulletCreationRequest>
+    : public QueuedManager<Bullet, BulletCreationRequest>
 {
 public:
 
@@ -38,7 +35,7 @@ public:
 
     void queueDeletion(Bullet* bullet);
 
-    void update(const GeneralContext& ctx) override;
+    void update();
 
     Bullet* isCollidingWithBullet(TangibleObject& object, bool amIPlayer);
 

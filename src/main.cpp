@@ -20,6 +20,7 @@
 #include "ScriptRunner.hpp"
 #include "DialogueManager.hpp"
 #include "EnemyManager.hpp"
+#include "SceneManager.hpp"
 
 /*Namespaces*/
 #include "Constants.hpp"
@@ -50,162 +51,340 @@
 #include <iostream>
 #include <ctime>
 
-int main() {
+// int main() {
 
-    InputManager& inputManager = InputManager::getInstance();
+//     InputManager& inputManager = InputManager::getInstance();
+//     LevelManager& levelManager = LevelManager::getInstance();
+//     GameState& gameState = GameState::getInstance();
+//     EnemyManager& enemyManager = EnemyManager::getInstance();
+
+//     sf::RenderWindow& window = *gameState.getMainWindow();
+//     window.setFramerateLimit(Constants::FRAME_RATE);
+
+//     sf::Clock clock;
+
+//     inputManager.loadBindingsFromJsonFile("./config/control_config.json");
+
+//     GameState::getInstance().getMainCamera()->zoomTo(3.f);
+//     GameState::getInstance().getMainCamera() -> scripter.addScript(script::roomCamera);
+//     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
+//     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraAlarm);
+
+//     ScriptRunner scriptRunner;
+//     scriptRunner.scripter.addScript(script::levelCreatorInputs);
+//     scriptRunner.scripter.addScript(script::particleGeneration);
+
+//     /*Particles*/
+//     sf::Texture particleTexture;
+//     particleTexture.loadFromFile("assets/particles.png");
+//         //as of now. Particles ignore rect, position and parallax
+//     RenderizerParameters particleParams{
+//         window,
+//         particleTexture,
+//         sf::IntRect(0,0,0,0),
+//         {0.f, 0.f},
+//         GameState::getInstance().getMainCamera(),
+//         -1.f,
+//         0.7f
+//     };
+
+//     PolyRenderizer particleRenderizer(particleParams);
+//     ParticleManager& particleManager = ParticleManager::getInstance();
+//     particleManager.attachPolyRederizer(&particleRenderizer); //Imperative attatchment of rendenderizer.
+//     /*Particles*/
+
+//     /*Dialogues*/
+//     sf::Texture fontTexture;
+//     fontTexture.loadFromFile("assets/font.png");
+//     RenderizerParameters textParams{
+//         window,
+//         fontTexture,
+//         sf::IntRect(),
+//         {0.f, 0.f},
+//         GameState::getInstance().getMainCamera(),
+//         -2.f,
+//         1.f
+//     };
+//     DialogueManager& dialogueManager = DialogueManager::getInstance();
+//     dialogueManager.attachTextParams(&textParams);
+//     dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+//     /*Dialogues*/
+
+//     sf::Texture toddTexture;
+//     toddTexture.loadFromFile("assets/todd.png");
+
+//     RenderizerParameters toddParams{
+//         window,
+//         toddTexture,
+//         {0,0,16,16},
+//         {128.f, 0.f},
+//         GameState::getInstance().getMainCamera(),
+//         0.f,
+//         1.f
+//     };
+//     RenderableObject todd(toddParams);
+//     todd.scripter.addScript(script::toddTalk);
+//     dialogueManager.assignDialogue(&todd, "Greeting");
+
+//     /*Enemy*/
+//     enemyManager.loadTexture("toy", "assets/toy.png");
+//     enemyManager.registerTemplate("toy", blueprint::toy);
+//     //enemyManager.queueCreateEnemy("toy", {16.f,16.f});
+
+//     enemyManager.loadTexture("reindeer", "assets/reindeer.png");
+//     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
+//     //enemyManager.queueCreateEnemy("reindeer", {-200.f,32.f});
+//     /*Enemy*/
+
+//     /*Player*/
+//     sf::Texture playerTexture;
+//     playerTexture.loadFromFile("assets/snowman_animation.png");
+
+//     RenderizerParameters playerParams{
+//         window,
+//         playerTexture,
+//         {0,0,17,17},
+//         {16.f * 100, 16.f * 98},
+//         GameState::getInstance().getMainCamera(),
+//         -0.1f,
+//         1.f
+//     };
+
+//     TangibleObject player(playerParams);
+//     player.collider.setSize({18.f, 18.f});
+
+//     player.scripter.addScript(script::tangibleAnimations);
+//     player.scripter.addScript(script::movement);
+
+//     player.animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
+//     player.animator.setSpeedMultiplier(1.8f);
+//     /*Player*/
+
+//     /*Bullet*/
+//     sf::Texture bulletTexture;
+//     bulletTexture.loadFromFile("assets/bullet.png");
+//     BulletManager& bulletManager = BulletManager::getInstance();
+//     /*Bullet*/
+
+//     levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), Constants::STARTING_LEVEL_PATH);
+
+//     while (window.isOpen()) {
+//         sf::Event event;
+
+//         inputManager.update();
+//         while (window.pollEvent(event)) {
+//             if (event.type == sf::Event::Closed)
+//                 window.close();
+
+//             inputManager.handleEvent(event);
+//         }
+
+//         //yet to modify general context
+//         GeneralContext ctx = {
+//             player.position,
+//             window,
+//             textParams,
+//             &player,
+//             bulletTexture
+//         };
+
+//         levelManager.applyQueuedTileChanges();
+//         dialogueManager.applyQueues();
+//         bulletManager.getInstance().applyQueues();
+//         enemyManager.getInstance().applyQueues();
+        
+//         bulletManager.update();
+
+//         window.clear(levelManager.getBackgroundColor());
+
+//         for (GameObject* gameObject :  GameObject::getGameObjects()) {
+//             if (!gameObject) {
+//                 std::cerr << "[Warning] Null GameObject pointer encountered during update. Skipping.\n";
+//                 continue;
+//             }
+//             gameObject->update(ctx);
+//         }
+
+//         Renderizer::renderAll();
+
+//         window.display();
+//     }
+    
+//     return 0;
+// }
+
+void setupMainLevelScene() {
     LevelManager& levelManager = LevelManager::getInstance();
-    GameState& gameState = GameState::getInstance();
     EnemyManager& enemyManager = EnemyManager::getInstance();
-
+    DialogueManager& dialogueManager = DialogueManager::getInstance();
+    ParticleManager& particleManager = ParticleManager::getInstance();
+    GameState& gameState = GameState::getInstance();
     sf::RenderWindow& window = *gameState.getMainWindow();
-    window.setFramerateLimit(Constants::FRAME_RATE);
 
-    sf::Clock clock;
-
-    inputManager.loadBindingsFromJsonFile("./config/control_config.json");
+    GameState::getInstance().createCamera(GameState::CameraList::MAIN);
+    GameState::getInstance().createCamera(GameState::CameraList::UI);
 
     GameState::getInstance().getMainCamera()->zoomTo(3.f);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::roomCamera);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraAlarm);
 
-    ScriptRunner scriptRunner;
-    scriptRunner.scripter.addScript(script::levelCreatorInputs);
-    scriptRunner.scripter.addScript(script::particleGeneration);
+    // Load level
+    levelManager.loadLevel(window, gameState.getMainCamera(), Constants::STARTING_LEVEL_PATH);
+ 
+    // Setup Scripts
+    // ScriptRunner scriptRunner;
+    // scriptRunner.scripter.addScript(script::levelCreatorInputs);
+    // scriptRunner.scripter.addScript(script::particleGeneration);
 
-    /*Particles*/
-    sf::Texture particleTexture;
+    // Particles
+    static sf::Texture particleTexture;
     particleTexture.loadFromFile("assets/particles.png");
-        //as of now. Particles ignore rect, position and parallax
     RenderizerParameters particleParams{
         window,
         particleTexture,
         sf::IntRect(0,0,0,0),
         {0.f, 0.f},
-        GameState::getInstance().getMainCamera(),
+        gameState.getMainCamera(),
         -1.f,
         0.7f
     };
+    static PolyRenderizer particleRenderizer(particleParams);
+    particleManager.attachPolyRederizer(&particleRenderizer);
 
-    PolyRenderizer particleRenderizer(particleParams);
-    ParticleManager& particleManager = ParticleManager::getInstance();
-    particleManager.attachPolyRederizer(&particleRenderizer); //Imperative attatchment of rendenderizer.
-    /*Particles*/
-
-    /*Dialogues*/
-    sf::Texture fontTexture;
+    // Dialogues
+    static sf::Texture fontTexture;
     fontTexture.loadFromFile("assets/font.png");
     RenderizerParameters textParams{
         window,
         fontTexture,
         sf::IntRect(),
         {0.f, 0.f},
-        GameState::getInstance().getMainCamera(),
+        gameState.getMainCamera(),
         -2.f,
         1.f
     };
-    DialogueManager& dialogueManager = DialogueManager::getInstance();
     dialogueManager.attachTextParams(&textParams);
     dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
-    /*Dialogues*/
 
-    sf::Texture toddTexture;
+    // Example of creating a game object like Todd
+    static sf::Texture toddTexture;
     toddTexture.loadFromFile("assets/todd.png");
-
     RenderizerParameters toddParams{
         window,
         toddTexture,
         {0,0,16,16},
         {128.f, 0.f},
-        GameState::getInstance().getMainCamera(),
+        gameState.getMainCamera(),
         0.f,
         1.f
     };
-    RenderableObject todd(toddParams);
-    todd.scripter.addScript(script::toddTalk);
-    dialogueManager.assignDialogue(&todd, "Greeting");
+    RenderableObject* todd = new RenderableObject(toddParams);
+    todd -> scripter.addScript(script::toddTalk);
+    dialogueManager.assignDialogue(todd, "Greeting");
 
-    /*Enemy*/
+    // Enemies
     enemyManager.loadTexture("toy", "assets/toy.png");
     enemyManager.registerTemplate("toy", blueprint::toy);
-    //enemyManager.queueCreateEnemy("toy", {16.f,16.f});
-
     enemyManager.loadTexture("reindeer", "assets/reindeer.png");
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
-    //enemyManager.queueCreateEnemy("reindeer", {-200.f,32.f});
-    /*Enemy*/
 
-    /*Player*/
-    sf::Texture playerTexture;
+    // Player setup
+    static sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/snowman_animation.png");
-
     RenderizerParameters playerParams{
         window,
         playerTexture,
         {0,0,17,17},
         {16.f * 100, 16.f * 98},
-        GameState::getInstance().getMainCamera(),
+        gameState.getMainCamera(),
         -0.1f,
         1.f
     };
+    TangibleObject* player = new TangibleObject(playerParams);
+    player -> collider.setSize({18.f, 18.f});
+    player ->scripter.addScript(script::movement);
+    player -> animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
+    player -> animator.setSpeedMultiplier(1.8f);
 
-    TangibleObject player(playerParams);
-    player.collider.setSize({18.f, 18.f});
-
-    player.scripter.addScript(script::tangibleAnimations);
-    player.scripter.addScript(script::movement);
-
-    player.animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
-    player.animator.setSpeedMultiplier(1.8f);
-    /*Player*/
-
-    /*Bullet*/
-    sf::Texture bulletTexture;
+    // Bullets
+    static sf::Texture bulletTexture;
     bulletTexture.loadFromFile("assets/bullet.png");
-    BulletManager& bulletManager = BulletManager::getInstance();
-    /*Bullet*/
 
     levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), Constants::STARTING_LEVEL_PATH);
 
+    //context. Imperative
+    GeneralContext ctx = {
+        &(player -> position),
+        &textParams,
+        player,
+        &bulletTexture
+    };
+    SceneManager::getInstance().setContext(ctx);
+
+}
+
+int main() {
+    // Grab singleton references
+    InputManager& inputManager = InputManager::getInstance();
+    SceneManager& sceneManager = SceneManager::getInstance();
+    GameState& gameState = GameState::getInstance();
+
+    sf::RenderWindow& window = *gameState.getMainWindow();
+    window.setFramerateLimit(Constants::FRAME_RATE);
+
+    inputManager.loadBindingsFromJsonFile("./config/control_config.json");
+
+    sceneManager.registerScene("MainLevel", setupMainLevelScene);
+
+    // Start the first scene explicitly:
+    sceneManager.loadScene("MainLevel");
+
+    sf::Clock clock;
+
+    // ScriptRunner scriptRunner;
+    // scriptRunner.scripter.addScript(script::levelCreatorInputs);
+    // scriptRunner.scripter.addScript(script::particleGeneration);
+
+    // Main game loop
     while (window.isOpen()) {
         sf::Event event;
-
         inputManager.update();
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
 
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
             inputManager.handleEvent(event);
         }
 
-        //yet to modify general context
-        GeneralContext ctx = {
-            player.position,
-            window,
-            textParams,
-            &player,
-            bulletTexture
-        };
+        if (inputManager.isJustPressed("nextScene")) {
+            sceneManager.loadScene("MainLevel");
+        }
 
-        levelManager.applyQueuedTileChanges();
-        dialogueManager.applyQueues();
-        bulletManager.getInstance().applyQueues();
-        enemyManager.getInstance().applyQueues();
+        sceneManager.update();
 
-        window.clear(levelManager.getBackgroundColor());
+        if (!sceneManager.isTransitioning()) {
+            LevelManager::getInstance().applyQueuedTileChanges();
+            DialogueManager::getInstance().applyQueues();
+            BulletManager::getInstance().applyQueues();
+            EnemyManager::getInstance().applyQueues();
 
-        for (GameObject* gameObject :  GameObject::getGameObjects()) {
-            if (!gameObject) {
-                std::cerr << "[Warning] Null GameObject pointer encountered during update. Skipping.\n";
-                continue;
+            BulletManager::getInstance().update();
+        }
+
+        window.clear(LevelManager::getInstance().getBackgroundColor());
+
+        for (GameObject* gameObject : GameObject::getGameObjects()) {
+            if (gameObject) {
+                gameObject->update(SceneManager::getInstance().getContext());
             }
-            gameObject->update(ctx);
         }
 
         Renderizer::renderAll();
 
         window.display();
     }
-    
+
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "DialogueManager.hpp"
+#include "QueuedManager.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -78,4 +79,11 @@ GameText* DialogueManager::createFromRequest(const TextCreationRequest& req) {
 
 void DialogueManager::destroyObject(GameText* text) {
     delete text;
+}
+
+void DialogueManager::onSceneUnload(){
+    assigned.clear();
+    attachedTextParams = nullptr;
+
+    QueuedManager<GameText, TextCreationRequest>::onSceneUnload();
 }

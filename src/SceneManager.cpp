@@ -2,6 +2,10 @@
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
 #include "GameState.hpp"
+#include "BulletManager.hpp"
+#include "EnemyManager.hpp"
+#include "ParticleManager.hpp"
+#include "DialogueManager.hpp"
 
 SceneManager& SceneManager::getInstance() {
     static SceneManager instance;
@@ -23,11 +27,20 @@ void SceneManager::beginTransition(const std::string& nextScene) {
     queuedScene = nextScene;
 }
 
-void SceneManager::finishTransition() {
-    GameObject::destroyAll();
+void SceneManager::unloadCurrentScene() {
+    BulletManager::getInstance().onSceneUnload();
+    EnemyManager::getInstance().onSceneUnload();
+    ParticleManager::getInstance().onSceneUnload();
+    DialogueManager::getInstance().onSceneUnload();
+    LevelManager::getInstance().onSceneUnload();
 
-    auto& levelManager = LevelManager::getInstance();
-    levelManager = LevelManager();
+    GameState::getInstance().clearCameras();
+
+    GameObject::destroySceneObjects();
+}
+
+void SceneManager::finishTransition() {
+    unloadCurrentScene();
 
     scenes[queuedScene]();
     currentScene = queuedScene;
@@ -43,4 +56,16 @@ void SceneManager::update() {
     if (transitionTimer >= 0.5f) {
         finishTransition();
     }
+}
+
+bool SceneManager::isTransitioning(){
+    return transitioning;
+}
+
+void SceneManager::setContext(GeneralContext& newContext){
+    currentContext = newContext;
+}
+
+const GeneralContext& SceneManager::getContext() const{
+    return currentContext;
 }

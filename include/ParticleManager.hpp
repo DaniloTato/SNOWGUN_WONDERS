@@ -4,10 +4,14 @@
 
 #include "Animator.hpp"
 #include "GameObject.hpp"
+#include "SceneAware.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
 
-class ParticleManager: GameObject {
+class ParticleManager
+    : public GameObject
+    , public SceneAware
+{
 public:
     enum class Type {
         Snow,
@@ -51,11 +55,13 @@ public:
     void updateParticles();
     void updateRenderCommandBuffer();
 
-    virtual void update(const GeneralContext& ctx) override;
+    void update(const GeneralContext& ctx) override;
 
     void attachPolyRederizer(PolyRenderizer* polyRenderizer);
 
     void destroyAll();
+
+    void onSceneUnload() override;
 
 private:
     ParticleManager();

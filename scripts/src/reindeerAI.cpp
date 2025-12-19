@@ -84,7 +84,7 @@ namespace script {
 
                     RenderizerParameters bulletParams{
                         *GameState::getInstance().getMainWindow(),
-                        ctx.bulletTexture,
+                        *ctx.bulletTexture,
                         {0,0,15,15},
                         tangible.position,
                         GameState::getInstance().getMainCamera(),

@@ -21,10 +21,12 @@ namespace script {
 
     void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx){
 
+        std::cout << "running\n";
+
         InputManager& inputManager = InputManager::getInstance();
         LevelManager& levelManager = LevelManager::getInstance();
 
-        sf::RenderWindow& window = ctx.window;
+        sf::RenderWindow& window = *GameState::getInstance().getMainWindow();
 
         if (inputManager.isJustPressed("tilePicker")){
             TilePicker picker(

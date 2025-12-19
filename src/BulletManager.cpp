@@ -51,7 +51,7 @@ void BulletManager::destroyObject(Bullet* bullet) {
     GameObject::destroy(bullet);
 }
 
-void BulletManager::update(const GeneralContext& ctx) {
+void BulletManager::update() {
     for (Bullet* bullet : objects) {
         if (bullet->isDead()) {
             queueDeletion(bullet);

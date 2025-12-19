@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "GameCamera.hpp"
-#include "GameObject.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
 class GameState {
@@ -10,13 +9,15 @@ public:
 
     enum class CameraList{
         MAIN,
-        UI    
+        UI,
+        COUNT
     };
 
     static GameState& getInstance();
 
     void addCamera(GameCamera* camera);
     void removeCamera(GameCamera* camera);
+    void createCamera(CameraList type);
     const std::vector<GameCamera*>& getActiveCameras() const;
     GameCamera* getMainCamera() const;
     GameCamera* getUiCamera() const;

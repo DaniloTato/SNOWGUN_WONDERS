@@ -1,3 +1,5 @@
+#pragma once
+
 class SceneAware {
 public:
     virtual void onSceneUnload() = 0;

@@ -25,3 +25,10 @@ std::vector<GameObject*> GameObject::s_gameObjects;
 std::vector<GameObject*>& GameObject::getGameObjects() {
     return s_gameObjects;
 }
+
+void GameObject::destroySceneObjects() {
+    for (auto* obj : getGameObjects()) {
+        if (!obj->persistentAcrossScenes)
+            destroy(obj);
+    }
+}

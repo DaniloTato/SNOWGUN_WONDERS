@@ -26,6 +26,7 @@ public:
     void onTrigger(GameObject* object);
 
     void attachTextParams(RenderizerParameters* params);
+    void onSceneUnload() override;
 
 private:
     DialogueManager();

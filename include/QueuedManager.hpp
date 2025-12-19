@@ -1,9 +1,12 @@
 #pragma once
+#include "SceneAware.hpp"
 #include <vector>
 #include <algorithm>
 
 template<typename TObject, typename TCreateReq>
-class QueuedManager {
+class QueuedManager
+    : public SceneAware
+{
 protected:
     std::vector<TObject*> objects;
     std::vector<TCreateReq> createQueue;
@@ -31,5 +34,14 @@ public:
                 objects.push_back(obj);
         }
         createQueue.clear();
+    }
+
+    void onSceneUnload() override {
+        for (auto* obj : objects)
+            destroyObject(obj);
+
+        objects.clear();
+        createQueue.clear();
+        deleteQueue.clear();
     }
 };

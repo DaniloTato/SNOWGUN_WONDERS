@@ -15,6 +15,7 @@ static float _toggleRand(float min, float max) {
 
 ParticleManager::ParticleManager(){
     cachedAnimations = Animator::getAsepriteJSONAnimations("assets/json/particles.json");
+    persistentAcrossScenes = true;
 }
 
 ParticleManager& ParticleManager::getInstance() {
@@ -199,4 +200,15 @@ void ParticleManager::updateRenderCommandBuffer() {
 
 void ParticleManager::destroyAll() {
     particles.clear();
+}
+
+void ParticleManager::onSceneUnload()
+{
+    destroyAll();
+
+    renderCommandBuffer.clear();
+
+    attachedRenderizer = nullptr;
+
+    wind = {0.f, 0.f};
 }

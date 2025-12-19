@@ -17,6 +17,7 @@
         "shoot": "N",
         "crash": "U",
         "spawnEnemy": "R",
-        "kick": "LShift"
+        "kick": "LShift",
+        "nextScene": "Num5"
     }
 }

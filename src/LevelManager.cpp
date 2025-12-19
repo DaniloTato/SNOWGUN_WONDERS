@@ -319,3 +319,31 @@ void LevelManager::applyQueuedTileChanges() {
 const sf::Vector2f& LevelManager::getCameraPlayerRelation() const{
     return cameraPlayerRelation;
 }
+
+void LevelManager::onSceneUnload()
+{
+    for (auto& layer : layers)
+    {
+        for (auto& tile : layer.tiles)
+        {
+            if (tile.object)
+            {
+                GameObject::destroy(tile.object);
+                tile.object = nullptr;
+            }
+        }
+
+        layer.tiles.clear();
+    }
+
+    layers.clear();
+
+    createQueue.clear();
+    deleteQueue.clear();
+
+    levelLayout.clear();
+
+    activeLayer = 0;
+    cameraPlayerRelation = Constants::STARTING_PLAYER_CAMERA_RELATION;
+    backgroundColor = ColorPalette::DarkCyanBlue;
+}

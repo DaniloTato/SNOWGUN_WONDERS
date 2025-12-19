@@ -2,6 +2,7 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include "GeneralContext.hpp"
 
 class SceneManager {
 public:
@@ -11,6 +12,10 @@ public:
 
     void registerScene(const std::string& name, SceneSetupFn setup);
     void loadScene(const std::string& name);
+    bool isTransitioning();
+
+    void setContext(GeneralContext& newContext);
+    const GeneralContext& getContext() const;
 
     void update();
 
@@ -19,6 +24,7 @@ private:
 
     void beginTransition(const std::string& nextScene);
     void finishTransition();
+    void unloadCurrentScene();
 
     std::unordered_map<std::string, SceneSetupFn> scenes;
 
@@ -27,4 +33,6 @@ private:
 
     bool transitioning = false;
     float transitionTimer = 0.f;
+
+    GeneralContext currentContext;
 };

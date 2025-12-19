@@ -10,7 +10,7 @@
 namespace script{
 
     void followPlayer(GameCamera& camera, const GeneralContext& ctx) {
-        sf::Vector2f playerPosition = ctx.playerPosition;
+        sf::Vector2f playerPosition = *ctx.playerPosition;
 
         float zoom = camera.getZoom();
         sf::Vector2f halfViewSize(Constants::SCREEN_WIDTH / 2.f / zoom, Constants::SCREEN_HEIGHT / 2.f / zoom);

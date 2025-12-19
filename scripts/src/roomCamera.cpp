@@ -10,7 +10,7 @@ namespace script {
 
         const float FIXED_Y = 1460;
 
-        sf::Vector2f playerPosition = ctx.playerPosition;
+        sf::Vector2f playerPosition = *ctx.playerPosition;
 
         float zoom = camera.getZoom();
         float halfViewSizeX = Constants::SCREEN_WIDTH / 2.f / zoom;
