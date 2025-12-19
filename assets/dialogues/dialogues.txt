@@ -14,3 +14,17 @@ Today's a beautiful
 #alignment center
 
 Hola!!!!!!
+
+[Key=test]
+#position 1600 1600
+#boundary 400
+#alignment left
+
+Let's see if this works
+
+[Key=test2]
+#position 0 0
+#boundary 400
+#alignment left
+
+Let's see if this works

@@ -26,6 +26,7 @@ public:
     void onTrigger(GameObject* object);
 
     void attachTextParams(RenderizerParameters* params);
+    RenderizerParameters* getAttachedTextParams() const;
     void onSceneUnload() override;
 
 private:

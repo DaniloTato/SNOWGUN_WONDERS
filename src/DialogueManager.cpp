@@ -83,7 +83,12 @@ void DialogueManager::destroyObject(GameText* text) {
 
 void DialogueManager::onSceneUnload(){
     assigned.clear();
+    delete attachedTextParams;
     attachedTextParams = nullptr;
 
     QueuedManager<GameText, TextCreationRequest>::onSceneUnload();
+}
+
+RenderizerParameters* DialogueManager::getAttachedTextParams() const {
+    return attachedTextParams;
 }

@@ -6,7 +6,6 @@
 #include "EnemyManager.hpp"
 #include "ParticleManager.hpp"
 #include "DialogueManager.hpp"
-#include <iostream>
 
 SceneManager& SceneManager::getInstance() {
     static SceneManager instance;
@@ -30,8 +29,6 @@ void SceneManager::beginTransition(const std::string& nextScene) {
 
 void SceneManager::unloadCurrentScene() {
 
-    std::cout << "Game objects before deleting: " << GameObject::getGameObjects().size() << "\n";
-
     BulletManager::getInstance().onSceneUnload();
     EnemyManager::getInstance().onSceneUnload();
     ParticleManager::getInstance().onSceneUnload();
@@ -40,11 +37,7 @@ void SceneManager::unloadCurrentScene() {
 
     GameState::getInstance().clearCameras();
 
-    std::cout << "Game objects after deleting: " << GameObject::getGameObjects().size() << "\n";
-
-    std::cout << "started deleting" << "\n";
     GameObject::destroySceneObjects();
-    std::cout << "ended deleting" << "\n";
 }
 
 void SceneManager::finishTransition() {

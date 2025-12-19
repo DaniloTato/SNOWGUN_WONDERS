@@ -17,7 +17,7 @@ struct RenderEntry {
 class Renderizer {
 public:
     Renderizer(const RenderizerParameters& params);
-    ~Renderizer();
+    virtual ~Renderizer();
 
     void setRect(const sf::IntRect& newRect, int direction);
     const sf::IntRect& getRect() const;

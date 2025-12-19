@@ -31,30 +31,11 @@ std::vector<GameObject*>& GameObject::getGameObjects() {
 void GameObject::destroySceneObjects() {
     auto& objects = getGameObjects();
 
-    std::cout << "Destroying scene objects. Total: " << objects.size() << "\n";
-
-    // Use a reverse loop to safely remove while iterating
     for (int i = static_cast<int>(objects.size()) - 1; i >= 0; --i) {
         GameObject* obj = objects[i];
 
         if (!obj->persistentAcrossScenes) {
-            // Print pointer and RTTI type info if available
-            std::cout << "Destroying object at " << obj
-                      << ", type: " << typeid(*obj).name() << "\n";
-
-            try {
-                destroy(obj);  // Your existing destroy function
-            } catch (const std::exception& e) {
-                std::cerr << "Exception destroying object at " << obj
-                          << ": " << e.what() << "\n";
-            } catch (...) {
-                std::cerr << "Unknown exception destroying object at " << obj << "\n";
-            }
-        } else {
-            std::cout << "Skipping persistent object at " << obj
-                      << ", type: " << typeid(*obj).name() << "\n";
+            destroy(obj);
         }
     }
-
-    std::cout << "Finished destroying scene objects.\n";
 }

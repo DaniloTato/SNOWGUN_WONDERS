@@ -22,7 +22,6 @@ sf::Color& LevelManager::getBackgroundColor() {
 }
 
 void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const std::string& path){
-    std::cout << "Load level called \n";
     layers.clear();
 
     std::ifstream file(path);
@@ -70,8 +69,6 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
 
     const auto& jsonTiles = layerJSON["tiles"];
 
-    int tilesCreated = 0;
-
     for (const auto& t : jsonTiles)
     {
         TileInfo info;
@@ -102,13 +99,9 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
 
         tileList.push_back(info);
 
-        tilesCreated++;
-
         if (layerNo == 0 && info.y < levelLayout.size() && info.x < levelLayout[0].size())
             levelLayout[info.y][info.x] = 1;
     }
-
-    std::cout << "Tiles created this layer: " << tilesCreated << "\n";
 }
 
 void LevelManager::reloadAllLayers(sf::RenderWindow& window, GameCamera* camera){

@@ -208,6 +208,7 @@ void ParticleManager::onSceneUnload()
 
     renderCommandBuffer.clear();
 
+    delete attachedRenderizer;
     attachedRenderizer = nullptr;
 
     wind = {0.f, 0.f};
