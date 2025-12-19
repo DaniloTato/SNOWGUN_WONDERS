@@ -3,6 +3,7 @@
 #include "Bullet.hpp"
 #include "GameObject.hpp"
 #include "BasicCollider.hpp"
+#include "SceneAware.hpp"
 
 struct BulletCreationRequest {
     RenderizerParameters params;

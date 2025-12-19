@@ -9,6 +9,7 @@ namespace script {
 
     namespace ShakeFunctions{
         bool isShaking(GameCamera& camera);
+        void startShake(GameCamera& camera, float duration, float intensity);
     }
 
 }

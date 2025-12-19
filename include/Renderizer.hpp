@@ -29,7 +29,7 @@ public:
     void toggleShowEvery(float time);
     bool shouldIRender();
 
-    static void registerPair(GameObject* obj, Renderizer* rend, bool isRectShape = false);
+    static void registerPair(GameObject* obj, Renderizer* rend, bool isRectShape);
     static void unregisterPair(Renderizer* rend);
 
     static void renderAll();

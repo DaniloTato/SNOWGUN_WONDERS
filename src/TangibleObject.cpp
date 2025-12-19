@@ -2,7 +2,7 @@
 #include "GeneralContext.hpp"
 
 TangibleObject::TangibleObject(RenderizerParameters params) : GameObject(params.position), renderizer(params) {
-    Renderizer::registerPair(this, &renderizer);
+    Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 }
 
 void TangibleObject::update(const GeneralContext& ctx) {

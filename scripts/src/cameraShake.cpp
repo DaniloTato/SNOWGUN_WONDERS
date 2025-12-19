@@ -4,7 +4,6 @@
 
 #include "GameCamera.hpp"
 #include "GameState.hpp"
-#include "InputManager.hpp"
 
 namespace script {
 
@@ -52,11 +51,17 @@ namespace script {
 
     namespace ShakeFunctions{
         bool isShaking(GameCamera& camera){
-            auto it = camera.scripter.scriptState.find("damageable");
+            auto it = camera.scripter.scriptState.find("cameraShake");
             if (it == camera.scripter.scriptState.end()) return false;
-
             const auto& state = std::any_cast<const ScreenShake&>(it->second);
             return state.getShakeDuration() != 0.f;
+        }
+
+        void startShake(GameCamera& camera, float duration, float intensity){
+            auto it = camera.scripter.scriptState.find("cameraShake");
+            if (it == camera.scripter.scriptState.end()) return;
+            auto& state = std::any_cast<ScreenShake&>(it->second);
+            state.start(duration, intensity);
         }
     }
 
@@ -68,10 +73,6 @@ namespace script {
         auto& state = std::any_cast<ScreenShake&>(stateAny);
 
         state.update(camera, ctx, GameState::getInstance().dt());
-
-        if(InputManager::getInstance().isJustPressed("shakeCamera")){
-            state.start(0.5f, 40.f);
-        }
     }
 
 }

@@ -16,7 +16,7 @@ std::string trimLeadingSpace(std::string s) {
 
 GameText::GameText(RenderizerParameters params): renderizer(params){
 
-    Renderizer::registerPair(this, &renderizer);
+    Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 
     colorNameMap["white"] = sf::Color::White;
     colorNameMap["black"] = sf::Color::Black;

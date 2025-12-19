@@ -24,7 +24,7 @@ ParticleManager& ParticleManager::getInstance() {
 
 void ParticleManager::attachPolyRederizer(PolyRenderizer* polyRenderizer){
     attachedRenderizer = polyRenderizer;
-    Renderizer::registerPair(this, polyRenderizer);
+    Renderizer::registerPair(this, polyRenderizer, false);
 }
 
 void ParticleManager::update(const GeneralContext& ctx){

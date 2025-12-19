@@ -73,7 +73,7 @@ void Renderizer::renderRectShape(GameObject* obj) {
         rectShape.setSize(static_cast<sf::Vector2f>(rect.getSize()) * assignedCamera->getZoom());
     }
 
-    window.draw(sprite);
+    window.draw(rectShape);
 }
 
 void Renderizer::setColor(sf::Color newColor){
@@ -100,7 +100,11 @@ void Renderizer::renderAll(){
 
     for (auto& entry : registry)
         if(entry.renderizer -> shouldIRender()){
-            entry.renderizer->render(entry.object);
+            if(entry.isRectShape){
+                entry.renderizer->renderRectShape(entry.object);
+            } else{
+                entry.renderizer->render(entry.object);
+            }
         }
 }
 

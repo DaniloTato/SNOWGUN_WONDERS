@@ -12,6 +12,7 @@
 #include "PolyRenderizer.hpp"
 #include "RenderableObject.hpp"
 #include "Renderizer.hpp"
+#include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
@@ -22,18 +23,18 @@
 
 /*Namespaces*/
 #include "Constants.hpp"
-#include "ColorPalette.hpp"
 
 /*Camera Scripts*/
-#include "cameraShake.hpp"
+#include "cameraAlarm.hpp"
 #include "dramaticZoom.hpp"
-#include "followPlayer.hpp"
+#include "roomCamera.hpp"
 
 /*TangibleObject Scripts*/
 #include "reindeer.hpp"
 #include "movement.hpp"
 #include "particleGeneration.hpp"
 #include "reindeer.hpp"
+#include "roomCamera.hpp"
 #include "tangibleAnimations.hpp"
 
 /*General Scripts*/
@@ -64,9 +65,9 @@ int main() {
     inputManager.loadBindingsFromJsonFile("./config/control_config.json");
 
     GameState::getInstance().getMainCamera()->zoomTo(3.f);
-    GameState::getInstance().getMainCamera() -> scripter.addScript(script::followPlayer);
+    GameState::getInstance().getMainCamera() -> scripter.addScript(script::roomCamera);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
-    GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraShake);
+    GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraAlarm);
 
     ScriptRunner scriptRunner;
     scriptRunner.scripter.addScript(script::levelCreatorInputs);

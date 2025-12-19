@@ -7,7 +7,7 @@
         "jump": "M",
         "zoomIn": "O",
         "zoomOut": "L",
-        "shakeCamera": "Num1",
+        "startAlarm": "Num1",
         "dramaticZoom": "Num2",
         "saveLevel": "Num0",
         "createTile": "Space",

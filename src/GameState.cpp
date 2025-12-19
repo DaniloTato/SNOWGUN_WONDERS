@@ -4,7 +4,7 @@
 #include "Constants.hpp"
 
 GameState::GameState()
-: activeCameras({new GameCamera()}), activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")}) {}
+: activeCameras({new GameCamera(), new GameCamera()}), activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")}) {}
 
 GameState& GameState::getInstance() {
     static GameState instance;
@@ -26,8 +26,9 @@ const std::vector<GameCamera*>& GameState::getActiveCameras() const {
 }
 
 GameCamera* GameState::getMainCamera() const {
-    if (!activeCameras.empty()) {
-        return activeCameras.front();
+    int mainCameraIndex = static_cast<int>(CameraList::MAIN);
+    if(activeCameras.size() >= mainCameraIndex){
+        return activeCameras[mainCameraIndex];
     }
     return nullptr;
 }
@@ -45,4 +46,12 @@ void GameState::clearCameras() {
 
 const float GameState::dt(){
     return 1.f/Constants::FRAME_RATE;
+}
+
+GameCamera* GameState::getUiCamera() const{
+    int uiCameraIndex = static_cast<int>(CameraList::UI);
+    if(activeCameras.size() >= uiCameraIndex){
+        return activeCameras[uiCameraIndex];
+    }
+    return nullptr;
 }
