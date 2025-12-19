@@ -1,8 +1,6 @@
 #include "GameObject.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <vector>
-#include <typeinfo>
-#include <iostream>
 
 GameObject::GameObject(sf::Vector2f pos)
 : position(pos){

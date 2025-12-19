@@ -16,6 +16,9 @@ namespace script {
             float hitTimer = 0.f;
             float deadTimer = std::numeric_limits<float>::max();
             float explosionCooldown = EXPLOSION_COOLDOWN;
+
+            DamageState(int maxLife)
+            : life(maxLife) {}
         };
 
         bool isDead(const DamageState& s) {
@@ -48,11 +51,7 @@ namespace script {
         float hitDuration,
         float deadDuration
     ) {
-        auto& stateAny = tangible.scripter.scriptState["damageable"];
-        if (!stateAny.has_value()) {
-            stateAny = DamageState{ maxLife };
-        }
-        auto& state = std::any_cast<DamageState&>(stateAny);
+        auto& state = tangible.scripter.getState<DamageState>("damageable", maxLife);
 
         float dt = GameState::getInstance().dt();
         state.hitTimer -= dt;

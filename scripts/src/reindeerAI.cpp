@@ -37,11 +37,7 @@ namespace script {
         if (script::DamageFunctions::isDying(tangible))
             return;
 
-        auto& stateAny = tangible.scripter.scriptState["reindeerAI"];
-        if (!stateAny.has_value()) {
-            stateAny = ReindeerAIState{};
-        }
-        auto& state = std::any_cast<ReindeerAIState&>(stateAny);
+        auto& state = tangible.scripter.getState<ReindeerAIState>("reindeerAI");
 
         if (state.fixedY == std::numeric_limits<float>::max()) {
             state.fixedY = tangible.position.y;

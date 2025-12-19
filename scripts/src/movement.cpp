@@ -32,6 +32,7 @@ namespace script{
     void movement(TangibleObject& tangible, const GeneralContext& ctx) {
 
         auto& stateAny = tangible.scripter.scriptState["movement"];
+        
         if (!stateAny.has_value()) {
             stateAny = MovementState{};
         }

@@ -10,8 +10,6 @@ class Scripter {
 public:
     using ScriptFunc = void(*)(OwnerType&, const GeneralContext&);
 
-    std::unordered_map<std::string, std::any> scriptState;
-
     void addScript(ScriptFunc func) {
         scripts.push_back(func);
     }
@@ -23,6 +21,19 @@ public:
             }
         }
     }
+
+    /*Script States*/
+    std::unordered_map<std::string, std::any> scriptState;
+
+    template<typename T, typename... Args>
+    T& getState(const std::string& key, Args&&... args) {
+        auto& stateAny = scriptState[key];
+        if (!stateAny.has_value()) {
+            stateAny = T(std::forward<Args>(args)...);
+        }
+        return std::any_cast<T&>(stateAny);
+    }
+    /*Script States*/
 
 private:
     std::vector<ScriptFunc> scripts;

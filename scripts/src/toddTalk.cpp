@@ -9,18 +9,13 @@ namespace script{
 
     namespace {
         struct TalkCount{
-        public:
             int count = 0;
         };
     }
 
     void toddTalk(RenderableObject& renderable, const GeneralContext& ctx) {
 
-        auto& stateAny = renderable.scripter.scriptState["toddTalk"];
-        if (!stateAny.has_value()) {
-            stateAny = TalkCount{};
-        }
-        auto& state = std::any_cast<TalkCount&>(stateAny);
+        auto& state = renderable.scripter.getState<TalkCount>("toddTalk");
 
         TangibleObject* player = ctx.player;
         if(!state.count && BasicCollider::tangibleAndRenderableCollision(player, &renderable)){

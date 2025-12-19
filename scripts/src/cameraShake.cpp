@@ -66,11 +66,7 @@ namespace script {
     }
 
     void cameraShake(GameCamera& camera, const GeneralContext& ctx) {
-        auto& stateAny = camera.scripter.scriptState["cameraShake"];
-        if (!stateAny.has_value()) {
-            stateAny = ScreenShake{};
-        }
-        auto& state = std::any_cast<ScreenShake&>(stateAny);
+        auto& state = camera.scripter.getState<ScreenShake>("cameraShake");
 
         state.update(camera, ctx, GameState::getInstance().dt());
     }

@@ -80,11 +80,7 @@ namespace script{
     void cameraAlarm(GameCamera& camera, const GeneralContext& ctx) {
         cameraShake(camera, ctx);
 
-        auto& stateAny = camera.scripter.scriptState["cameraAlarm"];
-        if (!stateAny.has_value()) {
-            stateAny = AlarmState{};
-        }
-        auto& state = std::any_cast<AlarmState&>(stateAny);
+        auto& state = camera.scripter.getState<AlarmState>("cameraAlarm");
 
         state.init(*GameState::getInstance().getMainWindow());
 
