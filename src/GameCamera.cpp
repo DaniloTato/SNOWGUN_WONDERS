@@ -14,6 +14,7 @@ sf::Vector2f Vec2iTo2f(sf::Vector2i vec){
 
 GameCamera::GameCamera()
     : GameObject({0,0}), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {
+        //persistentAcrossScenes = true;
 }
 
 void GameCamera::goTo(const sf::Vector2f& pos) {

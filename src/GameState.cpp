@@ -41,6 +41,9 @@ sf::RenderWindow* GameState::getMainWindow() const {
 }
 
 void GameState::clearCameras() {
+    for(auto& i:activeCameras){
+        GameObject::destroy(i);
+    }
     activeCameras.clear();
 }
 

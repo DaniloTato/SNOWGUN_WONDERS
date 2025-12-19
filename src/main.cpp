@@ -228,14 +228,11 @@ void setupMainLevelScene() {
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::roomCamera);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::dramaticZoom);
     GameState::getInstance().getMainCamera() -> scripter.addScript(script::cameraAlarm);
-
-    // Load level
-    levelManager.loadLevel(window, gameState.getMainCamera(), Constants::STARTING_LEVEL_PATH);
  
     // Setup Scripts
-    // ScriptRunner scriptRunner;
-    // scriptRunner.scripter.addScript(script::levelCreatorInputs);
-    // scriptRunner.scripter.addScript(script::particleGeneration);
+    ScriptRunner* scriptRunner = new ScriptRunner();
+    scriptRunner -> scripter.addScript(script::levelCreatorInputs);
+    scriptRunner -> scripter.addScript(script::particleGeneration);
 
     // Particles
     static sf::Texture particleTexture;
@@ -252,7 +249,6 @@ void setupMainLevelScene() {
     static PolyRenderizer particleRenderizer(particleParams);
     particleManager.attachPolyRederizer(&particleRenderizer);
 
-    // Dialogues
     static sf::Texture fontTexture;
     fontTexture.loadFromFile("assets/font.png");
     RenderizerParameters textParams{
@@ -267,7 +263,6 @@ void setupMainLevelScene() {
     dialogueManager.attachTextParams(&textParams);
     dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
 
-    // Example of creating a game object like Todd
     static sf::Texture toddTexture;
     toddTexture.loadFromFile("assets/todd.png");
     RenderizerParameters toddParams{
@@ -282,12 +277,6 @@ void setupMainLevelScene() {
     RenderableObject* todd = new RenderableObject(toddParams);
     todd -> scripter.addScript(script::toddTalk);
     dialogueManager.assignDialogue(todd, "Greeting");
-
-    // Enemies
-    enemyManager.loadTexture("toy", "assets/toy.png");
-    enemyManager.registerTemplate("toy", blueprint::toy);
-    enemyManager.loadTexture("reindeer", "assets/reindeer.png");
-    enemyManager.registerTemplate("reindeer", blueprint::reindeer);
 
     // Player setup
     static sf::Texture playerTexture;
@@ -325,9 +314,9 @@ void setupMainLevelScene() {
 }
 
 int main() {
-    // Grab singleton references
     InputManager& inputManager = InputManager::getInstance();
     SceneManager& sceneManager = SceneManager::getInstance();
+    EnemyManager& enemyManager = EnemyManager::getInstance();
     GameState& gameState = GameState::getInstance();
 
     sf::RenderWindow& window = *gameState.getMainWindow();
@@ -337,16 +326,16 @@ int main() {
 
     sceneManager.registerScene("MainLevel", setupMainLevelScene);
 
-    // Start the first scene explicitly:
+    // Start the first scene explicitly
     sceneManager.loadScene("MainLevel");
 
     sf::Clock clock;
 
-    // ScriptRunner scriptRunner;
-    // scriptRunner.scripter.addScript(script::levelCreatorInputs);
-    // scriptRunner.scripter.addScript(script::particleGeneration);
+    enemyManager.loadTexture("toy", "assets/toy.png");
+    enemyManager.registerTemplate("toy", blueprint::toy);
+    enemyManager.loadTexture("reindeer", "assets/reindeer.png");
+    enemyManager.registerTemplate("reindeer", blueprint::reindeer);
 
-    // Main game loop
     while (window.isOpen()) {
         sf::Event event;
         inputManager.update();
