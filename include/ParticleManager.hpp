@@ -49,6 +49,7 @@ public:
     void emitDust(const sf::Vector2f& pos);
     void emitExplosion(const sf::Vector2f& pos, int count = 12);
     void emitStars(const sf::Vector2f& pos, int count = 1);
+    void emitCross(const sf::Vector2f& pos, int count = 1);
 
     void setWind(const sf::Vector2f& windVec);
 

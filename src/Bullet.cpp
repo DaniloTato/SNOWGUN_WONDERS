@@ -22,17 +22,21 @@ Bullet::Bullet(
 
     physics.setSpeed(initSpeed, PhysicsComponent::SpeedType::MOVEMENT);
     if(type != Bullet::Type::BubbleGun){
-        physics.turnOffFriction();
+        physics.turnOffXFriction();
     }else{
-        physics.xFriction = 0.99f;
+        physics.friction.x = 0.99f;
     }
 
     switch (type) {
         case Bullet::Type::Normal:
+            collider.setSize({7.f,7.f});
+            collider.setOffset({4.f,4.f});
             physics.gravity = 0.f;
             break;
 
         case Bullet::Type::BubbleGun:
+            collider.setSize({7.f,7.f});
+            collider.setOffset({4.f,4.f});
             physics.gravity = 0.3f;
             maxBounces = 10;
             maxLifeTime = 8.f;

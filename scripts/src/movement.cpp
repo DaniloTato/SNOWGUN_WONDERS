@@ -25,18 +25,14 @@ namespace script{
             int timeInAir = 0;
 
             bool kicking = false;
+            bool godMode = false;
             float kickTimer = 0.f;
         };
     }
 
     void movement(TangibleObject& tangible, const GeneralContext& ctx) {
 
-        auto& stateAny = tangible.scripter.scriptState["movement"];
-        
-        if (!stateAny.has_value()) {
-            stateAny = MovementState{};
-        }
-        auto& state = std::any_cast<MovementState&>(stateAny);
+        auto& state = tangible.scripter.getState<MovementState>("movement");
 
         std::string desiredAnimation = "idle";
 
@@ -47,79 +43,105 @@ namespace script{
             lookingUp = -1;
         }
 
-        if(InputManager::getInstance().isPressed("left")){
-            tangible.direction = -1;
+        if(state.godMode){
+            tangible.physics.turnOnYFriction();
+            tangible.physics.gravity = 0.f;
 
-            if(state.movementLock <= 0){
+            if(InputManager::getInstance().isPressed("left")){
                 tangible.physics.setSpdx(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
-            }else{
-                tangible.physics.setSpdx(-1.f, PhysicsComponent::SpeedType::MOVEMENT);
-            }
-            desiredAnimation = "walk";
-        } else if (InputManager::getInstance().isPressed("right")){
-            tangible.direction = 1;
-
-            if(state.movementLock <= 0){
+            } else if(InputManager::getInstance().isPressed("right")){
                 tangible.physics.setSpdx(3.f, PhysicsComponent::SpeedType::MOVEMENT);
-            }else{
-                tangible.physics.setSpdx(1.f, PhysicsComponent::SpeedType::MOVEMENT);
             }
-            desiredAnimation = "walk";
-        }
 
-        tangible.physics.updateX(tangible.position);
-        tangible.collider.horizontalLevelCollision(tangible.position);
-
-        if(InputManager::getInstance().isJustPressed("jump")){
-            tangible.physics.setSpdy(-5.f, PhysicsComponent::SpeedType::MOVEMENT);
-        }
-
-        tangible.physics.updateY(tangible.position);
-        if(tangible.collider.verticalLevelCollision(tangible.position)){
-            tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
-            state.timeInAir = 0;
-        }else{
-            state.timeInAir++;
-        }
-
-        if(state.timeInAir > 0){
-            desiredAnimation = "jump_once";
-        }
-
-        /*Kick logic*/
-        if (InputManager::getInstance().isJustPressed("kick")
-            && !state.kicking) {
-
-            state.kicking = true;
-            state.kickTimer = KICK_DURATION;
-
-            tangible.physics.setSpdy(KICK_JUMP_HEIGHT, PhysicsComponent::SpeedType::MOVEMENT);
-            tangible.physics.setSpdx(KICK_JUMP_X_SPEED * tangible.direction,PhysicsComponent::SpeedType::KICK);
-
-            /*Crete Kick Hitbox*/
-            BasicCollider kickCollider;
-            kickCollider.setSize({8.f, 20.f});
-            kickCollider.setOffset({
-                tangible.direction == 1 ? 12.f : -2,
-                0.f
-            });
-            AttackHitbox kickHitbox = {kickCollider, true,KICK_DAMAGE, KICK_DURATION};
-            tangible.attackHitbox = kickHitbox;
-            /*Crete Kick Hitbox*/
-        }
-
-        if (state.kicking) {
-            state.kickTimer -= GameState::getInstance().dt();
-
-            desiredAnimation = "kick_once";
-
-            if (state.kickTimer <= 0.f && state.timeInAir <= 0) {
-                state.kicking = false;
+            tangible.physics.updateX(tangible.position);
+            
+            if(InputManager::getInstance().isPressed("up")){
+                tangible.physics.setSpdy(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+            } else if(InputManager::getInstance().isPressed("down")){
+                tangible.physics.setSpdy(3.f, PhysicsComponent::SpeedType::MOVEMENT);
             }
+
+            tangible.physics.updateY(tangible.position);
+
         } else{
-            tangible.attackHitbox.reset();
+            tangible.physics.turnOffYFriction();
+            tangible.physics.gravity = 0.3f;
+
+            if(InputManager::getInstance().isPressed("left")){
+                tangible.direction = -1;
+
+                if(state.movementLock <= 0){
+                    tangible.physics.setSpdx(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+                }else{
+                    tangible.physics.setSpdx(-1.f, PhysicsComponent::SpeedType::MOVEMENT);
+                }
+                desiredAnimation = "walk";
+            } else if (InputManager::getInstance().isPressed("right")){
+                tangible.direction = 1;
+
+                if(state.movementLock <= 0){
+                    tangible.physics.setSpdx(3.f, PhysicsComponent::SpeedType::MOVEMENT);
+                }else{
+                    tangible.physics.setSpdx(1.f, PhysicsComponent::SpeedType::MOVEMENT);
+                }
+                desiredAnimation = "walk";
+            }
+
+            tangible.physics.updateX(tangible.position);
+            tangible.collider.horizontalLevelCollision(tangible.position);
+
+            if(InputManager::getInstance().isJustPressed("jump")){
+                tangible.physics.setSpdy(-5.f, PhysicsComponent::SpeedType::MOVEMENT);
+            }
+
+            tangible.physics.updateY(tangible.position);
+            if(tangible.collider.verticalLevelCollision(tangible.position)){
+                tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
+                state.timeInAir = 0;
+            }else{
+                state.timeInAir++;
+            }
+
+            if(state.timeInAir > 0){
+                desiredAnimation = "jump_once";
+            }
+
+            /*Kick logic*/
+            if (InputManager::getInstance().isJustPressed("kick")
+                && !state.kicking) {
+
+                state.kicking = true;
+                state.kickTimer = KICK_DURATION;
+
+                tangible.physics.setSpdy(KICK_JUMP_HEIGHT, PhysicsComponent::SpeedType::MOVEMENT);
+                tangible.physics.setSpdx(KICK_JUMP_X_SPEED * tangible.direction,PhysicsComponent::SpeedType::KICK);
+
+                /*Crete Kick Hitbox*/
+                BasicCollider kickCollider;
+                kickCollider.setSize({8.f, 20.f});
+                kickCollider.setOffset({
+                    tangible.direction == 1 ? 12.f : -2,
+                    0.f
+                });
+                AttackHitbox kickHitbox = {kickCollider, true,KICK_DAMAGE, KICK_DURATION};
+                tangible.attackHitbox = kickHitbox;
+                /*Crete Kick Hitbox*/
+            }
+
+            if (state.kicking) {
+                state.kickTimer -= GameState::getInstance().dt();
+
+                desiredAnimation = "kick_once";
+
+                if (state.kickTimer <= 0.f && state.timeInAir <= 0) {
+                    state.kicking = false;
+                }
+            } else{
+                tangible.attackHitbox.reset();
+            }
+            /*Kick logic*/
+
         }
-        /*Kick logic*/
 
         RenderizerParameters bulletParams{
             *GameState::getInstance().getMainWindow(),
@@ -163,6 +185,10 @@ namespace script{
             tangible.offset = {-SPRITE_DIRECTION_OFFSET, 0.f};
         } else{
             tangible.offset = {0.f, 0.f};
+        }
+
+        if(InputManager::getInstance().isJustPressed("godMode")){
+            state.godMode = !state.godMode;
         }
     }
 

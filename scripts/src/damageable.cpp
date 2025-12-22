@@ -1,5 +1,6 @@
 #include "damageable.hpp"
 #include "BulletManager.hpp"
+#include "CollectableManager.hpp"
 #include "ParticleManager.hpp"
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
@@ -96,8 +97,20 @@ namespace script {
             state.life--;
             state.hitTimer = hitDuration;
 
+            CollectableManager::getInstance().queueCreateCollectable(
+                "crystal", 
+                tangible.position + sf::Vector2f(16.f, 0.f)
+            );
+
             if (state.life <= 0 && !isDead(state)) {
                 state.deadTimer = deadDuration;
+                int numberOfCrystals = rand()%3 + 3;
+                for(int i = 0; i < numberOfCrystals; i++){
+                    CollectableManager::getInstance().queueCreateCollectable(
+                        "crystal", 
+                        tangible.position + sf::Vector2f(16.f, 0.f)
+                    );
+                }
             }
         }
         /*Check for bullet collision*/
@@ -116,6 +129,13 @@ namespace script {
             if (BasicCollider::isCollidingRect(attackRect, enemyRect)) {
 
                 ParticleManager::getInstance().emitStars(tangible.position + sf::Vector2f(4.f,4.f),8);
+
+                for(int i = 0; i < ctx.player->attackHitbox->damage; i++){
+                    CollectableManager::getInstance().queueCreateCollectable(
+                        "crystal", 
+                        tangible.position + sf::Vector2f(16.f, 0.f)
+                    );
+                }
 
                 state.life -= ctx.player->attackHitbox->damage;
                 state.hitTimer = hitDuration;

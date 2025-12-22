@@ -13,9 +13,15 @@ sf::Vector2f Vec2iTo2f(sf::Vector2i vec){
 }
 
 GameCamera::GameCamera()
-    : GameObject({0,0}), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f), speed(0.1f) {
-        //persistentAcrossScenes = true;
-}
+    : GameObject({0,0})
+    , desiredPosition(0.f, 0.f)
+    , shakePosition(0.f, 0.f)
+    , zoom(1.f)
+    , desiredZoom(1.f)
+    , impactZoom(0.f)
+    , followSpeed(sf::Vector2f(0.1,0.05))
+    , zoomSpeed(0.3)
+{}
 
 void GameCamera::goTo(const sf::Vector2f& pos) {
     desiredPosition = pos;
@@ -27,8 +33,9 @@ void GameCamera::zoomTo(float dZoom) {
 
 void GameCamera::update(const GeneralContext& ctx) {
     scripter.runScripts(*this, ctx);
-    zoom += ((desiredZoom + impactZoom) - zoom) * speed;
-    position += ((desiredPosition + shakePosition) - position) * speed;
+    zoom += ((desiredZoom + impactZoom) - zoom) * zoomSpeed;
+    position.x += ((desiredPosition.x + shakePosition.x) - position.x) * followSpeed.x;
+    position.y += ((desiredPosition.y + shakePosition.y) - position.y) * followSpeed.y;
 }
 
 float GameCamera::getZoom() const {

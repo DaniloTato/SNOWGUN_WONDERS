@@ -45,6 +45,8 @@ void Renderizer::render(GameObject* obj) {
 
     sf::Vector2f position = obj->position + obj->offset;
 
+    sprite.setColor(color);
+
     if (!assignedCamera) {
         sprite.setPosition(position);
         sprite.setScale(1.f, 1.f);
@@ -122,4 +124,8 @@ void Renderizer::toggleShowEvery(float time){
 
 bool Renderizer::shouldIRender(){
     return show;
+}
+
+void Renderizer::setLayer(float newLayer){
+    layer = newLayer;
 }

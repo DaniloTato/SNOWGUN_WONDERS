@@ -25,6 +25,7 @@ public:
     void renderRectShape(GameObject* obj);
     void assignCamera(GameCamera* cam);
     const float getLayer() const;
+    void setLayer(float newLayer);
     void setColor(sf::Color newColor);
     void toggleShowEvery(float time);
     bool shouldIRender();

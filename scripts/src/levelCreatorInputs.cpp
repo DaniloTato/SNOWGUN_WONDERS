@@ -118,8 +118,18 @@ namespace script {
         }
 
         if(inputManager.isJustPressed("saveLevel")){
-            std::cout << "Saving level..." << std::endl;
-            levelManager.saveLevel(Constants::STARTING_LEVEL_PATH);
+            std::cout << "Saving level on: " << levelManager.getLoadedLevelPath() << std::endl;
+            levelManager.saveLevel(levelManager.getLoadedLevelPath());
+        }
+
+        if(inputManager.isMouseJustPressed(MouseButton::Left)){
+            sf::Vector2f mousePosInWorld = GameState::getInstance().getMainCamera()-> screenToWorld(
+                {static_cast<float>(inputManager.getMousePosition().x), static_cast<float>(inputManager.getMousePosition().y)},
+                1.f
+            );
+            std::cout << "(" << mousePosInWorld.x << "," << mousePosInWorld.y << ")" << " "
+            << "(" << static_cast<int>(mousePosInWorld.x)/Constants::TILE_SIZE << "," 
+            << static_cast<int>(mousePosInWorld.y)/Constants::TILE_SIZE << ")\n";
         }
     }
 }

@@ -33,5 +33,6 @@ private:
     float zoom;
     float desiredZoom;
     float impactZoom;
-    float speed;
+    sf::Vector2f followSpeed;
+    float zoomSpeed;
 };

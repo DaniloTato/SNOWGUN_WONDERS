@@ -25,12 +25,15 @@ public:
     void setSpdx(float x, SpeedType type);
     void setSpdy(float y, SpeedType type);
 
-    void turnOffFriction();
+    void turnOffXFriction();
+    void turnOnYFriction();
+    void turnOffYFriction();
 
     float gravity;
-    float xFriction;
+    sf::Vector2f friction;
 
 private:
     std::vector<sf::Vector2f> speeds;
-    bool hasFriction;
+    bool hasXFriction;
+    bool hasYFriction;
 };

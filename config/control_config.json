@@ -18,6 +18,7 @@
         "crash": "U",
         "spawnEnemy": "R",
         "kick": "LShift",
-        "nextScene": "Num5"
+        "nextScene": "Num5",
+        "godMode": "G"
     }
 }

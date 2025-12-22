@@ -48,7 +48,8 @@ void ParticleManager::emitSnow(const sf::Vector2f& pos) {
 
     p.gravity = 5.f;
 
-    p.parallax = (5 + rand() % 5)*0.1;
+    p.parallax = 1; //may put rand values later, but would have to change the mothod for snow spawning
+    //emit snow(pos, parallax), so when using the ScreenToWorld() function, we can know beforehand the parallax
 
     p.sinAmplitude = 1.f;
     p.sinFrequency = 5.f;
@@ -121,6 +122,27 @@ void ParticleManager::emitStars(const sf::Vector2f& pos, int count){
         p.animator = std::make_unique<Animator>();
         p.animator->setAnimations(cachedAnimations);
         p.animator->play("star_once");
+        p.texRect = sf::IntRect(0, 0, 16, 16);
+
+        p.maxLifetime = 1.f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
+}
+
+void ParticleManager::emitCross(const sf::Vector2f& pos, int count){
+    for (int i = 0; i < count; i++) {
+        Particle p;
+        p.type = Type::Stars;
+        p.pos = pos;
+        p.vel = sf::Vector2f(_toggleRand(-100, 100), _toggleRand(-100, 100));
+
+        p.color = sf::Color::White;
+        
+        p.animator = std::make_unique<Animator>();
+        p.animator->setAnimations(cachedAnimations);
+        p.animator->play("cross_once");
         p.texRect = sf::IntRect(0, 0, 16, 16);
 
         p.maxLifetime = 1.f;

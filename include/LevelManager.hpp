@@ -62,11 +62,15 @@ public:
     void queueDeleteTile(int layer, int x, int y);
     void applyQueuedTileChanges();
 
-    void onSceneUnload() override;
+    void setSecretLayerOppacity(float oppacity);
 
+    const std::string& getLoadedLevelPath() const;
     const sf::Vector2f& getCameraPlayerRelation() const;
 
+    void onSceneUnload() override;
+
     sf::Color& getBackgroundColor();
+    void setBackgroundColor(sf::Color newColor);
 
     const LayerInfo getLayerInfo(int layerNo) const;
 
@@ -87,6 +91,8 @@ private:
     std::vector<TileDeletionRequest> deleteQueue;
 
     sf::Color backgroundColor;
+    std::string loadedLevelpath;
+    std::string tilesetPath;
 
     LevelManager(const LevelManager&) = delete;
     LevelManager& operator=(const LevelManager&) = delete;

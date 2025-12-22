@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include "LevelManager.hpp"
 #include "RenderableObject.hpp"
@@ -10,7 +11,11 @@
 
 using json = nlohmann::json;
 
-LevelManager::LevelManager(): activeLayer(0), cameraPlayerRelation(Constants::STARTING_PLAYER_CAMERA_RELATION), backgroundColor(ColorPalette::DarkCyanBlue){}
+LevelManager::LevelManager()
+    : activeLayer(0)
+    , cameraPlayerRelation(Constants::STARTING_PLAYER_CAMERA_RELATION)
+    , backgroundColor(ColorPalette::DarkCyanBlue)
+{}
 
 LevelManager& LevelManager::getInstance() {
     static LevelManager instance;
@@ -28,9 +33,13 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
     if (!file.is_open())
         throw std::runtime_error("Failed to open level file: " + path);
 
+    loadedLevelpath = path;
+
     json data = json::parse(file);
 
-    tilesheet.loadFromFile(data["tileset"].get<std::string>());
+    tilesetPath = data["tileset"].get<std::string>();
+
+    tilesheet.loadFromFile(tilesetPath);
     int tileSize = data["tile_size"];
 
     auto& jsonLayers = data["layers"];
@@ -44,6 +53,13 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
         layers[i].name = jsonLayers[i]["name"].get<std::string>();
         layers[i].paralax = jsonLayers[i]["parallax"].get<float>();
         loadLayer(window, camera, i, jsonLayers[i], tileSize);
+        
+        //put secret layer above others
+        if(layers[i].name == "secret"){
+            for(auto& tile : layers[i].tiles){
+                tile.object->renderizer.setLayer(-1);
+            }
+        }
     }
 }
 
@@ -112,6 +128,11 @@ void LevelManager::reloadAllLayers(sf::RenderWindow& window, GameCamera* camera)
 void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo){
     auto& tiles = layers[layerNo].tiles;
 
+    float layerValue = static_cast<float>(layerNo);
+    if(layers[layerNo].name == "secret"){
+        layerValue = -1;
+    }
+
     for (auto& t : tiles)
     {
         if (t.object) {
@@ -128,7 +149,7 @@ void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int
                 float(t.y * Constants::TILE_SIZE + 1)
             },
             camera,
-            static_cast<float>(layerNo),
+            layerValue,
             layers[layerNo].paralax
         };
 
@@ -158,6 +179,11 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
 
     std::vector<TileInfo>& tiles = layers[layerNo].tiles;
 
+    float layerValue = static_cast<float>(layerNo);
+    if(layers[layerNo].name == "secret"){
+        layerValue = -1;
+    }
+
     for (auto& t : tiles)
     {
         if (t.x == x && t.y == y){
@@ -181,7 +207,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
                     float(y * Constants::TILE_SIZE + 1)
                 },
                 camera,
-                static_cast<float>(layerNo),
+                layerValue,
                 layers[layerNo].paralax
             };
 
@@ -209,7 +235,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
             float(y * Constants::TILE_SIZE + 1)
         },
         camera,
-        static_cast<float>(layerNo),
+        layerValue,
         layers[layerNo].paralax
     };
 
@@ -250,7 +276,7 @@ void LevelManager::saveLevel(const std::string& path)
     json data;
 
     data["tile_size"] = Constants::TILE_SIZE;
-    data["tileset"]   = Constants::TILESET_PATH;
+    data["tileset"]   = tilesetPath;
 
     data["layers"] = json::array();
 
@@ -346,4 +372,32 @@ void LevelManager::onSceneUnload()
     activeLayer = 0;
     cameraPlayerRelation = Constants::STARTING_PLAYER_CAMERA_RELATION;
     backgroundColor = ColorPalette::DarkCyanBlue;
+}
+
+void LevelManager::setBackgroundColor(sf::Color newColor){
+    backgroundColor = newColor;
+}
+
+const std::string& LevelManager::getLoadedLevelPath() const{
+    return loadedLevelpath;
+}
+
+void LevelManager::setSecretLayerOppacity(float oppacity){
+    auto it = std::find_if(
+        layers.begin(),
+        layers.end(),
+        [](const LayerInfo& layer) {
+            return layer.name == "secret";
+        }
+    );
+
+    if (it != layers.end()) {
+        LayerInfo& secretLayer = *it;
+        for(auto& tile: secretLayer.tiles){
+            RenderableObject* obj = tile.object;
+            if(obj){
+                obj -> renderizer.setColor(sf::Color(255,255,255,oppacity));
+            }
+        }
+    }
 }
