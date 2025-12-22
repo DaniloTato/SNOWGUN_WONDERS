@@ -18,6 +18,7 @@
 #include "Constants.hpp"
 
 /*TangibleObject Scripts*/
+#include "missileBlueprint.hpp"
 #include "reindeer.hpp"
 
 /*Blueprints*/
@@ -54,6 +55,8 @@ int main() {
     enemyManager.registerTemplate("runningToy", blueprint::runningToyBlueprint);
     enemyManager.loadTexture("reindeer", "assets/reindeer.png");
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
+    enemyManager.loadTexture("missile", "assets/missile.png");
+    enemyManager.registerTemplate("missile", blueprint::missileBlueprint);
 
     // Collectable Manager Setup
     collectableManager.loadTexture("crystal", "assets/crystal.png");
@@ -88,6 +91,7 @@ int main() {
         }
 
         sceneManager.update();
+        gameState.updateDt();
 
         if (!sceneManager.isTransitioning()) {
             LevelManager::getInstance().applyQueuedTileChanges();

@@ -3,12 +3,6 @@
 
 namespace script {
 
-    namespace{
-        struct ToyState{
-            bool firstFrame = true;
-        };
-    }
-
     void enemyPatrol(TangibleObject& tangible, const GeneralContext& ctx){
 
         script::damageable(
@@ -17,13 +11,6 @@ namespace script {
             0.6f,
             0.65f
         );
-
-        auto& state = tangible.scripter.getState<ToyState>("toy");
-
-        if(state.firstFrame){
-            state.firstFrame = false;
-            tangible.direction = -1;
-        }
 
         bool beingHurt = script::DamageFunctions::isBeingHurt(tangible);
  

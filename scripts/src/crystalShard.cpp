@@ -38,8 +38,6 @@ namespace script {
             state.startingSpeed = {0.f,0.f};
         }
 
-        obj.collider.computeCollisionGrid(obj.position);
-
         obj.physics.updateX(obj.position);
         obj.collider.horizontalLevelCollision(obj.position);
 

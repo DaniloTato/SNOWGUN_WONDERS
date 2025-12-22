@@ -30,6 +30,8 @@ public:
     void toggleShowEvery(float time);
     bool shouldIRender();
 
+    bool isVisible() const;
+
     static void registerPair(GameObject* obj, Renderizer* rend, bool isRectShape);
     static void unregisterPair(Renderizer* rend);
 

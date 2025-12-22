@@ -1,4 +1,5 @@
 #include "Renderizer.hpp"
+#include "Constants.hpp"
 #include "GameState.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -41,6 +42,24 @@ void Renderizer::assignCamera(GameCamera* cam) {
     assignedCamera = cam;
 }
 
+bool Renderizer::isVisible() const {
+
+    float zoom = assignedCamera ? assignedCamera->getZoom() : 1.f;
+
+    float x = sprite.getPosition().x;
+    float y = sprite.getPosition().y;
+
+    float w = rect.width  * zoom;
+    float h = rect.height * zoom;
+
+    if (x + w < 0.f) return false;
+    if (x > Constants::SCREEN_WIDTH) return false;
+    if (y + h < 0.f) return false;
+    if (y > Constants::SCREEN_HEIGHT) return false;
+
+    return true;
+}
+
 void Renderizer::render(GameObject* obj) {
 
     sf::Vector2f position = obj->position + obj->offset;
@@ -49,10 +68,12 @@ void Renderizer::render(GameObject* obj) {
 
     if (!assignedCamera) {
         sprite.setPosition(position);
+        if(!isVisible()) return;
         sprite.setScale(1.f, 1.f);
     } else {
         sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
         sprite.setPosition(screenPos);
+        if(!isVisible()) return;
         sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
     }
 
@@ -100,14 +121,20 @@ void Renderizer::renderAll(){
         }
     );
 
-    for (auto& entry : registry)
-        if(entry.renderizer -> shouldIRender()){
-            if(entry.isRectShape){
-                entry.renderizer->renderRectShape(entry.object);
-            } else{
-                entry.renderizer->render(entry.object);
-            }
+    for (auto& entry : registry) {
+
+        Renderizer* rend = entry.renderizer;
+        GameObject* obj = entry.object;
+
+        if (!rend->shouldIRender())
+            continue;
+
+        if (entry.isRectShape) {
+            rend->renderRectShape(obj);
+        } else {
+            rend->render(obj);
         }
+    }
 }
 
 const sf::IntRect& Renderizer::getRect() const {

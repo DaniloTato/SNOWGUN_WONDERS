@@ -25,6 +25,8 @@ public:
     const sf::Vector2f screenToWorld(const sf::Vector2f& screenPos, float parallax) const;
     const sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;
 
+    sf::FloatRect getWorldViewRect() const;
+
     Scripter<GameCamera> scripter;
 
 private:

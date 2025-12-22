@@ -28,7 +28,7 @@ namespace script {
     }
 
     namespace DamageFunctions{
-        bool isDying(const TangibleObject& tangible) {
+        bool isDying(TangibleObject& tangible) {
             auto it = tangible.scripter.scriptState.find("damageable");
             if (it == tangible.scripter.scriptState.end()) return false;
 
@@ -36,12 +36,24 @@ namespace script {
             return state.deadTimer != std::numeric_limits<float>::max();
         }
 
-        bool isBeingHurt(const TangibleObject &tangible){
+        bool isBeingHurt(TangibleObject &tangible){
             auto it = tangible.scripter.scriptState.find("damageable");
             if (it == tangible.scripter.scriptState.end()) return false;
 
             const auto& state = std::any_cast<const DamageState&>(it->second);
             return state.hitTimer > 0.f;
+        }
+
+        void kill(TangibleObject &tangible, float deadDuration){
+            auto it = tangible.scripter.scriptState.find("damageable");
+            if (it == tangible.scripter.scriptState.end()) return;
+
+            auto& state = std::any_cast<DamageState&>(it->second);
+
+            if(!isDead(state)){
+                state.life = 0;
+                state.deadTimer = deadDuration;
+            }
         }
     }
 

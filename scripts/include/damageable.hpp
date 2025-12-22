@@ -12,7 +12,8 @@ namespace script {
     );
 
     namespace DamageFunctions{
-        bool isDying(const TangibleObject& tangible);
-        bool isBeingHurt(const TangibleObject& tangible);
+        bool isDying(TangibleObject& tangible);
+        bool isBeingHurt(TangibleObject& tangible);
+        void kill(TangibleObject &tangible, float deadDuration);
     }
 }

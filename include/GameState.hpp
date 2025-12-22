@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <chrono>
 #include "GameCamera.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
@@ -24,6 +25,7 @@ public:
     sf::RenderWindow* getMainWindow() const;
     void clearCameras();
     const float dt();
+    void updateDt();
 
 private:
     GameState();
@@ -37,4 +39,7 @@ private:
 
     std::vector<GameCamera*> activeCameras;
     std::vector<sf::RenderWindow*> activeWindows;
+
+    std::chrono::high_resolution_clock::time_point lastFrameTime = std::chrono::high_resolution_clock::now();
+    float dtValue;
 };

@@ -30,6 +30,7 @@ namespace blueprint {
         toy->animator.play("walking");
 
         toy->scripter.addScript(script::enemyPatrol);
+        toy->direction = -1;
 
         return toy;
     }

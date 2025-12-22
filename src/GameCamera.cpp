@@ -75,6 +75,12 @@ const sf::Vector2f GameCamera::screenToWorld(const sf::Vector2f& screenPos, floa
     return world;
 }
 
+sf::FloatRect GameCamera::getWorldViewRect() const {
+    sf::Vector2f size = {Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT};
+    sf::Vector2f topLeft = {position.x - (size.x * 0.5f), position.y - (size.y * 0.5f)};
+    return sf::FloatRect(topLeft, size);
+}
+
 void GameCamera::setCameraShakePosition(const sf::Vector2f& shakePos) {
     shakePosition = shakePos;
 }

@@ -49,7 +49,7 @@ namespace script{
             }
 
             void update(bool isShaking) {
-                float targetAlpha = isShaking ? 100.f : 0.f;
+                float targetAlpha = isShaking && on ? 100.f : 0.f;
 
                 currentAlpha += (targetAlpha - currentAlpha) * LERP_SPEED * GameState::getInstance().dt();
                 if (currentAlpha < 0.f) currentAlpha = 0.f;

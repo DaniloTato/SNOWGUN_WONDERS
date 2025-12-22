@@ -110,6 +110,38 @@ void ParticleManager::emitExplosion(const sf::Vector2f& pos, int count){
     }
 }
 
+void ParticleManager::emitMediumExplosion(const sf::Vector2f& pos, int count, float radius) {
+    for (int i = 0; i < count; i++) {
+        float angle = _toggleRand(0.f, 2.f * M_PI);
+        float r = std::sqrt(_toggleRand(0.f, 1.f)) * radius;
+
+        sf::Vector2f offset(
+            std::cos(angle) * r,
+            std::sin(angle) * r
+        );
+
+        Particle p;
+        p.type = Type::Explosion;
+        p.pos = pos + offset;
+
+        p.color = ColorPalette::White;
+
+        p.animator = std::make_unique<Animator>();
+        p.animator->setAnimations(cachedAnimations);
+
+        if(rand() % 10 == 0){
+            p.animator->play("medium_explosion_once");
+        } else{
+            p.animator->play("star_once");
+        }
+
+        p.maxLifetime = 2.f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
+}
+
 void ParticleManager::emitStars(const sf::Vector2f& pos, int count){
     for (int i = 0; i < count; i++) {
         Particle p;
@@ -134,7 +166,7 @@ void ParticleManager::emitStars(const sf::Vector2f& pos, int count){
 void ParticleManager::emitCross(const sf::Vector2f& pos, int count){
     for (int i = 0; i < count; i++) {
         Particle p;
-        p.type = Type::Stars;
+        p.type = Type::Cross;
         p.pos = pos;
         p.vel = sf::Vector2f(_toggleRand(-100, 100), _toggleRand(-100, 100));
 
@@ -146,6 +178,39 @@ void ParticleManager::emitCross(const sf::Vector2f& pos, int count){
         p.texRect = sf::IntRect(0, 0, 16, 16);
 
         p.maxLifetime = 1.f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
+}
+
+void ParticleManager::emitSmoke(const sf::Vector2f& pos, int count){
+    for (int i = 0; i < count; i++) {
+        Particle p;
+        p.type = Type::Smoke;
+        p.pos = pos;
+
+        p.vel = {
+            _toggleRand(-10.f, 10.f),
+            _toggleRand(-20.f, -40.f)
+        };
+
+        p.gravity = -5.f;
+
+        p.sinAmplitude = _toggleRand(0.5f, 1.5f);
+        p.sinFrequency = _toggleRand(1.f, 3.f);
+        p.sinPhase = _toggleRand(0.f, 3.f);
+
+        p.texRect = sf::IntRect(16,0,12,12);
+
+        if(rand() % 2 == 0){
+            p.color = ColorPalette::SoftViolet;
+        } else{
+            p.color = ColorPalette::VividIndigo;
+        }
+        p.color.a = 200;
+
+        p.maxLifetime = _toggleRand(1.5f, 3.f);
         p.lifetime = p.maxLifetime;
 
         particles.push_back(std::move(p));
@@ -178,13 +243,13 @@ void ParticleManager::updateParticles() {
         p.vel.y += p.gravity * dt;
         p.pos += p.vel * dt;
 
-        if (p.type == Type::Snow) {
+        if (p.type == Type::Snow || p.type == Type::Smoke) {
             float offset = std::sin((p.maxLifetime - p.lifetime) * p.sinFrequency + p.sinPhase)
                         * p.sinAmplitude;
             p.pos.x += offset * dt * 60.f;
         }
 
-        if (p.type == Type::Explosion) {
+        if (p.type == Type::Explosion || p.type == Type::Smoke) {
             float alpha = p.lifetime / p.maxLifetime;
             p.color.a = static_cast<sf::Uint8>(255 * alpha);
         }
@@ -210,7 +275,7 @@ void ParticleManager::updateRenderCommandBuffer() {
         cmd.color = p.color;
         cmd.overrideParalax = p.parallax;
 
-        if (p.type == Type::Dust && p.shakeIntensity > 0.f) {
+        if (p.shakeIntensity > 0.f) {
             float t = (p.maxLifetime - p.lifetime) * 30.f;
             cmd.pos.x += std::sin(t * 2.7f) * p.shakeIntensity;
             cmd.pos.y += std::cos(t * 3.7f) * p.shakeIntensity;

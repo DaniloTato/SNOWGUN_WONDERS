@@ -48,7 +48,14 @@ void GameState::clearCameras() {
 }
 
 const float GameState::dt(){
-    return 1.f/Constants::FRAME_RATE;
+    return dtValue;
+}
+
+void GameState::updateDt(){
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> elapsed = now - lastFrameTime;
+    lastFrameTime = now;
+    dtValue = elapsed.count();
 }
 
 GameCamera* GameState::getUiCamera() const{

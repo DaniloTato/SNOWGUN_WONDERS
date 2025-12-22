@@ -1,6 +1,7 @@
 #include "tutorialTriggers.hpp"
 #include "BasicCollider.hpp"
 #include "EnemyManager.hpp"
+#include "GameState.hpp"
 #include "GeneralContext.hpp"
 #include "LevelManager.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -28,6 +29,9 @@ namespace script {
             Helper::TriggerOnce spawnRunningEnemies;
             Helper::TriggerOnce firstEnemySpawn;
             Helper::TriggerOnce hiddenRunningEnemies;
+            Helper::TriggerOnce firstMissile;
+            bool firstMissileSpawnOn = false;
+            float firstMissileSpawnCounter;
             SecretLayerOppacity secretLayerOppacity;
         };
     }
@@ -79,6 +83,21 @@ namespace script {
                 }
             }
         );
+
+        state.firstMissile.check(
+            (ctx.player->position.x > 2300.f),
+            [&state]{
+                state.firstMissileSpawnOn = 90;
+                state.firstMissileSpawnCounter = 1.f;
+                EnemyManager::getInstance().queueCreateEnemy("missile", {155*16,81*16});
+            }
+        );
+
+        state.firstMissileSpawnCounter -= GameState::getInstance().dt();
+        if(state.firstMissileSpawnOn && state.firstMissileSpawnCounter <= 0.f){
+            EnemyManager::getInstance().queueCreateEnemy("missile", {170*16,81*16});
+            state.firstMissileSpawnCounter = 4.f;
+        }
 
         //secret layer oppacity change
         state.secretLayerOppacity.update();

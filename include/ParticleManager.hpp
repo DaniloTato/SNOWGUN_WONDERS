@@ -17,7 +17,10 @@ public:
         Snow,
         Dust,
         Explosion,
-        Stars
+        Stars,
+        Smoke,
+        ExplosionMedium,
+        Cross
     };
 
     struct Particle {
@@ -48,8 +51,10 @@ public:
     void emitSnow(const sf::Vector2f& pos);
     void emitDust(const sf::Vector2f& pos);
     void emitExplosion(const sf::Vector2f& pos, int count = 12);
+    void emitMediumExplosion(const sf::Vector2f& pos, int count = 1, float radius = 1);
     void emitStars(const sf::Vector2f& pos, int count = 1);
     void emitCross(const sf::Vector2f& pos, int count = 1);
+    void emitSmoke(const sf::Vector2f& pos, int count = 1);
 
     void setWind(const sf::Vector2f& windVec);
 

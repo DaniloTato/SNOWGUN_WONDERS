@@ -12,6 +12,7 @@ namespace ColorPalette {
     inline const sf::Color Black = sf::Color(0,0,0);
     inline const sf::Color White = sf::Color(252,252,252);
     inline const sf::Color DarkCyanBlue = sf::Color(0,64,88);
+    inline const sf::Color VividIndigo = sf::Color(104,68,252);
 
     inline constexpr std::array<const sf::Color*, 6> EXPLOSION_COLORS = {
         &HotPink,
