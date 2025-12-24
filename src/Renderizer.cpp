@@ -15,7 +15,8 @@ assignedCamera(params.camera),
 layer(params.layer), 
 paralax(params.parallax), 
 show(true), 
-showCountDown(0.f)
+showCountDown(0.f),
+hasCulling(true)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(rect);
@@ -68,12 +69,12 @@ void Renderizer::render(GameObject* obj) {
 
     if (!assignedCamera) {
         sprite.setPosition(position);
-        if(!isVisible()) return;
+        if(hasCulling && !isVisible()) return;
         sprite.setScale(1.f, 1.f);
     } else {
         sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
         sprite.setPosition(screenPos);
-        if(!isVisible()) return;
+        if(hasCulling && !isVisible()) return;
         sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
     }
 
@@ -92,7 +93,7 @@ void Renderizer::renderRectShape(GameObject* obj) {
         rectShape.setSize(static_cast<sf::Vector2f>(rect.getSize()));
     } else{
         sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
-        sprite.setPosition(screenPos);
+        rectShape.setPosition(screenPos);
         rectShape.setSize(static_cast<sf::Vector2f>(rect.getSize()) * assignedCamera->getZoom());
     }
 
@@ -105,6 +106,10 @@ void Renderizer::setColor(sf::Color newColor){
 
 const float Renderizer::getLayer() const{
     return layer;
+}
+
+void Renderizer::turnOffCulling(){
+    hasCulling = false;
 }
 
 void Renderizer::setRect(const sf::IntRect& newRect, int direction) {
@@ -149,10 +154,26 @@ void Renderizer::toggleShowEvery(float time){
     }
 }
 
+void Renderizer::showSprite(){
+    show = true;
+}
+
 bool Renderizer::shouldIRender(){
     return show;
 }
 
 void Renderizer::setLayer(float newLayer){
     layer = newLayer;
+}
+
+void Renderizer::toggleColorEvery(float time, const sf::Color& color1, const sf::Color& color2){
+    colorCountDown -= GameState::getInstance().dt();
+    if(colorCountDown < 0){
+        if(color == color1){
+            color = color2;
+        } else{
+            color = color1;
+        }
+        colorCountDown = time;
+    }
 }

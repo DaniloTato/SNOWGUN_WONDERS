@@ -1,41 +1,105 @@
 #include "tutorial.hpp"
 
+#include "AnimatedObject.hpp"
 #include "CollectableManager.hpp"
 #include "ColorPalette.hpp"
 #include "LevelManager.hpp"
 #include "DialogueManager.hpp"
 #include "ParticleManager.hpp"
 #include "GameState.hpp"
+#include "barrelScript.hpp"
 #include "followPlayer.hpp"
 #include "sceneHelperFunctions.hpp"
 #include "ScriptRunner.hpp"
 #include "SceneManager.hpp"
+#include "Constants.hpp"
+#include "Helpers.hpp"
 
 #include "levelCreatorInputs.hpp"
 #include "particleGeneration.hpp"
 #include "particleGeneration.hpp"
 #include "tutorialTriggers.hpp"
+#include "updateLifeCounterScript.hpp"
+#include "updateCrystalCounterScript.hpp"
 
 namespace SceneBuilder{
 
-    void tutorial() {
-        LevelManager& levelManager = LevelManager::getInstance();
-        DialogueManager& dialogueManager = DialogueManager::getInstance();
-        ParticleManager& particleManager = ParticleManager::getInstance();
+    void ui(){
         GameState& gameState = GameState::getInstance();
+        gameState.getUiCamera() -> zoomTo(3.f);
+        gameState.getUiCamera() -> zoomToDesired();
+
+        sf::Texture dummyTexture;
+        RenderizerParameters topBarParams{
+            *gameState.getMainWindow(),
+            dummyTexture,
+            {0, 0, Constants::SCREEN_WIDTH / 3 + 1, 32},
+            {0.f, 0.f},
+            GameState::getInstance().getUiCamera(),
+            Constants::UI_LAYER,
+            1.f,
+            true
+        };
+        RenderableObject* topBarUI = new RenderableObject(topBarParams);
+        topBarUI->renderizer.setColor(ColorPalette::Black);
+
+        RenderizerParameters barrelParams{
+            *gameState.getMainWindow(),
+            Helper::loadTexture("assets/whiteBarrel.png"),
+            {0,0,76,78},
+            {-26.f, -26.f},
+            GameState::getInstance().getUiCamera(),
+            Constants::UI_LAYER - 2,
+            1.f,
+        };
+        AnimatedObject* barrelUI = new AnimatedObject(barrelParams);
+        barrelUI->renderizer.setColor(ColorPalette::NeonMagenta);
+        barrelUI->animator.loadAsepriteAnimations("assets/json/whiteBarrel.json");
+        barrelUI->animator.play("idle_once");
+        barrelUI->animator.setSpeedMultiplier(2);
+        barrelUI->scripter.addScript(script::barrelScript);
+
+        RenderizerParameters barrelCenterParams{
+            *gameState.getMainWindow(),
+            Helper::loadTexture("assets/barrelCenter.png"),
+            {0,0,21,21},
+            {2.f, 2.f},
+            GameState::getInstance().getUiCamera(),
+            Constants::UI_LAYER - 1,
+            1.f,
+        };
+        new RenderableObject(barrelCenterParams);
+
+    }
+
+    void tutorial() {
+
+        GameState& gameState = GameState::getInstance();
+        setupCameras(gameState);
+
+        auto mainCam = gameState.getMainCamera();
         sf::RenderWindow& window = *gameState.getMainWindow();
 
-        setupCameras(gameState);
-        auto mainCam = gameState.getMainCamera();
+        // Text Font Setup
+        DialogueManager& dialogueManager = DialogueManager::getInstance();
+        setupTextAndDialogue(window, dialogueManager, mainCam);
+        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+
+        ui();
+
+        LevelManager& levelManager = LevelManager::getInstance();
+        ParticleManager& particleManager = ParticleManager::getInstance();
         mainCam->scripter.addScript(script::followPlayer);
 
         ScriptRunner* scriptRunner = new ScriptRunner();
         scriptRunner->scripter.addScript(script::levelCreatorInputs);
         scriptRunner->scripter.addScript(script::particleGeneration);
         scriptRunner->scripter.addScript(script::tutorialTriggers);
+        scriptRunner->scripter.addScript(script::updateLifeCounterScript);
+        scriptRunner->scripter.addScript(script::updateCrystalCounterScript);
 
         // Player setup
-        TangibleObject* player = createPlayer(window, loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
 
         // Bullets
         static sf::Texture bulletTexture;
@@ -43,10 +107,6 @@ namespace SceneBuilder{
 
         // Particles Texture Setup
         setupParticles(window, particleManager, mainCam);
-
-        // Text Font Setup
-        setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
 
         levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "assets/level_data/tutorial.json");
 
@@ -63,5 +123,11 @@ namespace SceneBuilder{
             &bulletTexture
         };
         SceneManager::getInstance().setContext(ctx);
+
+        /*Force excecution of camera script to follow player so the camera can go to
+        the desired position instantly*/
+        mainCam->scripter.runScripts(*mainCam, ctx);
+        mainCam->goToDesired();
+        mainCam -> zoomToDesired();
     }
 }

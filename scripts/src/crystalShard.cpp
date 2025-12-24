@@ -2,6 +2,7 @@
 
 #include "BasicCollider.hpp"
 #include "CollectableManager.hpp"
+#include "GameState.hpp"
 #include "ParticleManager.hpp"
 #include "PhysicsComponent.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -51,7 +52,7 @@ namespace script {
             state.collected = true;
             ParticleManager::getInstance().emitCross(obj.position);
 
-            //ctx.player->addCrystals(1);
+            GameState::getInstance().addToCrystalAmount(state.isBig ? 2 : 1);
 
             CollectableManager::getInstance().queueDeleteCollectable(&obj);
         }

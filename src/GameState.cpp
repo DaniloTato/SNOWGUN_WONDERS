@@ -1,10 +1,15 @@
 #include "GameState.hpp"
+#include "Bullet.hpp"
 #include "GameCamera.hpp"
 #include <SFML/Graphics.hpp>
 #include "Constants.hpp"
 
 GameState::GameState()
-: activeCameras({}), activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")}) {}
+    : activeCameras({})
+    , activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")})
+    , playerHealth(3)
+    , selectedWeapon(Bullet::Type::Normal)
+{}
 
 GameState& GameState::getInstance() {
     static GameState instance;
@@ -79,4 +84,32 @@ void GameState::createCamera(CameraList type){
     }
 
     activeCameras[index] = new GameCamera();
+}
+
+int GameState::getCrystalAmount() const{
+    return crystals;
+}
+
+void GameState::addToCrystalAmount(int amount){
+    crystals += amount;
+}
+
+int GameState::getPlayerHealth() const{
+    return playerHealth;
+}
+    
+void GameState::changePlayerHealth(int amount){
+    playerHealth += amount;
+}
+
+void GameState::changeWeaponSelection(){
+    if(selectedWeapon == Bullet::Type::Normal){
+        selectedWeapon = Bullet::Type::BubbleGun;
+    } else{
+        selectedWeapon = Bullet::Type::Normal;
+    }
+}
+
+Bullet::Type GameState::getWeaponSelection(){
+    return selectedWeapon;
 }

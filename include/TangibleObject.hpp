@@ -22,6 +22,9 @@ public:
     Scripter<TangibleObject> scripter;
     Animator animator;
     PhysicsComponent physics;
-    int direction = 1;
+
+
     std::optional<AttackHitbox> attackHitbox;
+    int direction = 1;
+    bool makesDamageTroughContact = true; //Horrible, but whatever. I'll change it eventually.
 };

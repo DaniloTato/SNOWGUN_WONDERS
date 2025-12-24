@@ -1,4 +1,5 @@
 #include "Bullet.hpp"
+#include "ColorPalette.hpp"
 #include "Constants.hpp"
 #include "PhysicsComponent.hpp"
 
@@ -27,6 +28,8 @@ Bullet::Bullet(
         physics.friction.x = 0.99f;
     }
 
+    renderizer.setColor(ColorPalette::LimeGreen);
+
     switch (type) {
         case Bullet::Type::Normal:
             collider.setSize({7.f,7.f});
@@ -40,6 +43,7 @@ Bullet::Bullet(
             physics.gravity = 0.3f;
             maxBounces = 10;
             maxLifeTime = 8.f;
+            physics.setSpdy(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
             break;
 
         case Bullet::Type::Bazooka:
@@ -53,6 +57,10 @@ Bullet::Bullet(
 
 void Bullet::update(const GeneralContext& ctx) {
     if (dead) return;
+
+    if(!shotByPlayer){
+        renderizer.toggleColorEvery(0.1f, ColorPalette::White, ColorPalette::MexicanPink);
+    }
 
     if (!dying) {
         updateBehavior(ctx);

@@ -1,12 +1,14 @@
 #include "movement.hpp"
 
 #include "BasicCollider.hpp"
+#include "SceneManager.hpp"
 #include "TangibleObject.hpp"
 #include "InputManager.hpp"
 #include "PhysicsComponent.hpp"
 #include "GameState.hpp"
 #include "InputManager.hpp"
 #include "BulletManager.hpp"
+#include "playerDamage.hpp"
 
 namespace script{
 
@@ -31,6 +33,33 @@ namespace script{
     }
 
     void movement(TangibleObject& tangible, const GeneralContext& ctx) {
+
+        playerDamage(
+            tangible,
+            ctx,
+            1.f,
+            {5,-3}
+        );
+
+        if (PlayerDamageFunctions::isKnocked(tangible) || GameState::getInstance().getPlayerHealth() <= 0) {
+
+            tangible.physics.updateX(tangible.position);
+            tangible.collider.horizontalLevelCollision(tangible.position);
+
+            tangible.physics.updateY(tangible.position);
+
+            if (tangible.collider.verticalLevelCollision(tangible.position)) {
+                tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
+                if(GameState::getInstance().getPlayerHealth() > 0){
+                    PlayerDamageFunctions::QuitKnockedState(tangible);
+                } else{
+                    SceneManager::getInstance().reloadCurrentScene();
+                }
+            }
+
+            tangible.animator.play("damaged_once");
+            return;
+        }
 
         auto& state = tangible.scripter.getState<MovementState>("movement");
 
@@ -90,7 +119,7 @@ namespace script{
             tangible.physics.updateX(tangible.position);
             tangible.collider.horizontalLevelCollision(tangible.position);
 
-            if(InputManager::getInstance().isJustPressed("jump")){
+            if(InputManager::getInstance().isJustPressed("jump") && state.timeInAir == 0){
                 tangible.physics.setSpdy(-5.f, PhysicsComponent::SpeedType::MOVEMENT);
             }
 
@@ -169,7 +198,7 @@ namespace script{
 
             BulletManager::getInstance().queueSpawn(
                 bulletParams,
-                Bullet::Type::Normal,
+                GameState::getInstance().getWeaponSelection(),
                 bulletSpeed,
                 sf::Vector2f(0.f,0.f),
                 8.f,

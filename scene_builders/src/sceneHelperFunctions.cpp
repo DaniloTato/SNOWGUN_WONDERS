@@ -1,7 +1,10 @@
 #include "sceneHelperFunctions.hpp"
+#include "GameState.hpp"
 #include "dramaticZoom.hpp"
 #include "cameraAlarm.hpp"
 #include "movement.hpp"
+#include "Constants.hpp"
+#include "Helpers.hpp"
 
 namespace SceneBuilder{
 
@@ -14,19 +17,6 @@ namespace SceneBuilder{
         mainCam->zoomTo(3.f);
         mainCam->scripter.addScript(script::dramaticZoom);
         mainCam->scripter.addScript(script::cameraAlarm);
-    }
-
-    // Create and setup a texture from file, returning reference
-    sf::Texture& loadTexture(const std::string& path) {
-        static std::unordered_map<std::string, sf::Texture> cache;
-        if (cache.find(path) == cache.end()) {
-            sf::Texture tex;
-            if (!tex.loadFromFile(path)) {
-                throw std::runtime_error("Failed to load texture " + path);
-            }
-            cache[path] = std::move(tex);
-        }
-        return cache[path];
     }
 
     // Create player object with common setup
@@ -46,12 +36,17 @@ namespace SceneBuilder{
         player->scripter.addScript(script::movement);
         player->animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
         player->animator.setSpeedMultiplier(1.8f);
+
+        if(GameState::getInstance().getPlayerHealth() <= 0){
+            GameState::getInstance().changePlayerHealth(3 - GameState::getInstance().getPlayerHealth());
+        }
+
         return player;
     }
 
     // Setup particles
     PolyRenderizer* setupParticles(sf::RenderWindow& window, ParticleManager& particleManager, GameCamera* camera) {
-        static sf::Texture& particleTexture = loadTexture("assets/particles.png");
+        static sf::Texture& particleTexture = Helper::loadTexture("assets/particles.png");
         RenderizerParameters params{
             window,
             particleTexture,
@@ -68,14 +63,14 @@ namespace SceneBuilder{
 
     // Setup text parameters and dialogue system
     RenderizerParameters* setupTextAndDialogue(sf::RenderWindow& window, DialogueManager& dialogueManager, GameCamera* camera) {
-        static sf::Texture& fontTexture = loadTexture("assets/font.png");
+        static sf::Texture& fontTexture = Helper::loadTexture("assets/font.png");
         RenderizerParameters* params = new RenderizerParameters{
             window,
             fontTexture,
-            sf::IntRect(),
+            sf::IntRect(), 
             {0.f, 0.f},
             camera,
-            -2.f,
+            Constants::TEXT_LAYER,
             1.f
         };
         dialogueManager.attachTextParams(params);

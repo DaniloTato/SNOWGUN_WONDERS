@@ -28,7 +28,9 @@ public:
     void setLayer(float newLayer);
     void setColor(sf::Color newColor);
     void toggleShowEvery(float time);
+    void toggleColorEvery(float time, const sf::Color& color1, const sf::Color& color2);
     bool shouldIRender();
+    void turnOffCulling();
 
     bool isVisible() const;
 
@@ -36,6 +38,7 @@ public:
     static void unregisterPair(Renderizer* rend);
 
     static void renderAll();
+    void showSprite();
 
 protected:
     sf::RenderWindow& window;
@@ -49,6 +52,9 @@ protected:
 
     bool show;
     float showCountDown;
+    float colorCountDown;
+
+    bool hasCulling;
 
     static std::vector<RenderEntry> registry;
 };

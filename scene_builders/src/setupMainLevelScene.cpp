@@ -7,6 +7,7 @@
 #include "sceneHelperFunctions.hpp"
 #include "ScriptRunner.hpp"
 #include "SceneManager.hpp"
+#include "Helpers.hpp"
 
 #include "levelCreatorInputs.hpp"
 #include "roomCamera.hpp"
@@ -30,7 +31,7 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::levelCreatorInputs);
 
         // Player setup
-        TangibleObject* player = createPlayer(window, loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
 
         setupParticles(window, particleManager, mainCam);
 

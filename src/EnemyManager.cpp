@@ -1,5 +1,6 @@
 #include "EnemyManager.hpp"
 #include "GameObject.hpp"
+#include "damageable.hpp"
 #include <iostream>
 
 EnemyManager& EnemyManager::getInstance() {
@@ -66,4 +67,29 @@ std::vector<std::string> EnemyManager::getEnemyList() const {
     }
 
     return result;
+}
+
+TangibleObject* EnemyManager::isCollidingWithEnemy(TangibleObject& object) {
+    for (TangibleObject* enemy : objects) {
+
+        if (!enemy) continue;
+
+        if (enemy->attackHitbox.has_value()) {
+            if(BasicCollider::isCollidingRect(
+                enemy->attackHitbox.value().collider.getCollisionRect(enemy->position),
+                object.collider.getCollisionRect(object.position))
+            )
+            {
+                return enemy;
+            }
+        }
+
+        if (script::DamageFunctions::isDying(*enemy)) continue;
+
+        if (enemy->makesDamageTroughContact && BasicCollider::objectsColliding(&object, enemy)) {
+            return enemy;
+        }
+    }
+
+    return nullptr;
 }

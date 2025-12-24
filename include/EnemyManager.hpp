@@ -33,6 +33,8 @@ public:
 
     std::vector<std::string> getEnemyList() const;
 
+    TangibleObject* isCollidingWithEnemy(TangibleObject& object);
+
 protected:
     TangibleObject* createFromRequest(const EnemyCreationRequest& req) override;
     void destroyObject(TangibleObject* obj) override;

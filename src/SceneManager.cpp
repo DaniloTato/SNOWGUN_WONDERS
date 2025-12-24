@@ -6,6 +6,7 @@
 #include "EnemyManager.hpp"
 #include "ParticleManager.hpp"
 #include "DialogueManager.hpp"
+#include "Constants.hpp"
 
 SceneManager& SceneManager::getInstance() {
     static SceneManager instance;
@@ -21,10 +22,17 @@ void SceneManager::loadScene(const std::string& name) {
     beginTransition(name);
 }
 
+void SceneManager::reloadCurrentScene(){
+    loadScene(currentScene);
+}
+
 void SceneManager::beginTransition(const std::string& nextScene) {
     transitioning = true;
+    fadingOut = true;
     transitionTimer = 0.f;
     queuedScene = nextScene;
+
+    initFadeOverlay();
 }
 
 void SceneManager::unloadCurrentScene() {
@@ -40,22 +48,35 @@ void SceneManager::unloadCurrentScene() {
     GameObject::destroySceneObjects();
 }
 
-void SceneManager::finishTransition() {
-    unloadCurrentScene();
-
-    scenes[queuedScene]();
-    currentScene = queuedScene;
-
-    transitioning = false;
-}
-
 void SceneManager::update() {
     if (!transitioning) return;
 
-    transitionTimer += GameState::getInstance().dt();
+    float dt = GameState::getInstance().dt();
+    transitionTimer += dt;
 
-    if (transitionTimer >= 0.5f) {
-        finishTransition();
+    float t = transitionTimer / transitionDuration;
+    if (t > 1.f) t = 1.f;
+
+    if (fadingOut) {
+        sf::Uint8 alpha = static_cast<sf::Uint8>(255.f * t);
+        fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
+
+        if (t >= 1.f) {
+            unloadCurrentScene();
+            scenes[queuedScene]();
+            currentScene = queuedScene;
+
+            fadingOut = false;
+            transitionTimer = 0.f;
+        }
+    } else {
+        sf::Uint8 alpha = static_cast<sf::Uint8>(255.f * (1.f - t));
+        fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
+
+        if (t >= 1.f) {
+            fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
+            transitioning = false;
+        }
     }
 }
 
@@ -69,4 +90,25 @@ void SceneManager::setContext(GeneralContext& newContext){
 
 const GeneralContext& SceneManager::getContext() const{
     return currentContext;
+}
+
+void SceneManager::initFadeOverlay() {
+    if (fadeOverlay) return;
+
+    sf::Texture dummyTexture;
+
+    RenderizerParameters params{
+        *GameState::getInstance().getMainWindow(),
+        dummyTexture,
+        {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
+        {0.f, 0.f},
+        GameState::getInstance().getUiCamera(),
+        Constants::OVERLAY_LAYER,
+        1.f,
+        true
+    };
+
+    fadeOverlay = new RenderableObject(params);
+    fadeOverlay->makePersistentAcrossScenes();
+    fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
 }

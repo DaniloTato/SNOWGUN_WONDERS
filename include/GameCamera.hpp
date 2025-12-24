@@ -21,6 +21,8 @@ public:
     const float getDesiredZoom() const;
     void setCameraShakePosition(const sf::Vector2f& shakePos);
     void setImpactZoom(float impactZoom);
+    void zoomToDesired();
+    void goToDesired();
 
     const sf::Vector2f screenToWorld(const sf::Vector2f& screenPos, float parallax) const;
     const sf::Vector2f worldToScreen(const sf::Vector2f& worldPos, float parallax = 1.0f) const;

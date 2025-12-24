@@ -64,7 +64,7 @@ Bullet* BulletManager::isCollidingWithBullet(TangibleObject& object, bool amIPla
     for (Bullet* bullet : objects) {
 
         if (!bullet->isDying() && 
-            BasicCollider::objectsColliding(&object, bullet) &&
+        BasicCollider::objectsColliding(&object, bullet) &&
             ((amIPlayer && !bullet->isShotByPlayer()) || (!amIPlayer && bullet->isShotByPlayer()))
         ) {
             return bullet;

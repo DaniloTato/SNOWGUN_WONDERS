@@ -27,8 +27,16 @@ void GameCamera::goTo(const sf::Vector2f& pos) {
     desiredPosition = pos;
 }
 
+void GameCamera::goToDesired(){
+    position = desiredPosition;
+}
+
 void GameCamera::zoomTo(float dZoom) {
     desiredZoom = dZoom;
+}
+
+void GameCamera::zoomToDesired(){
+    zoom = desiredZoom;
 }
 
 void GameCamera::update(const GeneralContext& ctx) {

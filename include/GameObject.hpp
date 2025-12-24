@@ -11,6 +11,8 @@ public:
     virtual ~GameObject();
     virtual void update(const GeneralContext& ctx) = 0;
 
+    void makePersistentAcrossScenes();
+
     static std::vector<GameObject*>& getGameObjects();
     static void destroy(GameObject* g);
 

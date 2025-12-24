@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 namespace Helper{
 
     struct TriggerOnce {
@@ -18,4 +20,6 @@ namespace Helper{
     constexpr T lerp(const T& actual, const T& desired, float speed) {
         return actual + (desired - actual) * speed;
     }
+
+    sf::Texture& loadTexture(const std::string& path);
 }

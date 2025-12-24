@@ -30,6 +30,8 @@ namespace blueprint {
 
         toy->scripter.addScript(script::runningToy);
 
+        toy->makesDamageTroughContact = false;
+
         return toy;
     }
 

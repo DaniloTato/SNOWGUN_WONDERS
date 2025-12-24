@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include "GameCamera.hpp"
+#include "Bullet.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
 class GameState {
@@ -27,6 +28,15 @@ public:
     const float dt();
     void updateDt();
 
+    int getCrystalAmount() const;
+    void addToCrystalAmount(int amount);
+
+    int getPlayerHealth() const;
+    void changePlayerHealth(int amount);
+
+    void changeWeaponSelection();
+    Bullet::Type getWeaponSelection();
+
 private:
     GameState();
     ~GameState() = default;
@@ -42,4 +52,8 @@ private:
 
     std::chrono::high_resolution_clock::time_point lastFrameTime = std::chrono::high_resolution_clock::now();
     float dtValue;
+
+    int crystals;
+    int playerHealth;
+    Bullet::Type selectedWeapon;
 };

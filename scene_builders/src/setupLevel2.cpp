@@ -14,6 +14,7 @@
 #include "levelCreatorInputs.hpp"
 #include "particleGeneration.hpp"
 #include "toddTalk.hpp"
+#include "Helpers.hpp"
 
 namespace SceneBuilder{
 
@@ -33,7 +34,7 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::particleGeneration);
 
         // Todd setup
-        static sf::Texture& toddTexture = loadTexture("assets/todd.png");
+        static sf::Texture& toddTexture = Helper::loadTexture("assets/todd.png");
         RenderizerParameters toddParams{
             window,
             toddTexture,
@@ -48,7 +49,7 @@ namespace SceneBuilder{
         dialogueManager.assignDialogue(todd, "Greeting");
 
         // Player
-        TangibleObject* player = createPlayer(window, loadTexture("assets/snowman_animation.png"), mainCam, {16.f,16.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f,16.f});
 
         setupParticles(window, particleManager, mainCam);
 
@@ -66,7 +67,7 @@ namespace SceneBuilder{
             &(player->position),
             dialogueManager.getAttachedTextParams(),
             player,
-            &loadTexture("assets/bullet.png")
+            &Helper::loadTexture("assets/bullet.png")
         };
         SceneManager::getInstance().setContext(ctx);
     }

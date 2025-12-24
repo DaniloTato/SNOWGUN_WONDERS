@@ -12,6 +12,7 @@ namespace script {
         const int MAX_LIFE = 10;
         const float SPEED = 1.f;
         const float EXPLOSION_SPEED = 0.1;
+        const int EXPLOSION_DAMAGE = 1;
         const float DEAD_DURATION = 1.f;
         const float MAXIMUM_EXPLOSION_RADIUS = 40.f;
 
@@ -48,7 +49,26 @@ namespace script {
         if(isDying){
             tangible.renderizer.setLayer(0.f); //change layer so it renders behind explosion
             status.currentExplosionRadius = Helper::lerp(status.currentExplosionRadius, MAXIMUM_EXPLOSION_RADIUS, EXPLOSION_SPEED);
-            ParticleManager::getInstance().emitMediumExplosion(tangible.position + sf::Vector2f(8,24), 2, status.currentExplosionRadius);
+
+            sf::Vector2f explosionCenter = tangible.position + sf::Vector2f(8.f, 24.f);
+            ParticleManager::getInstance().emitMediumExplosion(explosionCenter, 2, status.currentExplosionRadius);
+
+            BasicCollider explosionCollider;
+            explosionCollider.setSize({ 2.f * status.currentExplosionRadius, 2.f * status.currentExplosionRadius });
+
+            explosionCollider.setOffset({
+                explosionCenter.x - status.currentExplosionRadius - tangible.position.x + 10,
+                explosionCenter.y - status.currentExplosionRadius - tangible.position.y
+            });
+
+            AttackHitbox explosionHitbox = {
+                explosionCollider,
+                true,
+                EXPLOSION_DAMAGE,
+                10.f
+            };
+
+            tangible.attackHitbox = explosionHitbox;
             return;
         }
 

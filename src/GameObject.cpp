@@ -37,3 +37,7 @@ void GameObject::destroySceneObjects() {
         }
     }
 }
+
+void GameObject::makePersistentAcrossScenes(){
+    persistentAcrossScenes = true;
+}

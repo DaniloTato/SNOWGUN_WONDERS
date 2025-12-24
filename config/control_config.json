@@ -19,6 +19,7 @@
         "spawnEnemy": "R",
         "kick": "LShift",
         "nextScene": "Num5",
-        "godMode": "G"
+        "godMode": "G",
+        "changeGun": "F"
     }
 }
