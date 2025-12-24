@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
 
 namespace Helper{
@@ -22,4 +23,5 @@ namespace Helper{
     }
 
     sf::Texture& loadTexture(const std::string& path);
+    float distance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
 }

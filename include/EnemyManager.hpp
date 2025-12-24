@@ -16,6 +16,26 @@ class EnemyManager
     : public QueuedManager<TangibleObject, EnemyCreationRequest>
 {
 public:
+
+    enum class EnemySpawnTriggerType {
+        AREA_ENTER,
+        TIMER
+    };
+
+    struct EnemySpawnDefinition {
+        std::string id;
+        std::string templateName;
+        EnemySpawnTriggerType triggerType;
+        sf::FloatRect triggerArea;
+        float spawnInterval = 0.f;
+        float spawnTimer = 0.f;
+        sf::Vector2f spawnPoint;
+        int maxAlive = 1;
+        float activationRadius = 500.f;
+        bool triggeredOnce = false;
+        bool enabled = true;
+    };
+
     static EnemyManager& getInstance();
 
     void registerTemplate(
@@ -35,6 +55,16 @@ public:
 
     TangibleObject* isCollidingWithEnemy(TangibleObject& object);
 
+    void checkSpawnTriggers(const sf::Vector2f& playerPos); //Must be run every frame
+
+    void loadSpawnDefinitionsFromJson(const std::string& path);
+    void saveSpawnDefinitionsToJson(const std::string& path);
+
+    void addSpawnDefinition(const EnemySpawnDefinition& def);
+    void removeSpawnDefinition(const std::string& id);
+    void removeSpawnDefinition( const sf::Vector2f& position,float tolerance);
+    std::vector<EnemySpawnDefinition>& getSpawnDefinitions();
+
 protected:
     TangibleObject* createFromRequest(const EnemyCreationRequest& req) override;
     void destroyObject(TangibleObject* obj) override;
@@ -46,4 +76,6 @@ private:
         std::function<TangibleObject*(const sf::Vector2f&)>> templates;
 
     std::unordered_map<std::string, sf::Texture> enemyTextures;
+
+    std::vector<EnemySpawnDefinition> spawnDefinitions;
 };
