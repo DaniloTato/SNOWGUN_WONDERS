@@ -24,4 +24,5 @@ namespace Helper{
 
     sf::Texture& loadTexture(const std::string& path);
     float distance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
+    sf::FloatRect makeRectFromPoints(float x1, float y1,float x2, float y2);
 }

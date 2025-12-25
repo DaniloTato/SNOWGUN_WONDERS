@@ -92,3 +92,7 @@ void DialogueManager::onSceneUnload(){
 RenderizerParameters* DialogueManager::getAttachedTextParams() const {
     return attachedTextParams;
 }
+
+void DialogueManager::print(const std::string markup){
+    createQueue.push_back({ *attachedTextParams, &markup });
+}

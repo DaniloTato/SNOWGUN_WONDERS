@@ -29,6 +29,8 @@ public:
     RenderizerParameters* getAttachedTextParams() const;
     void onSceneUnload() override;
 
+    void print(const std::string markup);
+
 private:
     DialogueManager();
     ~DialogueManager() = default;

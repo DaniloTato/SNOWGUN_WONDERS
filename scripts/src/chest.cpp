@@ -20,7 +20,10 @@ namespace script {
         if (BulletManager::getInstance().isCollidingWithBullet(chest, false)) {
 
             state.opened = true;
-            CollectableManager::getInstance().queueCreateCollectable("crystal", chest.position);
+
+            if(rand() % 2 == 0){
+                CollectableManager::getInstance().queueCreateCollectable("health", {chest.position.x, chest.position.y - 10});
+            }
 
             int numberOfCrystals = (rand() % 10 + 20);
 
@@ -29,6 +32,7 @@ namespace script {
             }
 
             chest.animator.play("open_once");
+            chest.playSound("chest");
         }
     }
 

@@ -14,7 +14,7 @@ using json = nlohmann::json;
 LevelManager::LevelManager()
     : activeLayer(0)
     , cameraPlayerRelation(Constants::STARTING_PLAYER_CAMERA_RELATION)
-    , backgroundColor(ColorPalette::DarkCyanBlue)
+    , backgroundColor(ColorPalette::Black)
 {}
 
 LevelManager& LevelManager::getInstance() {

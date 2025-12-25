@@ -18,4 +18,16 @@ namespace Helper{
         float dy = a.y - b.y;
         return std::sqrt(dx * dx + dy * dy);
     }
+
+    sf::FloatRect makeRectFromPoints(
+    float x1, float y1,
+    float x2, float y2
+    ) {
+        float left   = std::min(x1, x2);
+        float top    = std::min(y1, y2);
+        float width  = std::abs(x2 - x1);
+        float height = std::abs(y2 - y1);
+
+        return sf::FloatRect(left, top, width, height);
+    }
 }

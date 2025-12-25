@@ -19,7 +19,8 @@ public:
 
     enum class EnemySpawnTriggerType {
         AREA_ENTER,
-        TIMER
+        TIMER,
+        PROXIMITY,
     };
 
     struct EnemySpawnDefinition {

@@ -22,10 +22,10 @@ namespace blueprint {
 
         auto* hp = new TangibleObject(params);
 
-        hp->collider.setSize({12.f, 12.f});
-        hp->collider.setOffset({2.f, 2.f});
+        hp->collider.setSize({16.f, 16.f});
 
-        //hp->physics.enableGravity = true;
+        hp->animator.loadAsepriteAnimations("assets/json/ginger.json");
+        hp->animator.play("idle");
 
         hp->scripter.addScript(script::healthPickup);
 

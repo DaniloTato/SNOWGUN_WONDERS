@@ -5,6 +5,7 @@
 #include "Scripter.hpp"
 #include "Animator.hpp"
 #include "PhysicsComponent.hpp"
+#include <SFML/Audio.hpp>
 
 struct AttackHitbox {
     BasicCollider collider;
@@ -23,8 +24,12 @@ public:
     Animator animator;
     PhysicsComponent physics;
 
+    void playSound(const std::string& id, float volume = 100.f);
+    bool isPlayingAnySound() const;
 
     std::optional<AttackHitbox> attackHitbox;
     int direction = 1;
     bool makesDamageTroughContact = true; //Horrible, but whatever. I'll change it eventually.
+
+    std::unordered_map<std::string, sf::Sound> sounds;
 };

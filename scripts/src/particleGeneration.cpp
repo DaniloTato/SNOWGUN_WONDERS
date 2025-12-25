@@ -3,21 +3,55 @@
 #include "GameState.hpp"
 #include "Constants.hpp"
 
+#include "SFML/System/Vector2.hpp"
 #include "ScriptRunner.hpp"
 
-namespace script{
+namespace script {
 
     void particleGeneration(ScriptRunner& runner, const GeneralContext& ctx) {
 
-        //Particles are not GameObjcts. Hence, they do not need queueing when trying to create them.
+        //Particles are not game objects. Hence, they do not need to be queued to be destroyed.
 
-        const float snowSpawnRange =  5;
-        ParticleManager::getInstance().emitSnow(
-            GameState::getInstance().getMainCamera()->screenToWorld(
-                {static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5) ,-50},
+        static bool prewarmed = false;
+
+        const float snowSpawnRange = 7.f;
+        auto* camera = GameState::getInstance().getMainCamera();
+        if (!prewarmed) {
+            for (int i = 0; i < 1200; i++) {
+                sf::Vector2f worldPos = camera->screenToWorld(
+                    {
+                        static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange
+                        - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5f),
+                        static_cast<float>(rand() % Constants::SCREEN_WIDTH * snowSpawnRange
+                        - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5f)
+                    },
+                    1.f
+                );
+
+                if (worldPos.x <= 370 * 16) {
+                    ParticleManager::getInstance().emitSnow(worldPos);
+                }
+            }
+
+            prewarmed = true;
+            return;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            sf::Vector2f inGamePosition = camera->screenToWorld(
+                {
+                    static_cast<float>(
+                        rand() % Constants::SCREEN_WIDTH * snowSpawnRange
+                        - Constants::SCREEN_WIDTH * snowSpawnRange * 0.5f
+                    ),
+                    -50.f
+                },
                 1.f
-            )
-        );
-    }
+            );
 
+            if (inGamePosition.x > 370 * 16) continue;
+
+            ParticleManager::getInstance().emitSnow(inGamePosition);
+        }
+    }
 }

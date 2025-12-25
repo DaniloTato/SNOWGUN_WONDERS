@@ -3,6 +3,7 @@
 #include "AnimatedObject.hpp"
 #include "CollectableManager.hpp"
 #include "ColorPalette.hpp"
+#include "EnemyManager.hpp"
 #include "LevelManager.hpp"
 #include "DialogueManager.hpp"
 #include "ParticleManager.hpp"
@@ -21,6 +22,8 @@
 #include "tutorialTriggers.hpp"
 #include "updateLifeCounterScript.hpp"
 #include "updateCrystalCounterScript.hpp"
+
+#include <iostream>
 
 namespace SceneBuilder{
 
@@ -99,7 +102,7 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::updateCrystalCounterScript);
 
         // Player setup
-        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 99.f});
 
         // Bullets
         static sf::Texture bulletTexture;
@@ -114,6 +117,13 @@ namespace SceneBuilder{
 
         CollectableManager::getInstance().queueCreateCollectable("chest", {124 *16, 99*16});
         CollectableManager::getInstance().queueCreateCollectable("chest", {138 *16, 98*16});
+        CollectableManager::getInstance().queueCreateCollectable("chest", {384 *16, 76*16});
+        CollectableManager::getInstance().queueCreateCollectable("chest", {420 *16, 88*16});
+        CollectableManager::getInstance().queueCreateCollectable("chest", {374 *16, 82*16});
+        CollectableManager::getInstance().queueCreateCollectable("chest", {234 *16, 91*16});
+        CollectableManager::getInstance().queueCreateCollectable("health", {211 *16, 95*16});
+
+        EnemyManager::getInstance().loadSpawnDefinitionsFromJson("assets/level_data/tutorialEnemies.json");
 
         //context. Imperative
         GeneralContext ctx = {
@@ -126,8 +136,25 @@ namespace SceneBuilder{
 
         /*Force excecution of camera script to follow player so the camera can go to
         the desired position instantly*/
-        mainCam->scripter.runScripts(*mainCam, ctx);
-        mainCam->goToDesired();
+        mainCam -> zoomTo(3.0f);
         mainCam -> zoomToDesired();
+        script::followPlayer(*mainCam, ctx);
+        mainCam -> goToDesired();
+
+        static sf::Music tutorialMusic;
+        static bool musicStarted = false;
+
+        if (!musicStarted) {
+            if (!tutorialMusic.openFromFile("assets/sounds/tutorial2.wav")) {
+                std::cerr << "Failed to load tutorial music\n";
+            } else {
+                tutorialMusic.setLoop(true);
+                tutorialMusic.setVolume(100.f);
+                tutorialMusic.play();
+                musicStarted = true;
+            }
+        }
+
+        GameState::getInstance().changePlayerHealth(3 - GameState::getInstance().getPlayerHealth());
     }
 }

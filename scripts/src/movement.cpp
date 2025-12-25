@@ -41,6 +41,10 @@ namespace script{
             {5,-3}
         );
 
+        if(InputManager::getInstance().isJustPressed("changeGun")){
+            tangible.playSound("doKick");
+        }
+
         if (PlayerDamageFunctions::isKnocked(tangible) || GameState::getInstance().getPlayerHealth() <= 0) {
 
             tangible.physics.updateX(tangible.position);
@@ -139,6 +143,8 @@ namespace script{
             if (InputManager::getInstance().isJustPressed("kick")
                 && !state.kicking) {
 
+                tangible.playSound("doKick");
+
                 state.kicking = true;
                 state.kickTimer = KICK_DURATION;
 
@@ -186,6 +192,7 @@ namespace script{
 
         if(InputManager::getInstance().isJustPressed("shoot") && !state.kicking){
             state.movementLock = MAX_MOVEMENT_LOCK;
+            tangible.playSound("shoot");
 
             sf::Vector2f bulletSpeed;
             if (lookingUp == 1){

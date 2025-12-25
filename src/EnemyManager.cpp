@@ -105,6 +105,13 @@ void EnemyManager::checkSpawnTriggers(const sf::Vector2f& playerPos) {
         if (Helper::distance(playerPos, def.spawnPoint) > def.activationRadius)
             continue;
 
+        if (def.triggerType == EnemySpawnTriggerType::PROXIMITY){
+            if (!def.triggeredOnce){
+                queueCreateEnemy(def.templateName, def.spawnPoint);
+                def.triggeredOnce = true;
+            }
+        }
+
         if (def.triggerType == EnemySpawnTriggerType::AREA_ENTER) {
             if (!def.triggeredOnce &&
                 def.triggerArea.contains(playerPos))
@@ -137,9 +144,14 @@ void EnemyManager::loadSpawnDefinitionsFromJson(const std::string& path) {
         def.templateName = s["template"];
 
         std::string trigger = s["trigger"];
-        def.triggerType = trigger == "AREA_ENTER"
-            ? EnemySpawnTriggerType::AREA_ENTER
-            : EnemySpawnTriggerType::TIMER;
+
+        if(trigger == "AREA_ENTER"){
+            def.triggerType = EnemySpawnTriggerType::AREA_ENTER;
+        }else if(trigger == "TIMER"){
+            def.triggerType = EnemySpawnTriggerType::TIMER;
+        }else if(trigger == "PROXIMITY"){
+            def.triggerType = EnemySpawnTriggerType::PROXIMITY;
+        }
 
         if (def.triggerType == EnemySpawnTriggerType::AREA_ENTER) {
             auto r = s["triggerArea"];
@@ -148,7 +160,7 @@ void EnemyManager::loadSpawnDefinitionsFromJson(const std::string& path) {
 
         if (def.triggerType == EnemySpawnTriggerType::TIMER) {
             def.spawnInterval = s["interval"];
-            def.spawnTimer = def.spawnInterval;
+            def.spawnTimer = 0.f;
         }
 
         auto p = s["spawnPoint"];
@@ -220,7 +232,6 @@ void EnemyManager::removeSpawnDefinition(
     const sf::Vector2f& position,
     float tolerance
 ) {
-    auto sq = [](float v) { return v * v; };
     float tolSq = tolerance * tolerance;
 
     spawnDefinitions.erase(

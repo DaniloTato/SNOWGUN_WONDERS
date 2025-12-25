@@ -13,6 +13,7 @@
 #include "DialogueManager.hpp"
 #include "EnemyManager.hpp"
 #include "SceneManager.hpp"
+#include "SoundManager.hpp"
 
 /*Namespaces*/
 #include "Constants.hpp"
@@ -32,6 +33,7 @@
 #include "setupMainLevelScene.hpp"
 #include "setupLevel2.hpp"
 #include "tutorial.hpp"
+#include "titleScreen.hpp"
 
 #include <cstddef>
 #include <cstdlib>
@@ -61,17 +63,33 @@ int main() {
     // Collectable Manager Setup
     collectableManager.loadTexture("crystal", "assets/crystal.png");
     collectableManager.registerTemplate("crystal", blueprint::crystalBlueprint);
-    collectableManager.loadTexture("health", "assets/chest.png");
+    collectableManager.loadTexture("health", "assets/ginger.png");
     collectableManager.registerTemplate("health", blueprint::healthBlueprint);
     collectableManager.loadTexture("chest", "assets/chest.png");
     collectableManager.registerTemplate("chest", blueprint::chestBlueprint);
+
+    // Sound Manager Setup
+    SoundManager::getInstance().load("shoot", "assets/sounds/buster.wav");
+    SoundManager::getInstance().load("die", "assets/sounds/death.wav");
+    SoundManager::getInstance().load("enemyShot", "assets/sounds/enemy_shoot.wav");
+    SoundManager::getInstance().load("health", "assets/sounds/refill.wav");
+    SoundManager::getInstance().load("crystal", "assets/sounds/shard.wav");
+    SoundManager::getInstance().load("hit", "assets/sounds/hit.wav");
+    SoundManager::getInstance().load("crystal2", "assets/sounds/shard2.wav");
+    SoundManager::getInstance().load("chest", "assets/sounds/chest.wav");
+    SoundManager::getInstance().load("tutorialTune", "assets/sounds/tutorial2.wav");
+    SoundManager::getInstance().load("kickHit", "assets/sounds/kickHit.wav");
+    SoundManager::getInstance().load("doKick", "assets/sounds/doKick.wav");
+    SoundManager::getInstance().load("explosion", "assets/sounds/explosion.wav");
+    SoundManager::getInstance().load("enemyDie", "assets/sounds/enemyDie.wav");
 
     // Scene Manager Setup
     sceneManager.registerScene("barracks", SceneBuilder::setupMainLevelScene);
     sceneManager.registerScene("level2", SceneBuilder::setupLevel2);
     sceneManager.registerScene("tutorial", SceneBuilder::tutorial);
+    sceneManager.registerScene("titleScreen", SceneBuilder::titleScreen);
 
-    sceneManager.loadScene("barracks");
+    sceneManager.loadScene("titleScreen");
 
     sf::Clock clock;
 

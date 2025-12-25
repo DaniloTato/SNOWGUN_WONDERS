@@ -21,7 +21,12 @@ namespace script {
         bool crystalSize = (rand() % 3 == 0);
         auto& state = obj.scripter.getState<CrystalState>("crystal", crystalSize, sf::Vector2f(rand() % 8 - 4, 3 + rand() % 3));
 
-        if (state.collected) return;
+        if (state.collected){
+            if(!obj.isPlayingAnySound()){
+                CollectableManager::getInstance().queueDeleteCollectable(&obj);
+            }
+            return;
+        }
 
         //set speed first frame
         if(state.startingSpeed != sf::Vector2f(0.f,0.f)){
@@ -50,11 +55,11 @@ namespace script {
 
         if (BasicCollider::objectsColliding(ctx.player, &obj)) {
             state.collected = true;
+            obj.renderizer.hide();
             ParticleManager::getInstance().emitCross(obj.position);
+            obj.playSound(rand()%2 == 0 ? "crystal":"crystal2");
 
             GameState::getInstance().addToCrystalAmount(state.isBig ? 2 : 1);
-
-            CollectableManager::getInstance().queueDeleteCollectable(&obj);
         }
     }
 

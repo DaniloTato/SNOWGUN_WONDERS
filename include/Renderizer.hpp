@@ -32,6 +32,8 @@ public:
     bool shouldIRender();
     void turnOffCulling();
 
+    void hide();
+
     bool isVisible() const;
 
     static void registerPair(GameObject* obj, Renderizer* rend, bool isRectShape);

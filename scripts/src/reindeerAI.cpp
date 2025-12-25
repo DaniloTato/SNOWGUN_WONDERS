@@ -12,7 +12,7 @@ namespace script {
 
     namespace {
 
-        const float FOLLOW_SPEED = 50.f;
+        const float FOLLOW_SPEED = 30.f;
         const float PLAYER_DISTANCE = 30.f;
         const float SHOOT_DISTANCE = 100.f;
         const float FIRE_COOLDOWN = 0.8f;

@@ -47,6 +47,11 @@ namespace script {
         );
 
         if(isDying){
+
+            if(!tangible.isPlayingAnySound()){
+                tangible.playSound("explosion", 50);
+            }
+
             tangible.renderizer.setLayer(0.f); //change layer so it renders behind explosion
             status.currentExplosionRadius = Helper::lerp(status.currentExplosionRadius, MAXIMUM_EXPLOSION_RADIUS, EXPLOSION_SPEED);
 

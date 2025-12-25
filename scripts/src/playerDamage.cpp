@@ -115,6 +115,7 @@ namespace script {
                 0.5f,
                 {knockSpeed.x * -tangible.direction, knockSpeed.y}
             );
+            tangible.playSound("hit");
         }
         /*Check if player is colliding with bullet*/
 
@@ -130,6 +131,7 @@ namespace script {
                 0.5f,
                 {knockSpeed.x * -tangible.direction, knockSpeed.y}
             );
+            tangible.playSound(GameState::getInstance().getPlayerHealth() > 0 ? "hit" : "die", 200);
         }
         /*Check if player is colliding with enemy*/
     }

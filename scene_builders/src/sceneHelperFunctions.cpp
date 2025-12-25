@@ -37,10 +37,6 @@ namespace SceneBuilder{
         player->animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
         player->animator.setSpeedMultiplier(1.8f);
 
-        if(GameState::getInstance().getPlayerHealth() <= 0){
-            GameState::getInstance().changePlayerHealth(3 - GameState::getInstance().getPlayerHealth());
-        }
-
         return player;
     }
 

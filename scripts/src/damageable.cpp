@@ -109,12 +109,15 @@ namespace script {
             state.life--;
             state.hitTimer = hitDuration;
 
+            tangible.playSound("enemyShot");
+
             CollectableManager::getInstance().queueCreateCollectable(
                 "crystal", 
                 tangible.position + sf::Vector2f(16.f, 0.f)
             );
 
             if (state.life <= 0 && !isDead(state)) {
+                tangible.playSound("enemyDie", 50);
                 state.deadTimer = deadDuration;
                 int numberOfCrystals = rand()%3 + 3;
                 for(int i = 0; i < numberOfCrystals; i++){
@@ -140,6 +143,7 @@ namespace script {
 
             if (BasicCollider::isCollidingRect(attackRect, enemyRect)) {
 
+                tangible.playSound("kickHit");
                 ParticleManager::getInstance().emitStars(tangible.position + sf::Vector2f(4.f,4.f),8);
 
                 for(int i = 0; i < ctx.player->attackHitbox->damage; i++){
@@ -170,6 +174,7 @@ namespace script {
                     PhysicsComponent::SpeedType::KICK);
 
                 if (state.life <= 0 && !isDead(state)) {
+                    tangible.playSound("enemyDie", 50);
                     state.deadTimer = deadDuration;
                 }
 

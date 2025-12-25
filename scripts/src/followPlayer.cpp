@@ -6,6 +6,7 @@
 #include "InputManager.hpp"
 #include "GameState.hpp"
 #include "LevelManager.hpp"
+#include "SceneManager.hpp"
 
 namespace script{
 
@@ -15,6 +16,13 @@ namespace script{
         float zoom = camera.getZoom();
         sf::Vector2f halfViewSize(Constants::SCREEN_WIDTH / 2.f / zoom, Constants::SCREEN_HEIGHT / 2.f / zoom);
         sf::Vector2f desiredCamPos = playerPosition - (halfViewSize - LevelManager::getInstance().getCameraPlayerRelation());
+
+        if(desiredCamPos.x > 3000 && desiredCamPos.y > 87*16){
+            desiredCamPos.y = 87*16;
+            if(playerPosition.y > desiredCamPos.y + Constants::SCREEN_HEIGHT/camera.getZoom()){
+                SceneManager::getInstance().reloadCurrentScene();
+            }
+        }
 
         camera.goTo(desiredCamPos);
 

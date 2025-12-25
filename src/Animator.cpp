@@ -111,7 +111,7 @@ void Animator::play(const std::string& name) {
 
     auto it = animations.find(name);
     if (it == animations.end()){
-        std::cout << "⚠️ animation name not found: " << name << "\n";
+        std::cout << "[ANIMATOR] WARNING. Animation name not found: " << name << "\n";
         return;
     }
 

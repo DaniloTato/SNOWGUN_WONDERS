@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include "ColorPalette.hpp"
 #include "Constants.hpp"
 #include "RenderCommand.hpp"
 #include "Renderizer.hpp"
@@ -23,9 +24,10 @@ GameText::GameText(RenderizerParameters params): renderizer(params){
     colorNameMap["red"]   = sf::Color::Red;
     colorNameMap["green"] = sf::Color::Green;
     colorNameMap["blue"]  = sf::Color::Blue;
-    colorNameMap["yellow"]= sf::Color::Yellow;
+    colorNameMap["yellow"]= ColorPalette::LimeGreen;
     colorNameMap["cyan"]  = sf::Color::Cyan;
     colorNameMap["magenta"]= sf::Color::Magenta;
+    colorNameMap["purple"]= ColorPalette::VividIndigo;
     colorNameMap["transparent"] = sf::Color(0,0,0,0);
 }
 

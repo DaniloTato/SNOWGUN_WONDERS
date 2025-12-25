@@ -11,6 +11,7 @@ namespace script{
             animated.animator.play("idle_once");
             animated.animator.play("roll_once");
             GameState::getInstance().changeWeaponSelection();
+            
         }
     }
 }

@@ -177,3 +177,7 @@ void Renderizer::toggleColorEvery(float time, const sf::Color& color1, const sf:
         colorCountDown = time;
     }
 }
+
+void Renderizer::hide(){
+    show = false;
+}
