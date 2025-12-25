@@ -76,6 +76,7 @@ namespace SceneBuilder{
             "#position 0 150\n"
             "#boundary " + std::to_string(Constants::SCREEN_WIDTH/3) + "\n"
             "#alignment center\n" +
+            "#effect typewriter 0.2\n" +
             "<color=yellow><anim=shake:1>-PRESS ENTER TO START-</anim><color=purple>";
 
         enter -> loadFromMarkup(markupEnter);

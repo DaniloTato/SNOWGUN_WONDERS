@@ -20,7 +20,8 @@ public:
         Stars,
         Smoke,
         ExplosionMedium,
-        Cross
+        Cross,
+        Heart
     };
 
     struct Particle {
@@ -53,6 +54,7 @@ public:
     void emitExplosion(const sf::Vector2f& pos, int count = 12);
     void emitMediumExplosion(const sf::Vector2f& pos, int count = 1, float radius = 1);
     void emitStars(const sf::Vector2f& pos, int count = 1);
+    void emitHearts(const sf::Vector2f& pos, int count = 1);
     void emitCross(const sf::Vector2f& pos, int count = 1);
     void emitSmoke(const sf::Vector2f& pos, int count = 1);
 

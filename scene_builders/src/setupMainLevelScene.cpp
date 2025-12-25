@@ -46,7 +46,7 @@ namespace SceneBuilder{
         setupTextAndDialogue(window, dialogueManager, mainCam);
         dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
 
-        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), Constants::STARTING_LEVEL_PATH);
+        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "./assets/level_data/barracks.json");
 
         //context. Imperative
         GeneralContext ctx = {

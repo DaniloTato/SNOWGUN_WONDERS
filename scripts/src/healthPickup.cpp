@@ -26,7 +26,7 @@ namespace script {
             state.collected = true;
             obj.renderizer.hide();
             obj.playSound("health", 150);
-            ParticleManager::getInstance().emitCross(obj.position);
+            ParticleManager::getInstance().emitHearts(obj.position, 5);
             GameState::getInstance().changePlayerHealth(1);
         }
     }

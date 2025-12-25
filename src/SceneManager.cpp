@@ -1,4 +1,5 @@
 #include "SceneManager.hpp"
+#include "CollectableManager.hpp"
 #include "GameObject.hpp"
 #include "LevelManager.hpp"
 #include "GameState.hpp"
@@ -42,6 +43,7 @@ void SceneManager::unloadCurrentScene() {
     ParticleManager::getInstance().onSceneUnload();
     DialogueManager::getInstance().onSceneUnload();
     LevelManager::getInstance().onSceneUnload();
+    CollectableManager::getInstance().onSceneUnload();
 
     GameState::getInstance().clearCameras();
 

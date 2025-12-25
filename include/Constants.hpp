@@ -11,11 +11,11 @@ namespace Constants {
     inline constexpr int SCREEN_HEIGHT = 600;
     inline constexpr int FRAME_RATE = 60;
     inline constexpr int PARTICLES_LAYER = -1;
-    inline constexpr int EFFECTS_LAYER = -100;
+    inline constexpr int EFFECTS_LAYER = -99;
+    inline constexpr int TEXT_LAYER = -100;
     inline constexpr int UI_LAYER = -101;
-    inline constexpr int TEXT_LAYER = -105;
+    inline constexpr int UI_TEXT_LAYER = -105;
     inline constexpr int OVERLAY_LAYER = -200;
     const std::string TILESET_PATH = "./assets/house_spritesheet.png";
-    const std::string STARTING_LEVEL_PATH = "./assets/level_data/barracks.json";
     const sf::Vector2f STARTING_PLAYER_CAMERA_RELATION = {20,-30};
 }

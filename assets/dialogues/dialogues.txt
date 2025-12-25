@@ -28,3 +28,12 @@ Let's see if this works
 #alignment left
 
 Let's see if this works
+
+[Key=kickTutorial]
+#position 6624 1136
+#boundary 400
+#alignment left
+
+You kick ass!!!
+Kick harder by pressing
+<color=yellow><anim=sin>LEFT SHIFT</anim></color>

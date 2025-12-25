@@ -87,6 +87,7 @@ namespace SceneBuilder{
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
         dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+        dialogueManager.printByKey("kickTutorial");
 
         ui();
 

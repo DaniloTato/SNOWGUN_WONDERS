@@ -30,6 +30,7 @@ public:
     void onSceneUnload() override;
 
     void print(const std::string markup);
+    void printByKey(const std::string key);
 
 private:
     DialogueManager();

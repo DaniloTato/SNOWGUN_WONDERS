@@ -163,6 +163,27 @@ void ParticleManager::emitStars(const sf::Vector2f& pos, int count){
     }
 }
 
+void ParticleManager::emitHearts(const sf::Vector2f& pos, int count){
+    for (int i = 0; i < count; i++) {
+        Particle p;
+        p.type = Type::Heart;
+        p.pos = pos;
+        p.vel = sf::Vector2f(_toggleRand(-100, 100), _toggleRand(-100, 100));
+
+        p.color = sf::Color::White;
+        
+        p.animator = std::make_unique<Animator>();
+        p.animator->setAnimations(cachedAnimations);
+        p.animator->play("heart_once");
+        p.texRect = sf::IntRect(0, 0, 16, 16);
+
+        p.maxLifetime = 3.f;
+        p.lifetime = p.maxLifetime;
+
+        particles.push_back(std::move(p));
+    }
+}
+
 void ParticleManager::emitCross(const sf::Vector2f& pos, int count){
     for (int i = 0; i < count; i++) {
         Particle p;

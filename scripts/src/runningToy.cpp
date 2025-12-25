@@ -24,6 +24,8 @@ namespace script {
         tangible.physics.setSpdx(3, PhysicsComponent::SpeedType::MOVEMENT);
         tangible.physics.updateX(tangible.position);
 
+        tangible.collider.horizontalLevelCollision(tangible.position);
+
         state.trigger4.check((tangible.position.x >= 1710.f), [&tangible] {
             tangible.physics.setSpdy(-5, PhysicsComponent::SpeedType::MOVEMENT);
         });
