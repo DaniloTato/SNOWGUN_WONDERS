@@ -3,6 +3,10 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "chest.hpp"
+#include <filesystem>
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -27,7 +31,7 @@ namespace blueprint {
         //chest->collider.setStatic(true);
         //chest->physics.enableGravity = false;
 
-        chest->animator.loadAsepriteAnimations("assets/json/chest.json");
+        chest->animator.loadAsepriteAnimations(ROOT / "assets/json/chest.json");
         chest->animator.play("closed");
 
         chest->scripter.addScript(script::chest);

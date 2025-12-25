@@ -1,5 +1,13 @@
 #include "Helpers.hpp"
 
+#if defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#elif defined(__linux__)
+    #include <unistd.h>
+#elif defined(_WIN32)
+    #include <windows.h>
+#endif
+
 namespace Helper{
     sf::Texture& loadTexture(const std::string& path) {
         static std::unordered_map<std::string, sf::Texture> cache;
@@ -29,5 +37,25 @@ namespace Helper{
         float height = std::abs(y2 - y1);
 
         return sf::FloatRect(left, top, width, height);
+    }
+
+    std::filesystem::path getExecutableDir() {
+        #if defined(__APPLE__)
+            uint32_t size = 0;
+            _NSGetExecutablePath(nullptr, &size);
+            std::string buffer(size, '\0');
+            _NSGetExecutablePath(buffer.data(), &size);
+            return std::filesystem::path(buffer).parent_path();
+
+        #elif defined(__linux__)
+            char result[1024];
+            ssize_t count = readlink("/proc/self/exe", result, sizeof(result));
+            return std::filesystem::path(std::string(result, count)).parent_path();
+
+        #elif defined(_WIN32)
+            char buffer[MAX_PATH];
+            GetModuleFileNameA(nullptr, buffer, MAX_PATH);
+            return std::filesystem::path(buffer).parent_path();
+        #endif
     }
 }

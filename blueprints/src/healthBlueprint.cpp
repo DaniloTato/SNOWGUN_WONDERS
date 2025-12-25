@@ -3,6 +3,9 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "healthPickup.hpp"   // script
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -24,7 +27,7 @@ namespace blueprint {
 
         hp->collider.setSize({16.f, 16.f});
 
-        hp->animator.loadAsepriteAnimations("assets/json/ginger.json");
+        hp->animator.loadAsepriteAnimations(ROOT / "assets/json/ginger.json");
         hp->animator.play("idle");
 
         hp->scripter.addScript(script::healthPickup);

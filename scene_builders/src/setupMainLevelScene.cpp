@@ -11,10 +11,14 @@
 
 #include "levelCreatorInputs.hpp"
 #include "roomCamera.hpp"
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace SceneBuilder{
 
     void setupMainLevelScene() {
+
         LevelManager& levelManager = LevelManager::getInstance();
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         ParticleManager& particleManager = ParticleManager::getInstance();
@@ -29,22 +33,22 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::levelCreatorInputs);
 
         // Player setup
-        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture(ROOT / "assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 98.f});
 
         setupParticles(window, particleManager, mainCam);
 
         // Bullets
         static sf::Texture bulletTexture;
-        bulletTexture.loadFromFile("assets/bullet.png");
+        bulletTexture.loadFromFile(ROOT / "assets/bullet.png");
 
         // Particles Texture Setup
         setupParticles(window, particleManager, mainCam);
 
         // Text Font Setup
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile(ROOT / "assets/dialogues/dialogues.txt");
 
-        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), "./assets/level_data/barracks.json");
+        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), ROOT / "./assets/level_data/barracks.json");
 
         //context. Imperative
         GeneralContext ctx = {

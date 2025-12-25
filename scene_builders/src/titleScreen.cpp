@@ -12,6 +12,8 @@
 #include "Constants.hpp"
 #include <cstddef>
 
+const std::filesystem::path ROOT = Helper::getExecutableDir();
+
 namespace SceneBuilder{
 
     void titleScreen() {
@@ -28,7 +30,7 @@ namespace SceneBuilder{
         // Text Font Setup
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile(ROOT / "assets/dialogues/dialogues.txt");
 
         LevelManager& levelManager = LevelManager::getInstance();
 
@@ -48,7 +50,7 @@ namespace SceneBuilder{
         };
         SceneManager::getInstance().setContext(ctx);
 
-        sf::Texture& fontTexture = Helper::loadTexture("assets/font.png");
+        sf::Texture& fontTexture = Helper::loadTexture(ROOT /"assets/font.png");
 
         //title text
         RenderizerParameters params{

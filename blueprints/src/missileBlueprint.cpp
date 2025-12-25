@@ -2,7 +2,10 @@
 
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
+#include "Helpers.hpp"
 #include "missileAI.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -25,7 +28,7 @@ namespace blueprint {
         missile->collider.setOffset({0.f, 16.f});
         missile->collider.setSize({32.f, 32.f});
 
-        missile->animator.loadAsepriteAnimations("assets/json/missile.json");
+        missile->animator.loadAsepriteAnimations(ROOT / "assets/json/missile.json");
 
         missile->animator.play("idle");
 

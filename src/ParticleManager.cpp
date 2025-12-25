@@ -4,17 +4,20 @@
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
 #include "ColorPalette.hpp"
+#include "Helpers.hpp"
 #include <cmath>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 static float _toggleRand(float min, float max) {
     return min + ((float)rand() / RAND_MAX) * (max - min);
 }
 
 ParticleManager::ParticleManager(){
-    cachedAnimations = Animator::getAsepriteJSONAnimations("assets/json/particles.json");
+    cachedAnimations = Animator::getAsepriteJSONAnimations(ROOT / "assets/json/particles.json");
     persistentAcrossScenes = true;
 }
 

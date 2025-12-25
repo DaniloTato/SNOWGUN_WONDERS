@@ -10,6 +10,10 @@
 #include "SceneManager.hpp"
 #include <cstddef>
 
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
+
 namespace SceneBuilder{
 
     void end() {
@@ -27,7 +31,7 @@ namespace SceneBuilder{
         // Text Font Setup
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile(ROOT / "assets/dialogues/dialogues.txt");
         dialogueManager.printByKey("thanks");
 
         LevelManager& levelManager = LevelManager::getInstance();
@@ -47,19 +51,5 @@ namespace SceneBuilder{
             &dummy
         };
         SceneManager::getInstance().setContext(ctx);
-
-        //title text
-        // std::string markupMessage =
-        //     "#position 0 0\n"
-        //     "#boundary " + std::to_string(Constants::SCREEN_WIDTH/3) + "\n"
-        //     "#alignment left\n" +
-        //     "#effect typewriter 0.1\n" + 
-        //     "So... That was it.\n" +
-        //     "<color=yellow><anim=shake:2>for now!<anim=shake:2></color>\n" +
-        //     "expect much more in the future :D\n" +
-        //     "thanks to those who shared this <anim=sin>18</sin> day journey with me!\n" + 
-        //     "-with love * - Danilo";
-
-        // dialogueManager.print(markupMessage);
     }
 }

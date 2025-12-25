@@ -6,11 +6,13 @@
 #include "Helpers.hpp"
 #include "ScriptRunner.hpp"
 
+const std::filesystem::path ROOT = Helper::getExecutableDir();
+
 namespace script {
 
     namespace{
 
-        sf::Texture fontTexture = Helper::loadTexture("assets/font.png");
+        sf::Texture fontTexture = Helper::loadTexture(ROOT / "assets/font.png");
 
         struct LifeCounterState{
             GameText* lifeCounter = nullptr;

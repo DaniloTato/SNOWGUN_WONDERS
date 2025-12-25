@@ -1,6 +1,9 @@
 #include "BulletManager.hpp"
 #include "BasicCollider.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 BulletManager& BulletManager::getInstance() {
     static BulletManager instance;
@@ -42,7 +45,7 @@ Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
         req.shotByPlayer
     );
 
-    bullet->animator.loadAsepriteAnimations("assets/json/bullet.json");
+    bullet->animator.loadAsepriteAnimations(ROOT / "assets/json/bullet.json");
     bullet->animator.play("fly");
     return bullet;
 }

@@ -35,10 +35,13 @@
 #include "tutorial.hpp"
 #include "titleScreen.hpp"
 #include "end.hpp"
+#include "Helpers.hpp"
 
 #include <cstddef>
 #include <cstdlib>
 #include <ctime>
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 int main() {
     InputManager& inputManager = InputManager::getInstance();
@@ -50,39 +53,39 @@ int main() {
     sf::RenderWindow& window = *gameState.getMainWindow();
     window.setFramerateLimit(Constants::FRAME_RATE);
 
-    inputManager.loadBindingsFromJsonFile("./config/control_config.json");
+    inputManager.loadBindingsFromJsonFile(ROOT / "config/control_config.json");
 
     // Enemy Manager Setup
-    enemyManager.loadTexture("toy", "assets/toy.png");
+    enemyManager.loadTexture("toy", ROOT / "assets/toy.png");
     enemyManager.registerTemplate("toy", blueprint::toy);
     enemyManager.registerTemplate("runningToy", blueprint::runningToyBlueprint);
-    enemyManager.loadTexture("reindeer", "assets/reindeer.png");
+    enemyManager.loadTexture("reindeer", ROOT /"assets/reindeer.png");
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
-    enemyManager.loadTexture("missile", "assets/missile.png");
+    enemyManager.loadTexture("missile", ROOT /"assets/missile.png");
     enemyManager.registerTemplate("missile", blueprint::missileBlueprint);
 
     // Collectable Manager Setup
-    collectableManager.loadTexture("crystal", "assets/crystal.png");
+    collectableManager.loadTexture("crystal", ROOT / "assets/crystal.png");
     collectableManager.registerTemplate("crystal", blueprint::crystalBlueprint);
-    collectableManager.loadTexture("health", "assets/ginger.png");
+    collectableManager.loadTexture("health", ROOT / "assets/ginger.png");
     collectableManager.registerTemplate("health", blueprint::healthBlueprint);
-    collectableManager.loadTexture("chest", "assets/chest.png");
+    collectableManager.loadTexture("chest", ROOT / "assets/chest.png");
     collectableManager.registerTemplate("chest", blueprint::chestBlueprint);
 
     // Sound Manager Setup
-    SoundManager::getInstance().load("shoot", "assets/sounds/buster.wav");
-    SoundManager::getInstance().load("die", "assets/sounds/death.wav");
-    SoundManager::getInstance().load("enemyShot", "assets/sounds/enemy_shoot.wav");
-    SoundManager::getInstance().load("health", "assets/sounds/refill.wav");
-    SoundManager::getInstance().load("crystal", "assets/sounds/shard.wav");
-    SoundManager::getInstance().load("hit", "assets/sounds/hit.wav");
-    SoundManager::getInstance().load("crystal2", "assets/sounds/shard2.wav");
-    SoundManager::getInstance().load("chest", "assets/sounds/chest.wav");
-    SoundManager::getInstance().load("tutorialTune", "assets/sounds/tutorial2.wav");
-    SoundManager::getInstance().load("kickHit", "assets/sounds/kickHit.wav");
-    SoundManager::getInstance().load("doKick", "assets/sounds/doKick.wav");
-    SoundManager::getInstance().load("explosion", "assets/sounds/explosion.wav");
-    SoundManager::getInstance().load("enemyDie", "assets/sounds/enemyDie.wav");
+    SoundManager::getInstance().load("shoot", ROOT / "assets/sounds/buster.wav");
+    SoundManager::getInstance().load("die", ROOT / "assets/sounds/death.wav");
+    SoundManager::getInstance().load("enemyShot", ROOT / "assets/sounds/enemy_shoot.wav");
+    SoundManager::getInstance().load("health", ROOT / "assets/sounds/refill.wav");
+    SoundManager::getInstance().load("crystal", ROOT / "assets/sounds/shard.wav");
+    SoundManager::getInstance().load("hit", ROOT / "assets/sounds/hit.wav");
+    SoundManager::getInstance().load("crystal2", ROOT / "assets/sounds/shard2.wav");
+    SoundManager::getInstance().load("chest", ROOT / "assets/sounds/chest.wav");
+    SoundManager::getInstance().load("tutorialTune", ROOT / "assets/sounds/tutorial2.wav");
+    SoundManager::getInstance().load("kickHit", ROOT / "assets/sounds/kickHit.wav");
+    SoundManager::getInstance().load("doKick", ROOT / "assets/sounds/doKick.wav");
+    SoundManager::getInstance().load("explosion", ROOT / "assets/sounds/explosion.wav");
+    SoundManager::getInstance().load("enemyDie", ROOT / "assets/sounds/enemyDie.wav");
 
     // Scene Manager Setup
     sceneManager.registerScene("barracks", SceneBuilder::setupMainLevelScene);

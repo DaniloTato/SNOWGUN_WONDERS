@@ -3,6 +3,9 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "crystalShard.hpp"
+#include "Helpers.hpp"
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -28,7 +31,7 @@ namespace blueprint {
         // crystal->physics.enableGravity = true;
         // crystal->physics.mass = 1.f;
 
-        crystal->animator.loadAsepriteAnimations("assets/json/crystal.json");
+        crystal->animator.loadAsepriteAnimations(ROOT / "assets/json/crystal.json");
         crystal->animator.play("big");
 
         crystal->scripter.addScript(script::crystalShard);

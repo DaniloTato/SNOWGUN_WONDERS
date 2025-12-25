@@ -6,8 +6,11 @@
 #include "SFML/Graphics/Rect.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Constants.hpp"
+#include "Helpers.hpp"
 #include <nlohmann/json.hpp>
 #include <iostream>
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 using json = nlohmann::json;
 
@@ -39,7 +42,7 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
 
     tilesetPath = data["tileset"].get<std::string>();
 
-    tilesheet.loadFromFile(tilesetPath);
+    tilesheet.loadFromFile(ROOT / tilesetPath);
     int tileSize = data["tile_size"];
 
     auto& jsonLayers = data["layers"];

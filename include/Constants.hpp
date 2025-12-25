@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SFML/System/Vector2.hpp"
-#include <string>
 
 namespace Constants {
     inline constexpr int TILE_SIZE = 16;
@@ -16,6 +15,5 @@ namespace Constants {
     inline constexpr int UI_LAYER = -101;
     inline constexpr int UI_TEXT_LAYER = -105;
     inline constexpr int OVERLAY_LAYER = -200;
-    const std::string TILESET_PATH = "./assets/house_spritesheet.png";
     const sf::Vector2f STARTING_PLAYER_CAMERA_RELATION = {20,-30};
 }

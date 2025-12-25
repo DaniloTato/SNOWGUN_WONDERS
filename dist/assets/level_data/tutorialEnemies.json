@@ -1,0 +1,318 @@
+{
+  "spawns": [
+
+    {
+      "id": "running_enemies_area_1",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1679.0, 1591.0],
+      "maxAlive": 6,
+      "activationRadius": 800.0
+    },
+
+    {
+      "id": "running_enemies_area_1_b",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1663.0, 1591.0],
+      "maxAlive": 6
+    },
+
+    {
+      "id": "running_enemies_area_1_c",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1645.0, 1591.0],
+      "maxAlive": 6
+    },
+
+    {
+      "id": "running_enemies_area_1_d",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1620.0, 1591.0],
+      "maxAlive": 6
+    },
+
+    {
+      "id": "running_enemies_area_1_e",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1600.0, 1591.0],
+      "maxAlive": 6
+    },
+
+    {
+      "id": "running_enemies_area_1_f",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [1922.0, 1532.0, 128.0, 68.0],
+      "spawnPoint": [1550.0, 1591.0],
+      "maxAlive": 6
+    },
+
+    {
+      "id": "first_toy_enemy",
+      "template": "toy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2065.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2208.0, 1488.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "hidden_running_1",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2226.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2224.0, 1472.0],
+      "maxAlive": 5
+    },
+
+    {
+      "id": "hidden_running_2",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2226.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2208.0, 1488.0],
+      "maxAlive": 5
+    },
+
+    {
+      "id": "hidden_running_3",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2226.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2160.0, 1472.0],
+      "maxAlive": 5
+    },
+
+    {
+      "id": "hidden_running_4",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2226.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2144.0, 1488.0],
+      "maxAlive": 5
+    },
+
+    {
+      "id": "hidden_running_5",
+      "template": "runningToy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2226.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [2096.0, 1472.0],
+      "maxAlive": 5
+    },
+
+    {
+      "id": "first_missile",
+      "template": "missile",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2300.0, 0.0, 2000.0, 2000.0],
+      "spawnPoint": [2480.0, 1296.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "missile_repeater_a",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 4.0,
+      "spawnPoint": [2720.0, 1296.0],
+      "maxAlive": 2,
+      "activationRadius": 500.0
+    },
+
+    {
+      "id": "missile_repeater_b",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 2.5,
+      "spawnPoint": [2912.0, 1296.0],
+      "maxAlive": 2,
+      "activationRadius": 500.0
+    },
+
+    {
+      "id": "missile_repeater_c",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 3.0,
+      "spawnPoint": [3168.0, 1296.0],
+      "maxAlive": 2,
+      "activationRadius": 500.0
+    },
+
+    {
+      "id": "second_toy_enemy",
+      "template": "toy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [2850.0, 0.0, 2000.0, 1502.0],
+      "spawnPoint": [3068.0, 1480.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "toy_enemy_c",
+      "template": "toy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [3544.0, 0.0, 2000.0, 1555.0],
+      "spawnPoint": [3736.0, 1515.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "missile_repeater_d",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 4.0,
+      "spawnPoint": [4224.0, 1300.0],
+      "maxAlive": 2,
+      "activationRadius": 300.0
+    },
+
+    {
+      "id": "toy_enemy_d",
+      "template": "toy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [4300.0, 0.0, 2000.0, 1550.0],
+      "spawnPoint": [4500.0, 1500.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "toy_enemy_e",
+      "template": "toy",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [4300.0, 0.0, 2000.0, 1550.0],
+      "spawnPoint": [4428.0, 1500.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "reindeer_enemy_a",
+      "template": "reindeer",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [4790.0, 1392.0],
+      "activationRadius": 300.0
+    },
+
+    {
+      "id": "reindeer_enemy_b",
+      "template": "reindeer",
+      "trigger": "AREA_ENTER",
+      "triggerArea": [5070.0, 0.0, 2000.0, 1550.0],
+      "spawnPoint": [5240.0, 1376.0],
+      "maxAlive": 1
+    },
+
+    {
+      "id": "missile_repeater_e",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 4.0,
+      "spawnPoint": [5418.0, 1300.0],
+      "maxAlive": 2,
+      "activationRadius": 400.0
+    },
+
+    {
+      "id": "missile_repeater_f",
+      "template": "missile",
+      "trigger": "TIMER",
+      "interval": 2.5,
+      "spawnPoint": [5700.0, 1300.0],
+      "maxAlive": 2,
+      "activationRadius": 400.0
+    },
+
+    {
+
+      "id": "reindeer_enemy_c",
+      "template": "reindeer",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [5618.0, 1392.0],
+      "activationRadius": 300.0
+    },
+
+    {
+
+      "id": "reindeer_enemy_d",
+      "template": "reindeer",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [6600.0, 1296.0],
+      "activationRadius": 200.0
+    },
+
+    {
+
+      "id": "reindeer_enemy_e",
+      "template": "reindeer",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [6600.0, 1184.0],
+      "activationRadius": 200.0
+    },
+
+    {
+
+      "id": "toy_enemy_hall_a",
+      "template": "toy",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [6200, 1441.0],
+      "activationRadius": 300.0
+    },
+
+    {
+
+      "id": "toy_enemy_hall_b",
+      "template": "toy",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [6355, 1430.0],
+      "activationRadius": 300.0
+    },
+
+    {
+
+      "id": "toy_enemy_final_a",
+      "template": "toy",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [7529, 1194.0],
+      "activationRadius": 300.0
+    },
+
+    {
+
+      "id": "toy_enemy_final_b",
+      "template": "toy",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [7760, 1194.0],
+      "activationRadius": 300.0
+    },
+
+    {
+
+      "id": "reindeer_enemy_final_b",
+      "template": "reindeer",
+      "trigger": "PROXIMITY",
+      "spawnPoint": [7760, 1123.0],
+      "activationRadius": 200.0
+    },
+
+    {
+
+      "id": "missile_final_a",
+      "template": "missile",
+      "trigger": "TIMER",
+      "spawnPoint": [7760, 1000.0],
+      "activationRadius": 500.0,
+      "interval": 2.5
+    }
+
+  ]
+}

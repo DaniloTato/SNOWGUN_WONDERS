@@ -3,10 +3,15 @@
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
 #include "reindeerAI.hpp"
+#include "Helpers.hpp"
+
+std::filesystem::path ROOT;
 
 namespace blueprint {
 
     TangibleObject* reindeer(const sf::Vector2f& pos) {
+
+        ROOT = Helper::getExecutableDir();
 
         const std::string id = "reindeer";
 
@@ -25,7 +30,7 @@ namespace blueprint {
         heli->collider.setOffset({4.f, 4.f});
         heli->collider.setSize({24.f, 8.f});
 
-        heli->animator.loadAsepriteAnimations("assets/json/reindeer.json");
+        heli->animator.loadAsepriteAnimations(ROOT / "assets/json/reindeer.json");
 
         heli->animator.play("fly");
 
