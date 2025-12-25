@@ -32,7 +32,7 @@ namespace script {
                 sf::IntRect(),
                 {0.f, 0.f},
                 camera,
-                Constants::TEXT_LAYER,
+                Constants::UI_TEXT_LAYER,
                 1.f
             };
 

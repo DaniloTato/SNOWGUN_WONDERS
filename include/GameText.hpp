@@ -81,6 +81,7 @@ private:
     int glyphH;
     int atlasCols;
     int atlasFirstChar;
+    int lineSpacing;
 
     sf::Vector2f origin = {0.f, 0.f};
     float boundary = 10000.f;
@@ -92,7 +93,7 @@ private:
     float typeTimer = 0.f;
 
     std::vector<sf::SoundBuffer> soundBuffers;
-    std::vector<sf::Sound> soundPlayers;
+    sf::Sound typingSound;
     size_t soundPlayIndex = 0;
     bool useSoundPool = false;
     bool playSoundOnChars = true;
@@ -101,6 +102,8 @@ private:
     std::vector<std::vector<size_t>> lines;
 
     float globalTime = 0.f;
+
+    size_t revealableCount = 0;
 
     std::vector<RenderCommand> renderCommandBuffer;
 

@@ -3,7 +3,9 @@
 #include "EnemyManager.hpp"
 #include "GeneralContext.hpp"
 #include "LevelManager.hpp"
+#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
+#include "GameState.hpp"
 #include "Helpers.hpp"
 
 namespace script {
@@ -24,6 +26,9 @@ namespace script {
 
         struct TutorialTriggersState{
             SecretLayerOppacity secretLayerOppacity;
+            Helper::TriggerOnce setCheckpointA;
+            Helper::TriggerOnce setCheckpointB;
+            Helper::TriggerOnce setCheckpointEnd;
         };
     }
 
@@ -31,6 +36,24 @@ namespace script {
         auto& state = runner.scripter.getState<TutorialTriggersState>("tutorialTriggers");
 
         EnemyManager::getInstance().checkSpawnTriggers(ctx.player->position);
+
+        state.setCheckpointA.check((ctx.player->position.x > 206*16),
+            [] {
+                GameState::getInstance().setCheckpoint({206*16,94*16});
+            }
+        );
+
+        state.setCheckpointB.check((ctx.player->position.x > 368*16),
+            [] {
+                GameState::getInstance().setCheckpoint({368*16,92*16});
+            }
+        );
+
+        state.setCheckpointEnd.check((ctx.player->position.x > 508*16),
+            [] {
+                SceneManager::getInstance().loadScene("end");
+            }
+        );
 
         //secret layer oppacity change
         state.secretLayerOppacity.update();

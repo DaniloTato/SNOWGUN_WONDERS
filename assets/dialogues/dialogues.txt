@@ -37,3 +37,23 @@ Let's see if this works
 You kick ass!!!
 Kick harder by pressing
 <color=yellow><anim=sin>LEFT SHIFT</anim></color>
+
+[Key=thanks]
+#position 5 10
+#boundary 258
+#alignment center
+#effect typewriter 0.1
+#soundpool {"assets/sounds/shard.wav"}
+
+So... That was it.
+<ln>
+<color=yellow><anim=shake:2>for now!</anim></color>
+<ln>
+expect much more in the <ln> future :D
+<ln>
+thanks to those who shared
+this <anim=sin>18</sin> day
+journey with me! 
+<ln>
+<ln>
+<color=red>-with love * - Danilo</color>

@@ -5,6 +5,7 @@
 #include "GameCamera.hpp"
 #include "Bullet.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/System/Vector2.hpp"
 
 class GameState {
 public:
@@ -28,6 +29,9 @@ public:
     const float dt();
     void updateDt();
 
+    void setCheckpoint(sf::Vector2f position);
+    const sf::Vector2f getCheckpoint() const;
+
     int getCrystalAmount() const;
     void addToCrystalAmount(int amount);
 
@@ -36,6 +40,8 @@ public:
 
     void changeWeaponSelection();
     Bullet::Type getWeaponSelection();
+
+    bool hasCheckpoint() const;
 
 private:
     GameState();
@@ -52,6 +58,8 @@ private:
 
     std::chrono::high_resolution_clock::time_point lastFrameTime = std::chrono::high_resolution_clock::now();
     float dtValue;
+
+    sf::Vector2f checkpoint;
 
     int crystals;
     int playerHealth;

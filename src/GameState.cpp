@@ -3,10 +3,12 @@
 #include "GameCamera.hpp"
 #include <SFML/Graphics.hpp>
 #include "Constants.hpp"
+#include "SFML/System/Vector2.hpp"
 
 GameState::GameState()
     : activeCameras({})
     , activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")})
+    , checkpoint({-1,-1})
     , playerHealth(3)
     , selectedWeapon(Bullet::Type::Normal)
 {}
@@ -112,4 +114,16 @@ void GameState::changeWeaponSelection(){
 
 Bullet::Type GameState::getWeaponSelection(){
     return selectedWeapon;
+}
+
+void GameState::setCheckpoint(sf::Vector2f position){
+    checkpoint = position;
+}
+
+const sf::Vector2f GameState::getCheckpoint() const{
+    return checkpoint;
+}
+
+bool GameState::hasCheckpoint() const{
+    return checkpoint != sf::Vector2f{-1,-1};
 }

@@ -94,7 +94,8 @@ RenderizerParameters* DialogueManager::getAttachedTextParams() const {
 }
 
 void DialogueManager::print(const std::string markup){
-    createQueue.push_back({ *attachedTextParams, &markup });
+    const std::string* string = &markup;
+    createQueue.push_back({ *attachedTextParams, string });
 }
 
 void DialogueManager::printByKey(const std::string key){

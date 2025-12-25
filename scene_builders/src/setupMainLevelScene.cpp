@@ -12,8 +12,6 @@
 #include "levelCreatorInputs.hpp"
 #include "roomCamera.hpp"
 
-#include "Constants.hpp"
-
 namespace SceneBuilder{
 
     void setupMainLevelScene() {

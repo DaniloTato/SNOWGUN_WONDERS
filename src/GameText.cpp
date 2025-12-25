@@ -7,6 +7,7 @@
 #include "Constants.hpp"
 #include "RenderCommand.hpp"
 #include "Renderizer.hpp"
+#include "GameState.hpp"
 
 std::string trimLeadingSpace(std::string s) {
     while (!s.empty() && std::isspace(static_cast<unsigned char>(s.front()))){
@@ -15,13 +16,16 @@ std::string trimLeadingSpace(std::string s) {
     return s;
 }
 
-GameText::GameText(RenderizerParameters params): renderizer(params){
+GameText::GameText(RenderizerParameters params)
+    : lineSpacing(2)
+    , renderizer(params)
+{
 
     Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 
     colorNameMap["white"] = sf::Color::White;
     colorNameMap["black"] = sf::Color::Black;
-    colorNameMap["red"]   = sf::Color::Red;
+    colorNameMap["red"]   = ColorPalette::MexicanPink;
     colorNameMap["green"] = sf::Color::Green;
     colorNameMap["blue"]  = sf::Color::Blue;
     colorNameMap["yellow"]= ColorPalette::LimeGreen;
@@ -50,23 +54,15 @@ void GameText::setFontAtlas(sf::Texture& texture, int gW, int gH, int cols, int 
 
 void GameText::setSoundPool(const std::vector<std::string>& files) {
     soundBuffers.clear();
-    soundPlayers.clear();
-    for (auto &f : files) {
+
+    for (const auto& f : files) {
         sf::SoundBuffer buf;
-        if (buf.loadFromFile(f)) {
+        if (buf.loadFromFile(f))
             soundBuffers.push_back(std::move(buf));
-        }
     }
-    if (!soundBuffers.empty()) {
-        soundPlayers.resize(soundBuffers.size());
-        for (size_t i = 0; i < soundBuffers.size(); ++i) {
-            soundPlayers[i].setBuffer(soundBuffers[i]);
-        }
-        useSoundPool = true;
-        soundPlayIndex = 0;
-    } else {
-        useSoundPool = false;
-    }
+
+    useSoundPool = !soundBuffers.empty();
+    soundPlayIndex = 0;
 }
 
 void GameText::loadFromMarkup(const std::string& markup) {
@@ -321,7 +317,7 @@ void GameText::rebuildLayout() {
             glyphs[idx].basePos = { cx, origin.y + lineY };
             cx += static_cast<float>(glyphW);
         }
-        lineY += static_cast<float>(glyphH);
+        lineY += static_cast<float>(glyphH + lineSpacing);
     }
 
     // Assign appearIndex sequentially to all non-newline, so typewriter shows them in order
@@ -329,6 +325,14 @@ void GameText::rebuildLayout() {
     for (size_t i = 0; i < glyphs.size(); ++i) {
         if (glyphs[i].c != '\n') glyphs[i].appearIndex = ap++;
         else glyphs[i].appearIndex = -1;
+    }
+
+    revealableCount = 0;
+    for (auto& g : glyphs) {
+        if (g.c != '\n')
+            g.appearIndex = revealableCount++;
+        else
+            g.appearIndex = -1;
     }
 }
 
@@ -350,22 +354,30 @@ void GameText::forceRevealAll() {
 }
 
 void GameText::advanceTypewriter() {
-    float dt = 1.f/Constants::FRAME_RATE;
+    float dt = GameState::getInstance().dt();
+
     if (effect != Effect::Typewriter) return;
-    if (revealedCount >= glyphs.size()) return;
+
     typeTimer += dt;
+
     while (typeTimer >= typeDelay && revealedCount < glyphs.size()) {
         typeTimer -= typeDelay;
         revealedCount++;
-        if (useSoundPool && playSoundOnChars) playTypeSound();
+
+        if (useSoundPool && playSoundOnChars && revealedCount <= revealableCount)
+            playTypeSound();
     }
 }
 
 void GameText::playTypeSound() {
-    if (!useSoundPool || soundPlayers.empty()) return;
-    soundPlayers[soundPlayIndex].stop();
-    soundPlayers[soundPlayIndex].play();
-    soundPlayIndex = (soundPlayIndex + 1) % soundPlayers.size();
+    if (!useSoundPool || soundBuffers.empty()) return;
+
+    typingSound.stop();
+    typingSound.setBuffer(soundBuffers[soundPlayIndex]);
+    typingSound.play();
+
+    soundPlayIndex = (soundPlayIndex + 1) % soundBuffers.size();
+    typingSound.stop();
 }
 
 void GameText::updateRenderCommandBuffer() {

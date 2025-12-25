@@ -37,6 +37,12 @@ namespace SceneBuilder{
         player->animator.loadAsepriteAnimations("assets/json/snowman_animation.json");
         player->animator.setSpeedMultiplier(1.8f);
 
+        if(!GameState::getInstance().hasCheckpoint()){
+            GameState::getInstance().setCheckpoint(player->position);
+        } else{
+            player->position = GameState::getInstance().getCheckpoint();
+        }
+
         return player;
     }
 

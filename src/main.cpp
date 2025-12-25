@@ -34,6 +34,7 @@
 #include "setupLevel2.hpp"
 #include "tutorial.hpp"
 #include "titleScreen.hpp"
+#include "end.hpp"
 
 #include <cstddef>
 #include <cstdlib>
@@ -88,6 +89,7 @@ int main() {
     sceneManager.registerScene("level2", SceneBuilder::setupLevel2);
     sceneManager.registerScene("tutorial", SceneBuilder::tutorial);
     sceneManager.registerScene("titleScreen", SceneBuilder::titleScreen);
+    sceneManager.registerScene("end", SceneBuilder::end);
 
     sceneManager.loadScene("titleScreen");
 
