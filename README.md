@@ -32,7 +32,7 @@ This project is written in **C++17** and uses **SFML** and **nlohmann/json**.
 ### Common (Linux / macOS)
 - C++ compiler supporting C++17 (`g++` or `clang++`)
 - `make`
-- SFML 2.5+
+- SFML 2.6.0
 - nlohmann/json (header-only)
 
 ### Installing dependencies
