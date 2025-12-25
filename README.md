@@ -50,23 +50,97 @@ sudo apt install libsfml-dev nlohmann-json3-dev
 
 ---
 
-## Compile using Make (recommended)
+# Build & Distribution Guide — SNOWGUN WONDER
 
+## Compile using Make (Development)
+
+This is the **development workflow**.  
+The executable runs **from the project root** and uses `./assets` and `./config`.
+
+### Build
 ```bash
 make
 ```
 
-Run:
+This produces the executable:
 ```bash
-./xmas_app
+./snowgun
 ```
 
-Clean:
+### Run
+```bash
+make run
+```
+
+### Clean (development build + objects)
 ```bash
 make clean
 ```
 
 ---
+
+## Create a Distributable Build (macOS)
+
+This workflow creates a **self-contained folder** suitable for distribution.  
+The executable runs from inside `dist/` and uses `dist/assets` and `dist/config`.
+
+### Build the distributable binary
+```bash
+make dist
+```
+
+This produces:
+```bash
+dist/snowgun
+```
+
+### Copy runtime assets and libraries
+```bash
+make dist-package
+```
+
+This creates the following structure:
+```bash
+dist/
+├── snowgun
+├── assets/
+├── config/
+└── lib/        # SFML dynamic libraries
+```
+
+### Run the distributable build
+```bash
+make dist-run
+```
+
+### Clean distributable files only
+```bash
+make dist-clean
+```
+
+---
+
+## Create a ZIP Release (macOS)
+
+To generate a release archive containing everything needed to run the game:
+
+```bash
+sudo make zip
+```
+
+This produces:
+```bash
+snowgun-macos-[version].zip
+```
+
+The ZIP contains:
+- The `snowgun` executable
+- All required assets
+- Configuration files
+- SFML dynamic libraries
+
+This archive can be shared and run without rebuilding the project.
+
 
 ## Compile manually (without Make)
 
@@ -83,9 +157,9 @@ g++ -std=c++17 -Wall -g \
 ---
 
 ## Notes
-- The build system auto-discovers `.cpp` files.
-- Object files are stored in the `obj/` directory.
-- Tested on Linux and macOS.
+- Object files are stored under dist/obj/
+- Assets and config are loaded relative to the executable
+- Tested on MacOS
 
 --
 
