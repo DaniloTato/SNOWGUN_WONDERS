@@ -50,7 +50,7 @@ float GameCamera::getZoom() const {
     return zoom;
 }
 
-const float GameCamera::getDesiredZoom() const {
+float GameCamera::getDesiredZoom() const {
     return desiredZoom;
 }
 

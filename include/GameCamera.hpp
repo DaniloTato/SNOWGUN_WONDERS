@@ -18,7 +18,7 @@ public:
     void goTo(const sf::Vector2f& pos);
     void zoomTo(float desiredZoom);
     float getZoom() const;
-    const float getDesiredZoom() const;
+    float getDesiredZoom() const;
     void setCameraShakePosition(const sf::Vector2f& shakePos);
     void setImpactZoom(float impactZoom);
     void zoomToDesired();

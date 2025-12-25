@@ -33,7 +33,7 @@ const std::vector<GameCamera*>& GameState::getActiveCameras() const {
 }
 
 GameCamera* GameState::getMainCamera() const {
-    int mainCameraIndex = static_cast<int>(CameraList::MAIN);
+    size_t mainCameraIndex = static_cast<int>(CameraList::MAIN);
     if(activeCameras.size() >= mainCameraIndex){
         return activeCameras[mainCameraIndex];
     }
@@ -54,7 +54,7 @@ void GameState::clearCameras() {
     activeCameras.clear();
 }
 
-const float GameState::dt(){
+float GameState::dt(){
     return dtValue;
 }
 
@@ -66,7 +66,7 @@ void GameState::updateDt(){
 }
 
 GameCamera* GameState::getUiCamera() const{
-    int uiCameraIndex = static_cast<int>(CameraList::UI);
+    size_t uiCameraIndex = static_cast<int>(CameraList::UI);
     if(activeCameras.size() >= uiCameraIndex){
         return activeCameras[uiCameraIndex];
     }

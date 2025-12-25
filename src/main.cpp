@@ -106,10 +106,6 @@ int main() {
             inputManager.handleEvent(event);
         }
 
-        if (inputManager.isJustPressed("nextScene")) {
-            sceneManager.loadScene("tutorial");
-        }
-
         sceneManager.update();
         gameState.updateDt();
 

@@ -1,4 +1,5 @@
 #include "PolyRenderizer.hpp"
+#include "GameObject.hpp"
 #include "Renderizer.hpp"
 #include <limits>
 

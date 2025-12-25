@@ -96,7 +96,6 @@ PickerSelection TilePicker::open(
                     dragging = false;
             }
 
-            // ---------------- Enemies mode ----------------
             if (selection.mode == PickerMode::Enemies)
                 drawEnemyPicker(window, font, ev);
 
@@ -122,16 +121,13 @@ PickerSelection TilePicker::open(
         drawLayerList(window, layers, activeLayer, font, sf::Event{});
 
         if (activeLayer >= 0)
-            drawParallaxUI(window, layers[activeLayer], font, parallaxSlider, sf::Event{});
+            drawParallaxUI(window, layers[activeLayer], font, parallaxSlider);
 
         window.display();
     }
 
     return selection;
 }
-
-// ------------------------------------------------
-// Mode tabs
 
 void TilePicker::drawModeTabs(
     sf::RenderWindow& window,
@@ -150,9 +146,6 @@ void TilePicker::drawModeTabs(
     if (enemyBtn.isClicked(ev, window))
         selection.mode = PickerMode::Enemies;
 }
-
-// ------------------------------------------------
-// Enemy picker (simple, visible, safe)
 
 void TilePicker::drawEnemyPicker(
     sf::RenderWindow& window,
@@ -184,9 +177,6 @@ void TilePicker::drawEnemyPicker(
         y += 32.f;
     }
 }
-
-// ------------------------------------------------
-// ORIGINAL functions (unchanged)
 
 void TilePicker::drawTileset(sf::RenderWindow& window, const sf::IntRect& selectedRect)
 {
@@ -306,8 +296,7 @@ void TilePicker::drawParallaxUI(
     sf::RenderWindow& window,
     LayerInfo& layer,
     sf::Font& font,
-    UISlider& slider,
-    const sf::Event& ev
+    UISlider& slider
 )
 {
     float panelX = 10.f;

@@ -16,7 +16,7 @@ void PhysicsComponent::updateX(sf::Vector2f& position) {
 }
 
 void PhysicsComponent::updateY(sf::Vector2f& position) {
-    for(int i = 0; i < speeds.size(); i++){
+    for(size_t i = 0; i < speeds.size(); i++){
 
         if(hasYFriction){
             speeds[i].y *= friction.y;

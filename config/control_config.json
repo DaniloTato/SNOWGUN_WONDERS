@@ -13,12 +13,9 @@
         "createTile": "Space",
         "deleteTile": "LControl",
         "tilePicker": "T",
-        "textTest": "Num3",
         "shoot": "N",
         "crash": "U",
-        "spawnEnemy": "R",
         "kick": "LShift",
-        "nextScene": "Num5",
         "godMode": "G",
         "changeGun": "F",
         "start": "Enter"

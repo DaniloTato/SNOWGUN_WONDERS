@@ -38,8 +38,7 @@ private:
         sf::RenderWindow& window,
         LayerInfo& layer,
         sf::Font& font,
-        UISlider& slider,
-        const sf::Event& ev
+        UISlider& slider
     );
 
     void drawModeTabs(sf::RenderWindow& window, sf::Font& font, const sf::Event& ev);

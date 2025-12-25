@@ -49,7 +49,7 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
     int height = 1000;
     levelLayout.assign(height, std::vector<int>(width, 0));
 
-    for (int i = 0; i < jsonLayers.size(); i++) {
+    for (size_t i = 0; i < jsonLayers.size(); i++) {
         layers[i].name = jsonLayers[i]["name"].get<std::string>();
         layers[i].paralax = jsonLayers[i]["parallax"].get<float>();
         loadLayer(window, camera, i, jsonLayers[i], tileSize);
@@ -121,7 +121,7 @@ void LevelManager::loadLayer(sf::RenderWindow& window,
 }
 
 void LevelManager::reloadAllLayers(sf::RenderWindow& window, GameCamera* camera){
-    for (int i = 0; i < layers.size(); ++i)
+    for (size_t i = 0; i < layers.size(); ++i)
         reloadLayer(window, camera, i);
 }
 
@@ -158,7 +158,7 @@ void LevelManager::reloadLayer(sf::RenderWindow& window, GameCamera* camera, int
 }
 
 void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
-                              int x, int y, sf::IntRect rect){
+                              size_t x, size_t y, sf::IntRect rect){
 
     if (layerNo < 0 || layerNo >= (int)layers.size()) {
         std::cerr << "[createTile] ERROR: Invalid layerNo: " << layerNo << std::endl;
@@ -171,7 +171,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
             return;
         }
 
-        if ((y >= (int)levelLayout.size() || x >= (int)levelLayout[y].size())) {
+        if ((y >= levelLayout.size() || x >= levelLayout[y].size())) {
             std::cerr << "[createTile] ERROR: Tile coordinates out of levelLayout bounds: (" << x << ", " << y << ")\n";
             return;
         }
@@ -245,7 +245,7 @@ void LevelManager::createTile(sf::RenderWindow& window, GameCamera* camera, int 
     tiles.push_back(info);
 }
 
-void LevelManager::deleteTile(int layerNo, int x, int y){
+void LevelManager::deleteTile(int layerNo, size_t x, size_t y){
     if (layerNo == 0 && (x < 0 || y < 0)) return;
 
     std::vector<TileInfo>& tiles = layers[layerNo].tiles;
@@ -322,11 +322,11 @@ const LayerInfo LevelManager::getLayerInfo(int layerNo) const{
     return layers[layerNo];
 }
 
-void LevelManager::queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, int x, int y, const sf::IntRect& rect) {
+void LevelManager::queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, size_t x, size_t y, const sf::IntRect& rect) {
     createQueue.push_back({window, camera, layer, x, y, rect});
 }
 
-void LevelManager::queueDeleteTile(int layer, int x, int y) {
+void LevelManager::queueDeleteTile(int layer, size_t x, size_t y) {
     deleteQueue.push_back({layer, x, y});
 }
 

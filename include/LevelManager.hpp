@@ -12,19 +12,19 @@ struct TileCreationRequest {
     sf::RenderWindow& window;
     GameCamera* camera;
     int layer;
-    int x;
-    int y;
+    size_t x;
+    size_t y;
     sf::IntRect rect;
 };
 
 struct TileDeletionRequest {
     int layer;
-    int x;
-    int y;
+    size_t x;
+    size_t y;
 };
 
 struct TileInfo {
-    int x, y;
+    size_t x, y;
     sf::IntRect textureRect;
     RenderableObject* object = nullptr;
 };
@@ -49,17 +49,17 @@ public:
                    int tileSize);
 
     void createTile(sf::RenderWindow& window, GameCamera* camera, int layerNo,
-                    int x, int y, sf::IntRect rect);
+                    size_t x, size_t y, sf::IntRect rect);
 
-    void deleteTile(int layerNo, int x, int y);
+    void deleteTile(int layerNo, size_t x, size_t y);
     void saveLevel(const std::string& path);
 
     void deleteLayerObjects(int layerNo);
     void reloadAllLayers(sf::RenderWindow& window, GameCamera* camera);
     void reloadLayer(sf::RenderWindow& window, GameCamera* camera, int layerNo);
 
-    void queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, int x, int y, const sf::IntRect& rect);
-    void queueDeleteTile(int layer, int x, int y);
+    void queueCreateTile(sf::RenderWindow& window, GameCamera* camera, int layer, size_t x, size_t y, const sf::IntRect& rect);
+    void queueDeleteTile(int layer, size_t x, size_t y);
     void applyQueuedTileChanges();
 
     void setSecretLayerOppacity(float oppacity);

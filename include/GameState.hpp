@@ -26,7 +26,7 @@ public:
     GameCamera* getUiCamera() const;
     sf::RenderWindow* getMainWindow() const;
     void clearCameras();
-    const float dt();
+    float dt();
     void updateDt();
 
     void setCheckpoint(sf::Vector2f position);

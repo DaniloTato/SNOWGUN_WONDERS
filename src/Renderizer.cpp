@@ -104,7 +104,7 @@ void Renderizer::setColor(sf::Color newColor){
     color = newColor;
 }
 
-const float Renderizer::getLayer() const{
+float Renderizer::getLayer() const{
     return layer;
 }
 

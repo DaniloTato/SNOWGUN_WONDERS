@@ -72,7 +72,7 @@ bool BasicCollider::horizontalLevelCollision(sf::Vector2f& objectPos) {
     bool collided = false;
 
     for (auto& t : tileCoords) {
-        int tx = t.x, ty = t.y;
+        size_t tx = t.x, ty = t.y;
 
         if (ty < 0 || ty >= level.size()) continue;
         if (tx < 0 || tx >= level[ty].size()) continue;
@@ -111,7 +111,7 @@ bool BasicCollider::verticalLevelCollision(sf::Vector2f& objectPos) {
     bool collided = false;
 
     for (auto& t : tileCoords) {
-        int tx = t.x, ty = t.y;
+        size_t tx = t.x, ty = t.y;
 
         if (ty < 0 || ty >= level.size()) continue;
         if (tx < 0 || tx >= level[ty].size()) continue;
