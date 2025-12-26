@@ -29,7 +29,6 @@ LDFLAGS  += $(SFML_LIBS) -Wl,-rpath,@executable_path/lib
 SRC := $(shell find src scripts/src blueprints/src scene_builders/src -name '*.cpp')
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
 
-# ---------- Build ----------
 all: $(BINDIR)/$(APP_NAME)
 
 $(BINDIR)/$(APP_NAME): $(OBJ)
@@ -40,7 +39,6 @@ $(OBJDIR)/%.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# ---------- Bundle ALL dylibs ----------
 bundle-libs:
 	mkdir -p $(LIBDIR)
 
@@ -59,14 +57,12 @@ bundle-libs:
 	cp /opt/homebrew/opt/libpng/lib/libpng*.dylib $(LIBDIR)
 	cp /opt/homebrew/opt/zlib/lib/libz*.dylib $(LIBDIR)
 
-# ---------- Fix dylib IDs ----------
 fix-libs:
 	@for lib in $(LIBDIR)/*.dylib; do \
 		echo "Fixing ID $$lib"; \
 		install_name_tool -id @rpath/$$(basename $$lib) $$lib; \
 	done
 
-# ---------- Fix dylib → dylib deps ----------
 fix-lib-deps:
 	@for lib in $(LIBDIR)/*.dylib; do \
 		otool -L $$lib | grep /opt/homebrew | awk '{print $$1}' | while read dep; do \
@@ -75,34 +71,37 @@ fix-lib-deps:
 		done; \
 	done
 
-# ---------- Fix binary → dylib deps ----------
 fix-bin:
 	@otool -L $(BINDIR)/$(APP_NAME) | grep /opt/homebrew | awk '{print $$1}' | while read dep; do \
 		echo "Rewriting $$dep in binary"; \
 		install_name_tool -change $$dep @rpath/$$(basename $$dep) $(BINDIR)/$(APP_NAME); \
 	done
 
-# ---------- Package ----------
 package: all bundle-libs fix-libs fix-lib-deps fix-bin
 	cp -R assets $(BINDIR)/
 	cp -R config $(BINDIR)/
 
-# ---------- Sign ----------
 sign:
 	codesign --force --sign - $(LIBDIR)/*.dylib
 	codesign --force --deep --sign - $(BINDIR)/$(APP_NAME)
 	@echo "Ad-hoc signed all dylibs and binary"
 
-# ---------- Zip ----------
 zip: package sign
 	rm -rf release
 	mkdir -p release/$(APP_NAME)-macos-$(VERSION)
+
+	# Copy app bundle
 	cp -R dist/macos release/$(APP_NAME)-macos-$(VERSION)/
+
+	# Copy root docs
+	cp README.md HOW_TO_RUN.txt release/$(APP_NAME)-macos-$(VERSION)/
+
+	# Create zip
 	cd release && zip -r ../$(ZIP_NAME) $(APP_NAME)-macos-$(VERSION)
+
 	rm -rf release
 	@echo "Created $(ZIP_NAME)"
 
-# ---------- Utilities ----------
 run: all
 	./$(BINDIR)/$(APP_NAME)
 
