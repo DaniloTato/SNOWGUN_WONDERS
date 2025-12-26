@@ -1,7 +1,10 @@
 #include "TilePicker.hpp"
 #include "UIButton.hpp"
 #include "EnemyManager.hpp"
+#include "Helpers.hpp"
 #include <algorithm>
+
+const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 TilePicker::TilePicker(sf::Texture& tileset, int tileSize)
     : tileset(tileset), tileSize(tileSize)
@@ -24,7 +27,7 @@ PickerSelection TilePicker::open(
     window.setFramerateLimit(60);
 
     sf::Font font;
-    font.loadFromFile("/System/Library/Fonts/Supplemental/Arial.ttf");
+    font.loadFromFile((ROOT / "assets/fonts/ARIAL.TTF").string());
 
     if (layers.empty()) activeLayer = -1;
     else if (activeLayer < 0 || activeLayer >= (int)layers.size())

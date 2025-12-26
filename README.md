@@ -182,7 +182,6 @@ The game uses a configurable input system. Below are the default key bindings:
 | Kick | `Left Shift` |
 | Change Gun | `F` |
 | Start / Confirm | `Enter` |
-| Crash | `U` |
 
 ### Development & Debug Tools
 
