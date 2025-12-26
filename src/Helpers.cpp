@@ -1,4 +1,6 @@
 #include "Helpers.hpp"
+#include <unordered_map>
+#include <cmath>
 
 #if defined(__APPLE__)
     #include <mach-o/dyld.h>

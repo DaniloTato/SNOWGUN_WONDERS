@@ -28,10 +28,8 @@ namespace blueprint {
 
         chest->collider.setSize({14.f, 10.f});
         chest->collider.setOffset({1.f, 6.f});
-        //chest->collider.setStatic(true);
-        //chest->physics.enableGravity = false;
 
-        chest->animator.loadAsepriteAnimations(ROOT / "assets/json/chest.json");
+        chest->animator.loadAsepriteAnimations((ROOT / "assets\\json\\chest.json").string());
         chest->animator.play("closed");
 
         chest->scripter.addScript(script::chest);

@@ -13,7 +13,7 @@ namespace script {
 
     namespace{
 
-        sf::Texture fontTexture = Helper::loadTexture(ROOT /"assets/font.png");
+        sf::Texture fontTexture = Helper::loadTexture((ROOT / "assets\\font.png").string());
 
         struct CrystalCounterState{
             GameText* crystalCounter = nullptr;

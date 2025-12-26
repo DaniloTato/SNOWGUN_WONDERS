@@ -6,6 +6,7 @@
 #include "Animator.hpp"
 #include "PhysicsComponent.hpp"
 #include <SFML/Audio.hpp>
+#include <optional>
 
 struct AttackHitbox {
     BasicCollider collider;

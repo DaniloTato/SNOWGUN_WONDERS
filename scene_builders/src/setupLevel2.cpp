@@ -36,7 +36,7 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::particleGeneration);
 
         // Todd setup
-        static sf::Texture& toddTexture = Helper::loadTexture(ROOT / "assets/todd.png");
+        static sf::Texture& toddTexture = Helper::loadTexture((ROOT / "assets\\todd.png").string());
         RenderizerParameters toddParams{
             window,
             toddTexture,
@@ -51,14 +51,14 @@ namespace SceneBuilder{
         dialogueManager.assignDialogue(todd, "Greeting");
 
         // Player
-        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets/snowman_animation.png"), mainCam, {16.f,16.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture("assets\\snowman_animation.png"), mainCam, {16.f,16.f});
 
         setupParticles(window, particleManager, mainCam);
 
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile("assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile("assets\\dialogues\\dialogues.txt");
 
-        levelManager.loadLevel(window, mainCam, "assets/level_data/level.json");
+        levelManager.loadLevel(window, mainCam, "assets\\level_data\\level.json");
 
         EnemyManager::getInstance().queueCreateEnemy("toy", {16.f,16.f});
         EnemyManager::getInstance().queueCreateEnemy("reindeer", {-100.f,16.f});
@@ -69,7 +69,7 @@ namespace SceneBuilder{
             &(player->position),
             dialogueManager.getAttachedTextParams(),
             player,
-            &Helper::loadTexture("assets/bullet.png")
+            &Helper::loadTexture("assets\\bullet.png")
         };
         SceneManager::getInstance().setContext(ctx);
     }

@@ -50,7 +50,7 @@ namespace SceneBuilder{
 
         RenderizerParameters barrelParams{
             *gameState.getMainWindow(),
-            Helper::loadTexture(ROOT / "assets/whiteBarrel.png"),
+            Helper::loadTexture((ROOT / "assets\\whiteBarrel.png").string()),
             {0,0,76,78},
             {-26.f, -26.f},
             GameState::getInstance().getUiCamera(),
@@ -59,14 +59,14 @@ namespace SceneBuilder{
         };
         AnimatedObject* barrelUI = new AnimatedObject(barrelParams);
         barrelUI->renderizer.setColor(ColorPalette::NeonMagenta);
-        barrelUI->animator.loadAsepriteAnimations(ROOT / "assets/json/whiteBarrel.json");
+        barrelUI->animator.loadAsepriteAnimations((ROOT / "assets\\json\\whiteBarrel.json").string());
         barrelUI->animator.play("idle_once");
         barrelUI->animator.setSpeedMultiplier(2);
         barrelUI->scripter.addScript(script::barrelScript);
 
         RenderizerParameters barrelCenterParams{
             *gameState.getMainWindow(),
-            Helper::loadTexture(ROOT / "assets/barrelCenter.png"),
+            Helper::loadTexture((ROOT / "assets\\barrelCenter.png").string()),
             {0,0,21,21},
             {2.f, 2.f},
             GameState::getInstance().getUiCamera(),
@@ -88,7 +88,7 @@ namespace SceneBuilder{
         // Text Font Setup
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile(ROOT / "assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile((ROOT / "assets\\dialogues\\dialogues.txt").string());
         dialogueManager.printByKey("kickTutorial");
 
         ui();
@@ -105,16 +105,16 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::updateCrystalCounterScript);
 
         // Player setup
-        TangibleObject* player = createPlayer(window, Helper::loadTexture(ROOT / "assets/snowman_animation.png"), mainCam, {16.f * 100, 16.f * 99.f});
+        TangibleObject* player = createPlayer(window, Helper::loadTexture((ROOT / "assets\\snowman_animation.png").string()), mainCam, {16.f * 100, 16.f * 99.f});
 
         // Bullets
         static sf::Texture bulletTexture;
-        bulletTexture.loadFromFile(ROOT / "assets/bullet.png");
+        bulletTexture.loadFromFile((ROOT / "assets\\bullet.png").string());
 
         // Particles Texture Setup
         setupParticles(window, particleManager, mainCam);
 
-        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), ROOT / "assets/level_data/tutorial.json");
+        levelManager.loadLevel(window, GameState::getInstance().getMainCamera(), (ROOT / "assets\\level_data\\tutorial.json").string());
 
         levelManager.setBackgroundColor(ColorPalette::ElectricBlue);
 
@@ -126,7 +126,7 @@ namespace SceneBuilder{
         CollectableManager::getInstance().queueCreateCollectable("chest", {234 *16, 91*16});
         CollectableManager::getInstance().queueCreateCollectable("health", {211 *16, 95*16});
 
-        EnemyManager::getInstance().loadSpawnDefinitionsFromJson(ROOT / "assets/level_data/tutorialEnemies.json");
+        EnemyManager::getInstance().loadSpawnDefinitionsFromJson((ROOT / "assets\\level_data\\tutorialEnemies.json").string());
 
         //context. Imperative
         GeneralContext ctx = {
@@ -148,7 +148,7 @@ namespace SceneBuilder{
         static bool musicStarted = false;
 
         if (!musicStarted) {
-            if (!tutorialMusic.openFromFile(ROOT / "assets/sounds/tutorial2.wav")) {
+            if (!tutorialMusic.openFromFile((ROOT / "assets\\sounds\\tutorial2.wav").string())) {
                 std::cerr << "Failed to load tutorial music\n";
             } else {
                 tutorialMusic.setLoop(true);

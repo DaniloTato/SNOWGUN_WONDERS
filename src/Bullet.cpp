@@ -2,6 +2,7 @@
 #include "ColorPalette.hpp"
 #include "Constants.hpp"
 #include "PhysicsComponent.hpp"
+#include <cmath>
 
 Bullet::Bullet(
     RenderizerParameters params,

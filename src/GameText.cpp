@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <cmath>
 #include "ColorPalette.hpp"
 #include "Constants.hpp"
 #include "RenderCommand.hpp"

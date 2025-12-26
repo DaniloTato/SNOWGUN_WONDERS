@@ -31,7 +31,7 @@ namespace SceneBuilder{
         // Text Font Setup
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile(ROOT / "assets/dialogues/dialogues.txt");
+        dialogueManager.loadDialoguesFromFile((ROOT / "assets\\dialogues\\dialogues.txt").string());
         dialogueManager.printByKey("thanks");
 
         LevelManager& levelManager = LevelManager::getInstance();

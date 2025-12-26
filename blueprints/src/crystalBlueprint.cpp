@@ -31,7 +31,7 @@ namespace blueprint {
         // crystal->physics.enableGravity = true;
         // crystal->physics.mass = 1.f;
 
-        crystal->animator.loadAsepriteAnimations(ROOT / "assets/json/crystal.json");
+        crystal->animator.loadAsepriteAnimations((ROOT / "assets\\json\\crystal.json").string());
         crystal->animator.play("big");
 
         crystal->scripter.addScript(script::crystalShard);

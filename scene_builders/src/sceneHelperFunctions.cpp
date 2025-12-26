@@ -36,7 +36,7 @@ namespace SceneBuilder{
         player->collider.setSize({16.f, 16.f});
         player->collider.setOffset({1.f, 2.f});
         player->scripter.addScript(script::movement);
-        player->animator.loadAsepriteAnimations(ROOT / "assets/json/snowman_animation.json");
+        player->animator.loadAsepriteAnimations((ROOT / "assets\\json\\snowman_animation.json").string());
         player->animator.setSpeedMultiplier(1.8f);
 
         if(!GameState::getInstance().hasCheckpoint()){
@@ -50,7 +50,7 @@ namespace SceneBuilder{
 
     // Setup particles
     PolyRenderizer* setupParticles(sf::RenderWindow& window, ParticleManager& particleManager, GameCamera* camera) {
-        static sf::Texture& particleTexture = Helper::loadTexture(ROOT / "assets/particles.png");
+        static sf::Texture& particleTexture = Helper::loadTexture((ROOT / "assets\\particles.png").string());
         RenderizerParameters params{
             window,
             particleTexture,
@@ -67,7 +67,7 @@ namespace SceneBuilder{
 
     // Setup text parameters and dialogue system
     RenderizerParameters* setupTextAndDialogue(sf::RenderWindow& window, DialogueManager& dialogueManager, GameCamera* camera) {
-        static sf::Texture& fontTexture = Helper::loadTexture(ROOT / "assets/font.png");
+        static sf::Texture& fontTexture = Helper::loadTexture((ROOT / "assets\\font.png").string());
         RenderizerParameters* params = new RenderizerParameters{
             window,
             fontTexture,

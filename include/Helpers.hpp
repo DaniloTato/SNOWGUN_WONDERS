@@ -1,7 +1,11 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
+#ifdef __APPLE__
 #include <mach-o/dyld.h>
+#endif
+
 #include <filesystem>
 
 namespace Helper{

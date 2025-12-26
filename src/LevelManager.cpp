@@ -42,7 +42,7 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
 
     tilesetPath = data["tileset"].get<std::string>();
 
-    tilesheet.loadFromFile(ROOT / tilesetPath);
+    tilesheet.loadFromFile((ROOT / tilesetPath).string());
     int tileSize = data["tile_size"];
 
     auto& jsonLayers = data["layers"];

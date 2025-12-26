@@ -45,7 +45,7 @@ Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
         req.shotByPlayer
     );
 
-    bullet->animator.loadAsepriteAnimations(ROOT / "assets/json/bullet.json");
+    bullet->animator.loadAsepriteAnimations((ROOT / "assets\\json\\bullet.json").string());
     bullet->animator.play("fly");
     return bullet;
 }

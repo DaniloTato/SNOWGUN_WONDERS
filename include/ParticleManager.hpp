@@ -1,12 +1,18 @@
 #pragma once
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 #include "Animator.hpp"
 #include "GameObject.hpp"
 #include "SceneAware.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 
 class ParticleManager
     : public GameObject

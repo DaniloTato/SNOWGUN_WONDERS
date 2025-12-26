@@ -30,7 +30,7 @@ namespace blueprint {
         heli->collider.setOffset({4.f, 4.f});
         heli->collider.setSize({24.f, 8.f});
 
-        heli->animator.loadAsepriteAnimations(ROOT / "assets/json/reindeer.json");
+        heli->animator.loadAsepriteAnimations((ROOT / "assets\\json\\reindeer.json").string());
 
         heli->animator.play("fly");
 

@@ -74,8 +74,8 @@ bool BasicCollider::horizontalLevelCollision(sf::Vector2f& objectPos) {
     for (auto& t : tileCoords) {
         size_t tx = t.x, ty = t.y;
 
-        if (ty < 0 || ty >= level.size()) continue;
-        if (tx < 0 || tx >= level[ty].size()) continue;
+        if (ty >= level.size()) continue;
+        if (tx >= level[ty].size()) continue;
 
         if (level[ty][tx] != 0) {
             sf::FloatRect tileBox(tx * TILE, ty * TILE, TILE, TILE);
@@ -113,8 +113,8 @@ bool BasicCollider::verticalLevelCollision(sf::Vector2f& objectPos) {
     for (auto& t : tileCoords) {
         size_t tx = t.x, ty = t.y;
 
-        if (ty < 0 || ty >= level.size()) continue;
-        if (tx < 0 || tx >= level[ty].size()) continue;
+        if (ty >= level.size()) continue;
+        if (tx >= level[ty].size()) continue;
 
         if (level[ty][tx] != 0) {
 

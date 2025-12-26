@@ -28,7 +28,7 @@ namespace blueprint {
         missile->collider.setOffset({0.f, 16.f});
         missile->collider.setSize({32.f, 32.f});
 
-        missile->animator.loadAsepriteAnimations(ROOT / "assets/json/missile.json");
+        missile->animator.loadAsepriteAnimations((ROOT / "assets\\json\\missile.json").string());
 
         missile->animator.play("idle");
 
