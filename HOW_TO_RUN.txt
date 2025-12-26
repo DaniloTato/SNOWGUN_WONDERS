@@ -7,25 +7,31 @@ This process is **safe**, **common for indie software**, and only needs to be do
 ---
 
 ### 1. Open the Snowgun folder in Terminal
+_________________________________________________________________
 
 1. Open **Finder**
 2. Navigate to the folder where you extracted `snowgun-macos-<version>`
 3. Right-click inside the folder
-4. Select **“Open in Terminal”**
+4. Select “Open in Terminal” or "New Terminal at Folder" from the dropdown menu.
 
 > This opens Terminal already positioned in the correct directory.
-
 ---
 
-### 2. Remove macOS quarantine (required once)
+
+
+### 2. Remove macOS quarantine (required once)#######################
+_________________________________________________________________
 
 In the Terminal window that opens, run:
+(Copy and paste the line in between the '%')
 
-(you can copy and paste it)
 
-```bash
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 sudo xattr -dr com.apple.quarantine .
-```
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 You will be prompted for your macOS user _PASSWORD_
 No characters will appear while typing — this is normal
@@ -41,8 +47,12 @@ This command does _NOT_:
 - Collect any data
 
 It only removes a security flag from the Snowgun folder.
+---
 
-### 3. Launch the game
+
+
+### 3. Launch the game ########################################
+_________________________________________________________________
 
 After the command completes:
 - Close Terminal
