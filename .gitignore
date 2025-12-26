@@ -54,3 +54,5 @@ cache/
 *.iml
 
 .clangd
+
+snowgun

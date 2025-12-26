@@ -50,7 +50,7 @@ namespace SceneBuilder{
         };
         SceneManager::getInstance().setContext(ctx);
 
-        sf::Texture& fontTexture = Helper::loadTexture(ROOT /"assets/font.png");
+        sf::Texture& fontTexture = Helper::loadTexture(ROOT / "assets/font.png");
 
         //title text
         RenderizerParameters params{
