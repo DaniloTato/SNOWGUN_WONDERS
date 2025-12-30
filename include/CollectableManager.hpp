@@ -1,8 +1,7 @@
 #pragma once
-#include "QueuedManager.hpp"
+#include "SpawnableManager.hpp"
 #include "TangibleObject.hpp"
 #include <unordered_map>
-#include <functional>
 
 struct CollectableCreationRequest {
     std::string templateName;
@@ -10,18 +9,10 @@ struct CollectableCreationRequest {
 };
 
 class CollectableManager
-    : public QueuedManager<TangibleObject, CollectableCreationRequest>
+    : public SpawnableManager<TangibleObject, CollectableCreationRequest>
 {
 public:
     static CollectableManager& getInstance();
-
-    using CollectableFactory =
-        std::function<TangibleObject*(const sf::Vector2f&)>;
-
-    void registerTemplate(
-        const std::string& name,
-        CollectableFactory fn
-    );
 
     void queueCreateCollectable(
         const std::string& templateName,
@@ -39,14 +30,10 @@ public:
     Animations& getCachedAnimations(const std::string& name);
 
 protected:
-    TangibleObject* createFromRequest(
-        const CollectableCreationRequest& req
-    ) override;
 
     void destroyObject(TangibleObject* obj) override;
 
 private:
-    std::unordered_map<std::string, CollectableFactory> templates;
     std::unordered_map<std::string, sf::Texture> collectableTextures;
     std::unordered_map<std::string, Animations> collectableAnimations;
 };

@@ -1,10 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include <functional>
 
-#include "QueuedManager.hpp"
 #include "TangibleObject.hpp"
+#include "SpawnableManager.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
 struct EnemyCreationRequest {
@@ -13,7 +12,7 @@ struct EnemyCreationRequest {
 };
 
 class EnemyManager
-    : public QueuedManager<TangibleObject, EnemyCreationRequest>
+    : public SpawnableManager<TangibleObject, EnemyCreationRequest>
 {
 public:
 
@@ -38,11 +37,6 @@ public:
     };
 
     static EnemyManager& getInstance();
-
-    void registerTemplate(
-        const std::string& name,
-        std::function<TangibleObject*(const sf::Vector2f&)> fn
-    );
 
     sf::Texture& loadTexture(const std::string& name, const std::string& path);
     sf::Texture& getTexture(const std::string& name);
@@ -70,14 +64,10 @@ public:
     Animations& getCachedAnimations(const std::string& name);
 
 protected:
-    TangibleObject* createFromRequest(const EnemyCreationRequest& req) override;
     void destroyObject(TangibleObject* obj) override;
 
 private:
     EnemyManager() = default;
-
-    std::unordered_map<std::string,
-    std::function<TangibleObject*(const sf::Vector2f&)>> templates;
 
     std::unordered_map<std::string, sf::Texture> enemyTextures;
 

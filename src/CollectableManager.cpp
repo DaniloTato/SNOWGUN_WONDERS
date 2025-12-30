@@ -9,13 +9,6 @@ CollectableManager& CollectableManager::getInstance() {
     return instance;
 }
 
-void CollectableManager::registerTemplate(
-    const std::string& name,
-    CollectableFactory fn
-) {
-    templates[name] = fn;
-}
-
 void CollectableManager::queueCreateCollectable(
     const std::string& templateName,
     const sf::Vector2f& position
@@ -27,19 +20,6 @@ void CollectableManager::queueDeleteCollectable(
     TangibleObject* obj
 ) {
     deleteQueue.push_back(obj);
-}
-
-TangibleObject* CollectableManager::createFromRequest(
-    const CollectableCreationRequest& req
-) {
-    auto it = templates.find(req.templateName);
-    if (it == templates.end()) {
-        std::cerr << "[CollectableManager] Unknown collectable template: "
-                  << req.templateName << "\n";
-        return nullptr;
-    }
-
-    return it->second(req.position);
 }
 
 void CollectableManager::destroyObject(TangibleObject* obj) {

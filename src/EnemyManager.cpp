@@ -13,13 +13,6 @@ EnemyManager& EnemyManager::getInstance() {
     return instance;
 }
 
-void EnemyManager::registerTemplate(
-    const std::string& name,
-    std::function<TangibleObject*(const sf::Vector2f&)> fn
-) {
-    templates[name] = fn;
-}
-
 sf::Texture& EnemyManager::loadTexture(
     const std::string& name,
     const std::string& path
@@ -44,19 +37,6 @@ void EnemyManager::queueCreateEnemy(
 
 void EnemyManager::queueDeleteEnemy(TangibleObject* enemy) {
     deleteQueue.push_back(enemy);
-}
-
-TangibleObject* EnemyManager::createFromRequest(
-    const EnemyCreationRequest& req
-) {
-    auto it = templates.find(req.templateName);
-    if (it == templates.end()) {
-        std::cerr << "[EnemyManager] Unknown enemy template: "
-                  << req.templateName << "\n";
-        return nullptr;
-    }
-
-    return it->second(req.position);
 }
 
 void EnemyManager::destroyObject(TangibleObject* obj) {
