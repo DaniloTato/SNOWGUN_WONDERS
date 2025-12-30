@@ -12,7 +12,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            CollectableManager::getInstance().getTexture(id),
+            CollectableManager::getInstance().textureCache.get(id),
             {0, 0, 16, 16},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -21,7 +21,7 @@ namespace blueprint {
         };
 
         auto* crystal = new TangibleObject(params, 
-            CollectableManager::getInstance().getCachedAnimations(id));
+            CollectableManager::getInstance().animationCache.get(id));
 
         crystal->collider.setSize({12.f, 12.f});
         crystal->collider.setOffset({2.f, 2.f});

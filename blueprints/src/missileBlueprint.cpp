@@ -12,7 +12,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            EnemyManager::getInstance().getTexture(id),
+            EnemyManager::getInstance().textureCache.get(id),
             {0,0,48,48},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -21,7 +21,7 @@ namespace blueprint {
         };
 
         TangibleObject* missile = new TangibleObject(params, 
-            EnemyManager::getInstance().getCachedAnimations(id));
+            EnemyManager::getInstance().animationCache.get(id));
 
         missile->collider.setOffset({0.f, 16.f});
         missile->collider.setSize({32.f, 32.f});

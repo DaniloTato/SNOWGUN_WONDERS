@@ -1,8 +1,5 @@
 #include "CollectableManager.hpp"
 #include "GameObject.hpp"
-#include <iostream>
-
-//Posibility of unifting Collectablemanager and EnemyManager using inherency?
 
 CollectableManager& CollectableManager::getInstance() {
     static CollectableManager instance;
@@ -34,24 +31,4 @@ std::vector<std::string> CollectableManager::getCollectableList() const {
         result.push_back(pair.first);
 
     return result;
-}
-
-sf::Texture& CollectableManager::loadTexture(const std::string& name, const std::string& path){
-    auto& tex = collectableTextures[name];
-    if (!tex.loadFromFile(path)) {
-        std::cerr << "[EnemyManager] Failed to load texture: " << path << "\n";
-    }
-    return tex;
-}
-
-sf::Texture& CollectableManager::getTexture(const std::string& name){
-    return collectableTextures.at(name);
-}
-
-void CollectableManager::cacheAnimations(const std::string& collectableId, std::string animationPath) {
-    collectableAnimations[collectableId] = Animator::getAsepriteJSONAnimations(animationPath);
-}
-
-Animations& CollectableManager::getCachedAnimations(const std::string& name) {
-    return collectableAnimations.at(name);
 }

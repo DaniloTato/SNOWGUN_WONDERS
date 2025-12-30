@@ -1,7 +1,7 @@
 #pragma once
 #include "SpawnableManager.hpp"
 #include "TangibleObject.hpp"
-#include <unordered_map>
+#include "Cache.hpp"
 
 struct CollectableCreationRequest {
     std::string templateName;
@@ -23,17 +23,10 @@ public:
 
     std::vector<std::string> getCollectableList() const;
 
-    sf::Texture& loadTexture(const std::string& name, const std::string& path);
-    sf::Texture& getTexture(const std::string& name);
-
-    void cacheAnimations(const std::string& collectableId, std::string animationPath);
-    Animations& getCachedAnimations(const std::string& name);
+    Cache<sf::Texture> textureCache;
+    Cache<Animations> animationCache;
 
 protected:
 
     void destroyObject(TangibleObject* obj) override;
-
-private:
-    std::unordered_map<std::string, sf::Texture> collectableTextures;
-    std::unordered_map<std::string, Animations> collectableAnimations;
 };

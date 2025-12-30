@@ -12,7 +12,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            CollectableManager::getInstance().getTexture(id),
+            CollectableManager::getInstance().textureCache.get(id),
             {0, 0, 16, 16},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -21,7 +21,7 @@ namespace blueprint {
         };
 
         auto* hp = new TangibleObject(params,
-            CollectableManager::getInstance().getCachedAnimations(id));
+            CollectableManager::getInstance().animationCache.get(id));
 
         hp->collider.setSize({16.f, 16.f});
         hp->animator.play("idle");

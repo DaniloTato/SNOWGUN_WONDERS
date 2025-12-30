@@ -12,7 +12,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            EnemyManager::getInstance().getTexture(id),
+            EnemyManager::getInstance().textureCache.get(id),
             {0,0,32,16},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -21,7 +21,7 @@ namespace blueprint {
         };
 
         TangibleObject* heli = new TangibleObject(params, 
-            EnemyManager::getInstance().getCachedAnimations(id));
+            EnemyManager::getInstance().animationCache.get(id));
 
         heli->collider.setOffset({4.f, 4.f});
         heli->collider.setSize({24.f, 8.f});

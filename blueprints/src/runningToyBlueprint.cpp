@@ -11,7 +11,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            EnemyManager::getInstance().getTexture(id),
+            EnemyManager::getInstance().textureCache.get(id),
             {0,0,17,17},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -20,7 +20,7 @@ namespace blueprint {
         };
 
         TangibleObject* toy = new TangibleObject(params, 
-            EnemyManager::getInstance().getCachedAnimations(id));
+            EnemyManager::getInstance().animationCache.get(id));
 
         toy->collider.setOffset({5.f, 2.f});
         toy->collider.setSize({15.f, 14.f});

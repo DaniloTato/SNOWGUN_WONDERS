@@ -13,7 +13,7 @@ namespace blueprint {
 
         RenderizerParameters params{
             *GameState::getInstance().getMainWindow(),
-            CollectableManager::getInstance().getTexture(id),
+            CollectableManager::getInstance().textureCache.get(id),
             {0, 0, 16, 16},
             pos,
             GameState::getInstance().getMainCamera(),
@@ -22,7 +22,7 @@ namespace blueprint {
         };
 
         auto* chest = new TangibleObject(params, 
-            CollectableManager::getInstance().getCachedAnimations(id));
+            CollectableManager::getInstance().animationCache.get(id));
 
         chest->collider.setSize({14.f, 10.f});
         chest->collider.setOffset({1.f, 6.f});

@@ -1,6 +1,7 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
+#include "Animator.hpp"
 #include "BulletManager.hpp"
 
 /*Engine Objects*/
@@ -56,26 +57,43 @@ int main() {
     inputManager.loadBindingsFromJsonFile((Helper::getPath("config/control_config.json")));
 
     // Enemy Manager Setup
-    enemyManager.loadTexture("toy", (getPath("assets/toy.png")));
-    enemyManager.cacheAnimations("toy", getPath("assets/json/toy.json"));
+    enemyManager.textureCache.load("toy", 
+        Helper::loadTexture(getPath("assets/toy.png")));
+    enemyManager.animationCache.load("toy", 
+        Animator::getAsepriteJSONAnimations(getPath("assets/json/toy.json")));
     enemyManager.registerTemplate("toy", blueprint::toy);
+
     enemyManager.registerTemplate("runningToy", blueprint::runningToyBlueprint);
-    enemyManager.loadTexture("reindeer", (getPath("assets/reindeer.png")));
-    enemyManager.cacheAnimations("reindeer", getPath("assets/json/reindeer.json"));
+
+    enemyManager.textureCache.load("reindeer", 
+        Helper::loadTexture(getPath("assets/reindeer.png")));
+    enemyManager.animationCache.load("reindeer", 
+        Animator::getAsepriteJSONAnimations(getPath("assets/json/reindeer.json")));
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
-    enemyManager.loadTexture("missile", (getPath("assets/missile.png")));
-    enemyManager.cacheAnimations("missile", getPath("assets/json/missile.json"));
+
+    enemyManager.textureCache.load("missile", 
+        Helper::loadTexture(getPath("assets/missile.png")));
+    enemyManager.animationCache.load("missile", 
+        Animator::getAsepriteJSONAnimations(getPath("assets/json/missile.json")));
     enemyManager.registerTemplate("missile", blueprint::missileBlueprint);
 
     // Collectable Manager Setup
-    collectableManager.loadTexture("crystal", (Helper::getPath("assets/crystal.png")));
-    collectableManager.cacheAnimations("crystal", Helper::getPath("assets/json/crystal.json"));
+    collectableManager.textureCache.load("crystal", 
+        Helper::loadTexture(Helper::getPath("assets/crystal.png")));
+    collectableManager.animationCache.load("crystal", 
+        Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/crystal.json")));
     collectableManager.registerTemplate("crystal", blueprint::crystalBlueprint);
-    collectableManager.loadTexture("health", (Helper::getPath("assets/ginger.png")));
-    collectableManager.cacheAnimations("health", Helper::getPath("assets/json/ginger.json"));
+
+    collectableManager.textureCache.load("health", 
+        Helper::loadTexture(Helper::getPath("assets/ginger.png")));
+    collectableManager.animationCache.load("health", 
+        Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/ginger.json")));
     collectableManager.registerTemplate("health", blueprint::healthBlueprint);
-    collectableManager.loadTexture("chest", (Helper::getPath("assets/chest.png")));
-    collectableManager.cacheAnimations("chest", Helper::getPath("assets/json/chest.json"));
+
+    collectableManager.textureCache.load("chest", 
+        Helper::loadTexture(Helper::getPath("assets/chest.png")));
+    collectableManager.animationCache.load("chest", 
+        Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/chest.json")));
     collectableManager.registerTemplate("chest", blueprint::chestBlueprint);
 
     // Sound Manager Setup

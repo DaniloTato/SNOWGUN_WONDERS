@@ -3,7 +3,6 @@
 #include "damageable.hpp"
 #include "GameState.hpp"
 #include "Helpers.hpp"
-#include "Animator.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -11,21 +10,6 @@
 EnemyManager& EnemyManager::getInstance() {
     static EnemyManager instance;
     return instance;
-}
-
-sf::Texture& EnemyManager::loadTexture(
-    const std::string& name,
-    const std::string& path
-) {
-    auto& tex = enemyTextures[name];
-    if (!tex.loadFromFile(path)) {
-        std::cerr << "[EnemyManager] Failed to load texture: " << path << "\n";
-    }
-    return tex;
-}
-
-sf::Texture& EnemyManager::getTexture(const std::string& name) {
-    return enemyTextures.at(name);
 }
 
 void EnemyManager::queueCreateEnemy(
@@ -230,12 +214,4 @@ void EnemyManager::removeSpawnDefinition(
 
 std::vector<EnemyManager::EnemySpawnDefinition>& EnemyManager::getSpawnDefinitions() {
     return spawnDefinitions;
-}
-
-void EnemyManager::cacheAnimations(const std::string& enemyId, std::string animationPath) {
-    enemyAnimations[enemyId] = Animator::getAsepriteJSONAnimations(animationPath);
-}
-
-Animations& EnemyManager::getCachedAnimations(const std::string& name) {
-    return enemyAnimations.at(name);
 }
