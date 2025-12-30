@@ -17,7 +17,7 @@ struct AttackHitbox {
 
 class TangibleObject: public GameObject {
 public:
-    TangibleObject(RenderizerParameters params);
+    TangibleObject(RenderizerParameters params, Animations cachedAnimations);
     void update(const GeneralContext& ctx) override;
     Renderizer renderizer;
     BasicCollider collider;

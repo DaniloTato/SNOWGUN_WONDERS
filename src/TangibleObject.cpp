@@ -3,7 +3,10 @@
 #include "SoundManager.hpp"
 #include <SFML/Audio.hpp>
 
-TangibleObject::TangibleObject(RenderizerParameters params) : GameObject(params.position), renderizer(params) {
+TangibleObject::TangibleObject(RenderizerParameters params, Animations cachedAnimations) 
+    : GameObject(params.position)
+    , renderizer(params) {
+    animator.setAnimations(cachedAnimations);
     Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 }
 

@@ -31,4 +31,5 @@ namespace Helper{
     float distance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
     sf::FloatRect makeRectFromPoints(float x1, float y1,float x2, float y2);
     std::filesystem::path getExecutableDir();
+    std::string getPath(const std::string& relativePath);
 }

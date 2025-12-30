@@ -12,8 +12,6 @@
 
 #include "Helpers.hpp"
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
-
 namespace SceneBuilder{
 
     void end() {
@@ -31,7 +29,7 @@ namespace SceneBuilder{
         // Text Font Setup
         DialogueManager& dialogueManager = DialogueManager::getInstance();
         setupTextAndDialogue(window, dialogueManager, mainCam);
-        dialogueManager.loadDialoguesFromFile((ROOT / "assets\\dialogues\\dialogues.txt").string());
+        dialogueManager.loadDialoguesFromFile((Helper::getPath("assets/dialogues/dialogues.txt")));
         dialogueManager.printByKey("thanks");
 
         LevelManager& levelManager = LevelManager::getInstance();

@@ -6,6 +6,7 @@
 
 Bullet::Bullet(
     RenderizerParameters params,
+    Animations cachedAnimations,
     Bullet::Type t,
     const sf::Vector2f& initSpeed,
     const sf::Vector2f& accel,
@@ -13,7 +14,7 @@ Bullet::Bullet(
     float range,
     bool shotByPlayer
 )
-: TangibleObject(params),
+: TangibleObject(params, cachedAnimations),
   type(t),
   acceleration(accel),
   damageRadius(dmgRadius),

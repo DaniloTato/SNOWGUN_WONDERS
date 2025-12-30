@@ -1,9 +1,13 @@
 #include "BulletManager.hpp"
 #include "BasicCollider.hpp"
-#include "SFML/System/Vector2.hpp"
 #include "Helpers.hpp"
+#include "SFML/System/Vector2.hpp"
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
+BulletManager::BulletManager()
+    : cachedAnimations(Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/bullet.json")))
+{
+
+}
 
 BulletManager& BulletManager::getInstance() {
     static BulletManager instance;
@@ -37,6 +41,7 @@ void BulletManager::queueDeletion(Bullet* bullet) {
 Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
     Bullet* bullet = new Bullet(
         req.params,
+        cachedAnimations,
         req.type,
         req.speed,
         req.accel,
@@ -45,7 +50,6 @@ Bullet* BulletManager::createFromRequest(const BulletCreationRequest& req) {
         req.shotByPlayer
     );
 
-    bullet->animator.loadAsepriteAnimations((ROOT / "assets\\json\\bullet.json").string());
     bullet->animator.play("fly");
     return bullet;
 }

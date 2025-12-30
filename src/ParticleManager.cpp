@@ -11,14 +11,12 @@
 #include <iostream>
 #include <memory>
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
-
 static float _toggleRand(float min, float max) {
     return min + ((float)rand() / RAND_MAX) * (max - min);
 }
 
 ParticleManager::ParticleManager(){
-    cachedAnimations = Animator::getAsepriteJSONAnimations((ROOT / "assets\\json\\particles.json").string());
+    cachedAnimations = Animator::getAsepriteJSONAnimations((Helper::getPath("assets/json/particles.json")));
     persistentAcrossScenes = true;
 }
 

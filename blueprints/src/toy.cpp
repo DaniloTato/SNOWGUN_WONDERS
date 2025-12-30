@@ -3,9 +3,6 @@
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
 #include "enemyPatrol.hpp"
-#include "Helpers.hpp"
-
-const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -23,12 +20,11 @@ namespace blueprint {
             1.f
         };
 
-        TangibleObject* toy = new TangibleObject(params);
+        TangibleObject* toy = new TangibleObject(params, 
+            EnemyManager::getInstance().getCachedAnimations(id));
 
         toy->collider.setOffset({5.f, 2.f});
         toy->collider.setSize({15.f, 14.f});
-
-        toy->animator.loadAsepriteAnimations((ROOT / "assets\\json\\toy.json").string());
 
         toy->animator.play("walking");
 

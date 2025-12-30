@@ -47,6 +47,8 @@ public:
     sf::Texture& loadTexture(const std::string& name, const std::string& path);
     sf::Texture& getTexture(const std::string& name);
 
+    void cacheAnimations(const std::string& enemyId, Animations animation);
+
     void queueCreateEnemy(const std::string& templateName,
                           const sf::Vector2f& position);
 
@@ -66,6 +68,8 @@ public:
     void removeSpawnDefinition( const sf::Vector2f& position,float tolerance);
     std::vector<EnemySpawnDefinition>& getSpawnDefinitions();
 
+    Animations& getCachedAnimations(const std::string& name);
+
 protected:
     TangibleObject* createFromRequest(const EnemyCreationRequest& req) override;
     void destroyObject(TangibleObject* obj) override;
@@ -74,9 +78,11 @@ private:
     EnemyManager() = default;
 
     std::unordered_map<std::string,
-        std::function<TangibleObject*(const sf::Vector2f&)>> templates;
+    std::function<TangibleObject*(const sf::Vector2f&)>> templates;
 
     std::unordered_map<std::string, sf::Texture> enemyTextures;
 
     std::vector<EnemySpawnDefinition> spawnDefinitions;
+
+    std::unordered_map<std::string, Animations> enemyAnimations;
 };

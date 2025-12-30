@@ -8,6 +8,7 @@
 #include "SceneAware.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
+#include "Animation.hpp"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -84,7 +85,7 @@ private:
     PolyRenderizer* attachedRenderizer;
     sf::Vector2f wind = {0.f, 0.f};
 
-    std::unordered_map<std::string, Animator::Animation> cachedAnimations;
+    std::unordered_map<std::string, Animation> cachedAnimations;
 
     std::vector<RenderCommand> renderCommandBuffer;
 };

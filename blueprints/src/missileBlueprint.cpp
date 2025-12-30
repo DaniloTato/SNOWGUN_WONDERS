@@ -2,10 +2,7 @@
 
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
-#include "Helpers.hpp"
 #include "missileAI.hpp"
-
-const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -23,12 +20,11 @@ namespace blueprint {
             1.f
         };
 
-        TangibleObject* missile = new TangibleObject(params);
+        TangibleObject* missile = new TangibleObject(params, 
+            EnemyManager::getInstance().getCachedAnimations(id));
 
         missile->collider.setOffset({0.f, 16.f});
         missile->collider.setSize({32.f, 32.f});
-
-        missile->animator.loadAsepriteAnimations((ROOT / "assets\\json\\missile.json").string());
 
         missile->animator.play("idle");
 

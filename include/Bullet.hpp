@@ -12,6 +12,7 @@ public:
 
     Bullet(
         RenderizerParameters params,
+        Animations cachedAnimations,
         Type type,
         const sf::Vector2f& initSpeed,
         const sf::Vector2f& acceleration,

@@ -2,10 +2,8 @@
 
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
-#include "healthPickup.hpp"   // script
+#include "healthPickup.hpp"
 #include "Helpers.hpp"
-
-const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -23,11 +21,10 @@ namespace blueprint {
             1.f
         };
 
-        auto* hp = new TangibleObject(params);
+        auto* hp = new TangibleObject(params,
+            Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/ginger.json")));
 
         hp->collider.setSize({16.f, 16.f});
-
-        hp->animator.loadAsepriteAnimations((ROOT / "assets\\json\\ginger.json").string());
         hp->animator.play("idle");
 
         hp->scripter.addScript(script::healthPickup);

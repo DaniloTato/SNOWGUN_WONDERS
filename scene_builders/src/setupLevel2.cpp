@@ -16,8 +16,6 @@
 #include "toddTalk.hpp"
 #include "Helpers.hpp"
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
-
 namespace SceneBuilder{
 
     void setupLevel2() {
@@ -36,7 +34,7 @@ namespace SceneBuilder{
         scriptRunner->scripter.addScript(script::particleGeneration);
 
         // Todd setup
-        static sf::Texture& toddTexture = Helper::loadTexture((ROOT / "assets\\todd.png").string());
+        static sf::Texture& toddTexture = Helper::loadTexture(Helper::getPath("assets/todd.png"));
         RenderizerParameters toddParams{
             window,
             toddTexture,

@@ -3,6 +3,7 @@
 #include "damageable.hpp"
 #include "GameState.hpp"
 #include "Helpers.hpp"
+#include "Animator.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -249,4 +250,12 @@ void EnemyManager::removeSpawnDefinition(
 
 std::vector<EnemyManager::EnemySpawnDefinition>& EnemyManager::getSpawnDefinitions() {
     return spawnDefinitions;
+}
+
+void EnemyManager::cacheAnimations(const std::string& enemyId, Animations animation) {
+    enemyAnimations[enemyId] = animation;
+}
+
+Animations& EnemyManager::getCachedAnimations(const std::string& name) {
+    return enemyAnimations.at(name);
 }

@@ -1,12 +1,11 @@
 #include "sceneHelperFunctions.hpp"
+#include "Animator.hpp"
 #include "GameState.hpp"
 #include "dramaticZoom.hpp"
 #include "cameraAlarm.hpp"
 #include "movement.hpp"
 #include "Constants.hpp"
 #include "Helpers.hpp"
-
-const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace SceneBuilder{
 
@@ -32,11 +31,11 @@ namespace SceneBuilder{
             -0.1f,
             1.f
         };
-        TangibleObject* player = new TangibleObject(params);
+        TangibleObject* player = new TangibleObject(params,
+             Animator::getAsepriteJSONAnimations((Helper::getPath("assets/json/snowman_animation.json"))));
         player->collider.setSize({16.f, 16.f});
         player->collider.setOffset({1.f, 2.f});
         player->scripter.addScript(script::movement);
-        player->animator.loadAsepriteAnimations((ROOT / "assets\\json\\snowman_animation.json").string());
         player->animator.setSpeedMultiplier(1.8f);
 
         if(!GameState::getInstance().hasCheckpoint()){
@@ -50,7 +49,7 @@ namespace SceneBuilder{
 
     // Setup particles
     PolyRenderizer* setupParticles(sf::RenderWindow& window, ParticleManager& particleManager, GameCamera* camera) {
-        static sf::Texture& particleTexture = Helper::loadTexture((ROOT / "assets\\particles.png").string());
+        static sf::Texture& particleTexture = Helper::loadTexture((Helper::getPath("assets/particles.png")));
         RenderizerParameters params{
             window,
             particleTexture,
@@ -67,7 +66,7 @@ namespace SceneBuilder{
 
     // Setup text parameters and dialogue system
     RenderizerParameters* setupTextAndDialogue(sf::RenderWindow& window, DialogueManager& dialogueManager, GameCamera* camera) {
-        static sf::Texture& fontTexture = Helper::loadTexture((ROOT / "assets\\font.png").string());
+        static sf::Texture& fontTexture = Helper::loadTexture((Helper::getPath("assets/font.png")));
         RenderizerParameters* params = new RenderizerParameters{
             window,
             fontTexture,

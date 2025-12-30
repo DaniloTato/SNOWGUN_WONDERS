@@ -59,9 +59,7 @@ void Animator::loadAsepriteAnimations(const std::string& filename) {
         });
     }
 
-    // ------------------------------------------------------------
     // Build animations
-    // ------------------------------------------------------------
     for (auto& [name, frames] : grouped) {
         Animation anim;
         anim.loop = name.find("_once") == std::string::npos;
@@ -91,7 +89,7 @@ void Animator::loadAsepriteAnimations(const std::string& filename) {
     }
 }
 
-std::unordered_map<std::string, Animator::Animation> Animator::getAsepriteJSONAnimations(const std::string& filename){
+Animations Animator::getAsepriteJSONAnimations(const std::string& filename){
     static Animator tempAnimator;
     tempAnimator.loadAsepriteAnimations(filename);
     return tempAnimator.animations;
@@ -101,7 +99,7 @@ void Animator::addAnimation(const std::string& name, const Animation& anim) {
     animations[name] = anim;
 }
 
-void Animator::setAnimations(std::unordered_map<std::string, Animator::Animation>& newAnimations){
+void Animator::setAnimations(Animations& newAnimations){
     animations = newAnimations;
 }
 
@@ -131,7 +129,7 @@ void Animator::update() {
 
     timer += speedMultiplier * GameState::getInstance().dt();
 
-    const Frame& frame = currentAnim->frames[index];
+    const Animation::Frame& frame = currentAnim->frames[index];
 
     if (timer >= frame.duration) {
         timer -= frame.duration;
@@ -152,8 +150,6 @@ const sf::IntRect& Animator::getCurrentFrame() const {
     static sf::IntRect dummy{0, 0, 0, 0};
 
     if (!currentAnim || currentAnim->frames.empty())
-        // std::cout << "returned nothing" << "\n";
-        // std::cout << currentAnim << "\n";
         return dummy;
 
     return currentAnim->frames[index].rect;

@@ -41,7 +41,7 @@
 #include <cstdlib>
 #include <ctime>
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
+using namespace Helper;
 
 int main() {
     InputManager& inputManager = InputManager::getInstance();
@@ -53,39 +53,42 @@ int main() {
     sf::RenderWindow& window = *gameState.getMainWindow();
     window.setFramerateLimit(Constants::FRAME_RATE);
 
-    inputManager.loadBindingsFromJsonFile((ROOT / "config/control_config.json").string());
+    inputManager.loadBindingsFromJsonFile((Helper::getPath("config/control_config.json")));
 
     // Enemy Manager Setup
-    enemyManager.loadTexture("toy", (ROOT / "assets\\toy.png").string());
+    enemyManager.loadTexture("toy", (getPath("assets/toy.png")));
+    enemyManager.cacheAnimations("toy", Animator::getAsepriteJSONAnimations(getPath("assets/json/toy.json")));
     enemyManager.registerTemplate("toy", blueprint::toy);
     enemyManager.registerTemplate("runningToy", blueprint::runningToyBlueprint);
-    enemyManager.loadTexture("reindeer", (ROOT / "assets\\reindeer.png").string());
+    enemyManager.loadTexture("reindeer", (getPath("assets/reindeer.png")));
+    enemyManager.cacheAnimations("reindeer", Animator::getAsepriteJSONAnimations(getPath("assets/json/reindeer.json")));
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
-    enemyManager.loadTexture("missile", (ROOT / "assets\\missile.png").string());
+    enemyManager.loadTexture("missile", (getPath("assets/missile.png")));
+    enemyManager.cacheAnimations("missile", Animator::getAsepriteJSONAnimations(getPath("assets/json/missile.json")));
     enemyManager.registerTemplate("missile", blueprint::missileBlueprint);
 
     // Collectable Manager Setup
-    collectableManager.loadTexture("crystal", (ROOT / "assets\\crystal.png").string());
+    collectableManager.loadTexture("crystal", (Helper::getPath("assets/crystal.png")));
     collectableManager.registerTemplate("crystal", blueprint::crystalBlueprint);
-    collectableManager.loadTexture("health", (ROOT / "assets\\ginger.png").string());
+    collectableManager.loadTexture("health", (Helper::getPath("assets/ginger.png")));
     collectableManager.registerTemplate("health", blueprint::healthBlueprint);
-    collectableManager.loadTexture("chest", (ROOT / "assets\\chest.png").string());
+    collectableManager.loadTexture("chest", (Helper::getPath("assets/chest.png")));
     collectableManager.registerTemplate("chest", blueprint::chestBlueprint);
 
     // Sound Manager Setup
-    SoundManager::getInstance().load("shoot", (ROOT / "assets\\sounds/buster.wav").string());
-    SoundManager::getInstance().load("die", (ROOT / "assets\\sounds/death.wav").string());
-    SoundManager::getInstance().load("enemyShot", (ROOT / "assets\\sounds/enemy_shoot.wav").string());
-    SoundManager::getInstance().load("health", (ROOT / "assets\\sounds/refill.wav").string());
-    SoundManager::getInstance().load("crystal", (ROOT / "assets\\sounds/shard.wav").string());
-    SoundManager::getInstance().load("hit", (ROOT / "assets\\sounds/hit.wav").string());
-    SoundManager::getInstance().load("crystal2", (ROOT / "assets\\sounds/shard2.wav").string());
-    SoundManager::getInstance().load("chest", (ROOT / "assets\\sounds/chest.wav").string());
-    SoundManager::getInstance().load("tutorialTune", (ROOT / "assets\\sounds/tutorial2.wav").string());
-    SoundManager::getInstance().load("kickHit", (ROOT / "assets\\sounds/kickHit.wav").string());
-    SoundManager::getInstance().load("doKick", (ROOT / "assets\\sounds/doKick.wav").string());
-    SoundManager::getInstance().load("explosion", (ROOT / "assets\\sounds/explosion.wav").string());
-    SoundManager::getInstance().load("enemyDie", (ROOT / "assets\\sounds/enemyDie.wav").string());
+    SoundManager::getInstance().load("shoot", (Helper::getPath("assets/sounds/buster.wav")));
+    SoundManager::getInstance().load("die", (Helper::getPath("assets/sounds/death.wav")));
+    SoundManager::getInstance().load("enemyShot", (Helper::getPath("assets/sounds/enemy_shoot.wav")));
+    SoundManager::getInstance().load("health", (Helper::getPath("assets/sounds/refill.wav")));
+    SoundManager::getInstance().load("crystal", (Helper::getPath("assets/sounds/shard.wav")));
+    SoundManager::getInstance().load("hit", (Helper::getPath("assets/sounds/hit.wav")));
+    SoundManager::getInstance().load("crystal2", (Helper::getPath("assets/sounds/shard2.wav")));
+    SoundManager::getInstance().load("chest", (Helper::getPath("assets/sounds/chest.wav")));
+    SoundManager::getInstance().load("tutorialTune", (Helper::getPath("assets/sounds/tutorial2.wav")));
+    SoundManager::getInstance().load("kickHit", (Helper::getPath("assets/sounds/kickHit.wav")));
+    SoundManager::getInstance().load("doKick", (Helper::getPath("assets/sounds/doKick.wav")));
+    SoundManager::getInstance().load("explosion", (Helper::getPath("assets/sounds/explosion.wav")));
+    SoundManager::getInstance().load("enemyDie", (Helper::getPath("assets/sounds/enemyDie.wav")));
 
     // Scene Manager Setup
     sceneManager.registerScene("barracks", SceneBuilder::setupMainLevelScene);

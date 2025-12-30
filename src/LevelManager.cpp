@@ -10,8 +10,6 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 
-const std::filesystem::path ROOT = Helper::getExecutableDir();
-
 using json = nlohmann::json;
 
 LevelManager::LevelManager()
@@ -42,7 +40,7 @@ void LevelManager::loadLevel(sf::RenderWindow& window, GameCamera* camera, const
 
     tilesetPath = data["tileset"].get<std::string>();
 
-    tilesheet.loadFromFile((ROOT / tilesetPath).string());
+    tilesheet.loadFromFile(Helper::getPath(tilesetPath));
     int tileSize = data["tile_size"];
 
     auto& jsonLayers = data["layers"];

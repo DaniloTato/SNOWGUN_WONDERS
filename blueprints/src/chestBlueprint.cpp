@@ -1,12 +1,10 @@
+#include "Animator.hpp"
 #include "chest.hpp"
 
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "chest.hpp"
-#include <filesystem>
 #include "Helpers.hpp"
-
-const std::filesystem::path ROOT = Helper::getExecutableDir();
 
 namespace blueprint {
 
@@ -24,12 +22,12 @@ namespace blueprint {
             1.f
         };
 
-        auto* chest = new TangibleObject(params);
+        auto* chest = new TangibleObject(params, 
+            Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/chest.json")));
 
         chest->collider.setSize({14.f, 10.f});
         chest->collider.setOffset({1.f, 6.f});
 
-        chest->animator.loadAsepriteAnimations((ROOT / "assets\\json\\chest.json").string());
         chest->animator.play("closed");
 
         chest->scripter.addScript(script::chest);

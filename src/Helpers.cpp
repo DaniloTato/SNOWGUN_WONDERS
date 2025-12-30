@@ -60,4 +60,13 @@ namespace Helper{
             return std::filesystem::path(buffer).parent_path();
         #endif
     }
+
+    std::string getPath(const std::string& relativePath) {
+        std::filesystem::path base = getExecutableDir();
+        std::filesystem::path rel(relativePath);
+
+        std::filesystem::path full = base / rel;
+
+        return full.make_preferred().string();
+    }
 }

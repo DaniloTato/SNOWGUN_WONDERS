@@ -1,4 +1,5 @@
 #pragma once
+#include "Animator.hpp"
 #include "QueuedManager.hpp"
 #include "Bullet.hpp"
 #include "BasicCollider.hpp"
@@ -40,8 +41,10 @@ public:
     Bullet* isCollidingWithBullet(TangibleObject& object, bool amIPlayer);
 
 private:
-    BulletManager() = default;
+    BulletManager();
 
     Bullet* createFromRequest(const BulletCreationRequest& req) override;
     void destroyObject(Bullet* bullet) override;
+
+    Animations cachedAnimations;
 };
