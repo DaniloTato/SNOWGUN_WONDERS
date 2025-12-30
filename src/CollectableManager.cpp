@@ -67,3 +67,11 @@ sf::Texture& CollectableManager::loadTexture(const std::string& name, const std:
 sf::Texture& CollectableManager::getTexture(const std::string& name){
     return collectableTextures.at(name);
 }
+
+void CollectableManager::cacheAnimations(const std::string& collectableId, std::string animationPath) {
+    collectableAnimations[collectableId] = Animator::getAsepriteJSONAnimations(animationPath);
+}
+
+Animations& CollectableManager::getCachedAnimations(const std::string& name) {
+    return collectableAnimations.at(name);
+}

@@ -57,22 +57,25 @@ int main() {
 
     // Enemy Manager Setup
     enemyManager.loadTexture("toy", (getPath("assets/toy.png")));
-    enemyManager.cacheAnimations("toy", Animator::getAsepriteJSONAnimations(getPath("assets/json/toy.json")));
+    enemyManager.cacheAnimations("toy", getPath("assets/json/toy.json"));
     enemyManager.registerTemplate("toy", blueprint::toy);
     enemyManager.registerTemplate("runningToy", blueprint::runningToyBlueprint);
     enemyManager.loadTexture("reindeer", (getPath("assets/reindeer.png")));
-    enemyManager.cacheAnimations("reindeer", Animator::getAsepriteJSONAnimations(getPath("assets/json/reindeer.json")));
+    enemyManager.cacheAnimations("reindeer", getPath("assets/json/reindeer.json"));
     enemyManager.registerTemplate("reindeer", blueprint::reindeer);
     enemyManager.loadTexture("missile", (getPath("assets/missile.png")));
-    enemyManager.cacheAnimations("missile", Animator::getAsepriteJSONAnimations(getPath("assets/json/missile.json")));
+    enemyManager.cacheAnimations("missile", getPath("assets/json/missile.json"));
     enemyManager.registerTemplate("missile", blueprint::missileBlueprint);
 
     // Collectable Manager Setup
     collectableManager.loadTexture("crystal", (Helper::getPath("assets/crystal.png")));
+    collectableManager.cacheAnimations("crystal", Helper::getPath("assets/json/crystal.json"));
     collectableManager.registerTemplate("crystal", blueprint::crystalBlueprint);
     collectableManager.loadTexture("health", (Helper::getPath("assets/ginger.png")));
+    collectableManager.cacheAnimations("health", Helper::getPath("assets/json/ginger.json"));
     collectableManager.registerTemplate("health", blueprint::healthBlueprint);
     collectableManager.loadTexture("chest", (Helper::getPath("assets/chest.png")));
+    collectableManager.cacheAnimations("chest", Helper::getPath("assets/json/chest.json"));
     collectableManager.registerTemplate("chest", blueprint::chestBlueprint);
 
     // Sound Manager Setup

@@ -47,8 +47,6 @@ public:
     sf::Texture& loadTexture(const std::string& name, const std::string& path);
     sf::Texture& getTexture(const std::string& name);
 
-    void cacheAnimations(const std::string& enemyId, Animations animation);
-
     void queueCreateEnemy(const std::string& templateName,
                           const sf::Vector2f& position);
 
@@ -68,6 +66,7 @@ public:
     void removeSpawnDefinition( const sf::Vector2f& position,float tolerance);
     std::vector<EnemySpawnDefinition>& getSpawnDefinitions();
 
+    void cacheAnimations(const std::string& enemyId, std::string animationPath);
     Animations& getCachedAnimations(const std::string& name);
 
 protected:

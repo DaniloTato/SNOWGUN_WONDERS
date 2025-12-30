@@ -4,7 +4,6 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "chest.hpp"
-#include "Helpers.hpp"
 
 namespace blueprint {
 
@@ -23,7 +22,7 @@ namespace blueprint {
         };
 
         auto* chest = new TangibleObject(params, 
-            Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/chest.json")));
+            CollectableManager::getInstance().getCachedAnimations(id));
 
         chest->collider.setSize({14.f, 10.f});
         chest->collider.setOffset({1.f, 6.f});

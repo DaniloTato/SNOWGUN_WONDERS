@@ -252,8 +252,8 @@ std::vector<EnemyManager::EnemySpawnDefinition>& EnemyManager::getSpawnDefinitio
     return spawnDefinitions;
 }
 
-void EnemyManager::cacheAnimations(const std::string& enemyId, Animations animation) {
-    enemyAnimations[enemyId] = animation;
+void EnemyManager::cacheAnimations(const std::string& enemyId, std::string animationPath) {
+    enemyAnimations[enemyId] = Animator::getAsepriteJSONAnimations(animationPath);
 }
 
 Animations& EnemyManager::getCachedAnimations(const std::string& name) {

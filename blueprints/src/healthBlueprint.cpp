@@ -3,7 +3,6 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "healthPickup.hpp"
-#include "Helpers.hpp"
 
 namespace blueprint {
 
@@ -22,7 +21,7 @@ namespace blueprint {
         };
 
         auto* hp = new TangibleObject(params,
-            Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/ginger.json")));
+            CollectableManager::getInstance().getCachedAnimations(id));
 
         hp->collider.setSize({16.f, 16.f});
         hp->animator.play("idle");

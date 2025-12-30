@@ -3,7 +3,6 @@
 #include "GameState.hpp"
 #include "CollectableManager.hpp"
 #include "crystalShard.hpp"
-#include "Helpers.hpp"
 
 namespace blueprint {
 
@@ -22,7 +21,7 @@ namespace blueprint {
         };
 
         auto* crystal = new TangibleObject(params, 
-            Animator::getAsepriteJSONAnimations(Helper::getPath("assets/json/crystal.json")));
+            CollectableManager::getInstance().getCachedAnimations(id));
 
         crystal->collider.setSize({12.f, 12.f});
         crystal->collider.setOffset({2.f, 2.f});
