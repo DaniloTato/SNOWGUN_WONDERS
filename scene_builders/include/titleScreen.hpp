@@ -1,5 +1,5 @@
 #pragma once
 
-namespace SceneBuilder{
-    void titleScreen();
+namespace SceneBuilder {
+void titleScreen();
 }

@@ -1,8 +1,8 @@
 #include "ScriptRunner.hpp"
 #include "Scripter.hpp"
 
-ScriptRunner::ScriptRunner():GameObject(){}
+ScriptRunner::ScriptRunner() : GameObject() {}
 
-void ScriptRunner::update(const GeneralContext& ctx){
-    scripter.runScripts(*this, ctx);
+void ScriptRunner::update(const GeneralContext &ctx) {
+  scripter.runScripts(*this, ctx);
 }

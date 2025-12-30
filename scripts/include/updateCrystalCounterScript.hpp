@@ -5,5 +5,6 @@
 
 namespace script {
 
-    void updateCrystalCounterScript(ScriptRunner& runner, const GeneralContext& ctx);
+void updateCrystalCounterScript(ScriptRunner &runner,
+                                const GeneralContext &ctx);
 }

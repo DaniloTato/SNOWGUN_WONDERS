@@ -2,5 +2,5 @@
 #include "TangibleObject.hpp"
 
 namespace script {
-    void reindeerAI(TangibleObject& tangible, const GeneralContext& ctx);
+void reindeerAI(TangibleObject &tangible, const GeneralContext &ctx);
 }

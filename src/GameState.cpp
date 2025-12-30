@@ -1,129 +1,116 @@
 #include "GameState.hpp"
 #include "Bullet.hpp"
-#include "GameCamera.hpp"
-#include <SFML/Graphics.hpp>
 #include "Constants.hpp"
+#include "GameCamera.hpp"
 #include "SFML/System/Vector2.hpp"
+#include <SFML/Graphics.hpp>
 
 GameState::GameState()
-    : activeCameras({})
-    , activeWindows({new sf::RenderWindow(sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT), "SFML Window")})
-    , checkpoint({-1,-1})
-    , playerHealth(3)
-    , selectedWeapon(Bullet::Type::Normal)
-{}
+    : activeCameras({}),
+      activeWindows({new sf::RenderWindow(
+          sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT),
+          "SFML Window")}),
+      checkpoint({-1, -1}), playerHealth(3),
+      selectedWeapon(Bullet::Type::Normal) {}
 
-GameState& GameState::getInstance() {
-    static GameState instance;
-    return instance;
+GameState &GameState::getInstance() {
+  static GameState instance;
+  return instance;
 }
 
-void GameState::addCamera(GameCamera* camera) {
-    if (std::find(activeCameras.begin(), activeCameras.end(), camera) == activeCameras.end()) {
-        activeCameras.push_back(camera);
-    }
+void GameState::addCamera(GameCamera *camera) {
+  if (std::find(activeCameras.begin(), activeCameras.end(), camera) ==
+      activeCameras.end()) {
+    activeCameras.push_back(camera);
+  }
 }
 
-void GameState::removeCamera(GameCamera* camera) {
-    activeCameras.erase(std::remove(activeCameras.begin(), activeCameras.end(), camera), activeCameras.end());
+void GameState::removeCamera(GameCamera *camera) {
+  activeCameras.erase(
+      std::remove(activeCameras.begin(), activeCameras.end(), camera),
+      activeCameras.end());
 }
 
-const std::vector<GameCamera*>& GameState::getActiveCameras() const {
-    return activeCameras;
+const std::vector<GameCamera *> &GameState::getActiveCameras() const {
+  return activeCameras;
 }
 
-GameCamera* GameState::getMainCamera() const {
-    size_t mainCameraIndex = static_cast<int>(CameraList::MAIN);
-    if(activeCameras.size() >= mainCameraIndex){
-        return activeCameras[mainCameraIndex];
-    }
-    return nullptr;
+GameCamera *GameState::getMainCamera() const {
+  size_t mainCameraIndex = static_cast<int>(CameraList::MAIN);
+  if (activeCameras.size() >= mainCameraIndex) {
+    return activeCameras[mainCameraIndex];
+  }
+  return nullptr;
 }
 
-sf::RenderWindow* GameState::getMainWindow() const {
-    if(!activeWindows.empty()){
-        return activeWindows.front();
-    }
-    return nullptr;
+sf::RenderWindow *GameState::getMainWindow() const {
+  if (!activeWindows.empty()) {
+    return activeWindows.front();
+  }
+  return nullptr;
 }
 
 void GameState::clearCameras() {
-    for(auto& i:activeCameras){
-        GameObject::destroy(i);
-    }
-    activeCameras.clear();
+  for (auto &i : activeCameras) {
+    GameObject::destroy(i);
+  }
+  activeCameras.clear();
 }
 
-float GameState::dt(){
-    return dtValue;
+float GameState::dt() { return dtValue; }
+
+void GameState::updateDt() {
+  auto now = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<float> elapsed = now - lastFrameTime;
+  lastFrameTime = now;
+  dtValue = elapsed.count();
 }
 
-void GameState::updateDt(){
-    auto now = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> elapsed = now - lastFrameTime;
-    lastFrameTime = now;
-    dtValue = elapsed.count();
+GameCamera *GameState::getUiCamera() const {
+  size_t uiCameraIndex = static_cast<int>(CameraList::UI);
+  if (activeCameras.size() >= uiCameraIndex) {
+    return activeCameras[uiCameraIndex];
+  }
+  return nullptr;
 }
 
-GameCamera* GameState::getUiCamera() const{
-    size_t uiCameraIndex = static_cast<int>(CameraList::UI);
-    if(activeCameras.size() >= uiCameraIndex){
-        return activeCameras[uiCameraIndex];
-    }
-    return nullptr;
+void GameState::createCamera(CameraList type) {
+
+  auto index = static_cast<size_t>(type);
+
+  if (activeCameras.size() < static_cast<int>(CameraList::COUNT)) {
+    activeCameras.resize(static_cast<int>(CameraList::COUNT));
+  }
+
+  if (activeCameras[index]) {
+    return;
+  }
+
+  activeCameras[index] = new GameCamera();
 }
 
-void GameState::createCamera(CameraList type){
+int GameState::getCrystalAmount() const { return crystals; }
 
-    size_t index = static_cast<size_t>(type);
-    
-    if(activeCameras.size() < static_cast<int>(CameraList::COUNT)){
-        activeCameras.resize(static_cast<int>(CameraList::COUNT));
-    }
+void GameState::addToCrystalAmount(int amount) { crystals += amount; }
 
-    if (activeCameras[index]) {
-        return;
-    }
+int GameState::getPlayerHealth() const { return playerHealth; }
 
-    activeCameras[index] = new GameCamera();
+void GameState::changePlayerHealth(int amount) { playerHealth += amount; }
+
+void GameState::changeWeaponSelection() {
+  if (selectedWeapon == Bullet::Type::Normal) {
+    selectedWeapon = Bullet::Type::BubbleGun;
+  } else {
+    selectedWeapon = Bullet::Type::Normal;
+  }
 }
 
-int GameState::getCrystalAmount() const{
-    return crystals;
-}
+Bullet::Type GameState::getWeaponSelection() const { return selectedWeapon; }
 
-void GameState::addToCrystalAmount(int amount){
-    crystals += amount;
-}
+void GameState::setCheckpoint(sf::Vector2f position) { checkpoint = position; }
 
-int GameState::getPlayerHealth() const{
-    return playerHealth;
-}
-    
-void GameState::changePlayerHealth(int amount){
-    playerHealth += amount;
-}
+const sf::Vector2f GameState::getCheckpoint() const { return checkpoint; }
 
-void GameState::changeWeaponSelection(){
-    if(selectedWeapon == Bullet::Type::Normal){
-        selectedWeapon = Bullet::Type::BubbleGun;
-    } else{
-        selectedWeapon = Bullet::Type::Normal;
-    }
-}
-
-Bullet::Type GameState::getWeaponSelection(){
-    return selectedWeapon;
-}
-
-void GameState::setCheckpoint(sf::Vector2f position){
-    checkpoint = position;
-}
-
-const sf::Vector2f GameState::getCheckpoint() const{
-    return checkpoint;
-}
-
-bool GameState::hasCheckpoint() const{
-    return checkpoint != sf::Vector2f{-1,-1};
+bool GameState::hasCheckpoint() const {
+  return checkpoint != sf::Vector2f{-1, -1};
 }

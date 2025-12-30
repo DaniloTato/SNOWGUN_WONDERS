@@ -5,33 +5,31 @@
 
 namespace blueprint {
 
-    TangibleObject* runningToyBlueprint(const sf::Vector2f& pos) {
+TangibleObject *runningToyBlueprint(const sf::Vector2f &pos) {
 
-        const std::string id = "toy";
+  const std::string id = "toy";
 
-        RenderizerParameters params{
-            *GameState::getInstance().getMainWindow(),
-            EnemyManager::getInstance().textureCache.get(id),
-            {0,0,17,17},
-            pos,
-            GameState::getInstance().getMainCamera(),
-            0.f,
-            1.f
-        };
+  RenderizerParameters params{*GameState::getInstance().getMainWindow(),
+                              EnemyManager::getInstance().textureCache.get(id),
+                              {0, 0, 17, 17},
+                              pos,
+                              GameState::getInstance().getMainCamera(),
+                              0.f,
+                              1.f};
 
-        TangibleObject* toy = new TangibleObject(params, 
-            EnemyManager::getInstance().animationCache.get(id));
+  auto *toy = new TangibleObject(
+      params, EnemyManager::getInstance().animationCache.get(id));
 
-        toy->collider.setOffset({5.f, 2.f});
-        toy->collider.setSize({15.f, 14.f});
+  toy->collider.setOffset({5.f, 2.f});
+  toy->collider.setSize({15.f, 14.f});
 
-        toy->animator.play("walking");
+  toy->animator.play("walking");
 
-        toy->scripter.addScript(script::runningToy);
+  toy->scripter.addScript(script::runningToy);
 
-        toy->makesDamageTroughContact = false;
+  toy->makesDamageTroughContact = false;
 
-        return toy;
-    }
-
+  return toy;
 }
+
+} // namespace blueprint

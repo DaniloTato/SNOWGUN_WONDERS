@@ -1,9 +1,9 @@
 #pragma once
 
-#include "TangibleObject.hpp"
 #include "GeneralContext.hpp"
+#include "TangibleObject.hpp"
 
 namespace script {
 
-    void enemyPatrol(TangibleObject& tangible, const GeneralContext& ctx);
+void enemyPatrol(TangibleObject &tangible, const GeneralContext &ctx);
 }

@@ -6,32 +6,30 @@
 
 namespace blueprint {
 
-    TangibleObject* missileBlueprint(const sf::Vector2f& pos) {
+TangibleObject *missileBlueprint(const sf::Vector2f &pos) {
 
-        const std::string id = "missile";
+  const std::string id = "missile";
 
-        RenderizerParameters params{
-            *GameState::getInstance().getMainWindow(),
-            EnemyManager::getInstance().textureCache.get(id),
-            {0,0,48,48},
-            pos,
-            GameState::getInstance().getMainCamera(),
-            -11.f,
-            1.f
-        };
+  RenderizerParameters params{*GameState::getInstance().getMainWindow(),
+                              EnemyManager::getInstance().textureCache.get(id),
+                              {0, 0, 48, 48},
+                              pos,
+                              GameState::getInstance().getMainCamera(),
+                              -11.f,
+                              1.f};
 
-        TangibleObject* missile = new TangibleObject(params, 
-            EnemyManager::getInstance().animationCache.get(id));
+  auto *missile = new TangibleObject(
+      params, EnemyManager::getInstance().animationCache.get(id));
 
-        missile->collider.setOffset({0.f, 16.f});
-        missile->collider.setSize({32.f, 32.f});
+  missile->collider.setOffset({0.f, 16.f});
+  missile->collider.setSize({32.f, 32.f});
 
-        missile->animator.play("idle");
+  missile->animator.play("idle");
 
-        missile->scripter.addScript(script::missileAI);
-        missile->direction = -1;
+  missile->scripter.addScript(script::missileAI);
+  missile->direction = -1;
 
-        return missile;
-    }
-
+  return missile;
 }
+
+} // namespace blueprint

@@ -5,6 +5,6 @@
 
 namespace script {
 
-    void roomCamera(GameCamera& camera, const GeneralContext& ctx);
+void roomCamera(GameCamera &camera, const GeneralContext &ctx);
 
 }

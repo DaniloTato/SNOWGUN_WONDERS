@@ -1,116 +1,116 @@
 #include "SceneManager.hpp"
-#include "CollectableManager.hpp"
-#include "GameObject.hpp"
-#include "LevelManager.hpp"
-#include "GameState.hpp"
 #include "BulletManager.hpp"
-#include "EnemyManager.hpp"
-#include "ParticleManager.hpp"
-#include "DialogueManager.hpp"
+#include "CollectableManager.hpp"
 #include "Constants.hpp"
+#include "DialogueManager.hpp"
+#include "EnemyManager.hpp"
+#include "GameObject.hpp"
+#include "GameState.hpp"
+#include "LevelManager.hpp"
+#include "ParticleManager.hpp"
 
-SceneManager& SceneManager::getInstance() {
-    static SceneManager instance;
-    return instance;
+SceneManager &SceneManager::getInstance() {
+  static SceneManager instance;
+  return instance;
 }
 
-void SceneManager::registerScene(const std::string& name, SceneSetupFn setup) {
-    scenes[name] = setup;
+void SceneManager::registerScene(const std::string &name,
+                                 const SceneSetupFn &setup) {
+  scenes[name] = setup;
 }
 
-void SceneManager::loadScene(const std::string& name) {
-    if (transitioning) return;
-    beginTransition(name);
+void SceneManager::loadScene(const std::string &name) {
+  if (transitioning)
+    return;
+  beginTransition(name);
 }
 
-void SceneManager::reloadCurrentScene(){
-    loadScene(currentScene);
-}
+void SceneManager::reloadCurrentScene() { loadScene(currentScene); }
 
-void SceneManager::beginTransition(const std::string& nextScene) {
-    transitioning = true;
-    fadingOut = true;
-    transitionTimer = 0.f;
-    queuedScene = nextScene;
+void SceneManager::beginTransition(const std::string &nextScene) {
+  transitioning = true;
+  fadingOut = true;
+  transitionTimer = 0.f;
+  queuedScene = nextScene;
 
-    initFadeOverlay();
+  initFadeOverlay();
 }
 
 void SceneManager::unloadCurrentScene() {
 
-    BulletManager::getInstance().onSceneUnload();
-    EnemyManager::getInstance().onSceneUnload();
-    ParticleManager::getInstance().onSceneUnload();
-    DialogueManager::getInstance().onSceneUnload();
-    LevelManager::getInstance().onSceneUnload();
-    CollectableManager::getInstance().onSceneUnload();
+  BulletManager::getInstance().onSceneUnload();
+  EnemyManager::getInstance().onSceneUnload();
+  ParticleManager::getInstance().onSceneUnload();
+  DialogueManager::getInstance().onSceneUnload();
+  LevelManager::getInstance().onSceneUnload();
+  CollectableManager::getInstance().onSceneUnload();
 
-    GameState::getInstance().clearCameras();
+  GameState::getInstance().clearCameras();
 
-    GameObject::destroySceneObjects();
+  GameObject::destroySceneObjects();
 }
 
 void SceneManager::update() {
-    if (!transitioning) return;
+  if (!transitioning)
+    return;
 
-    float dt = GameState::getInstance().dt();
-    transitionTimer += dt;
+  float dt = GameState::getInstance().dt();
+  transitionTimer += dt;
 
-    float t = transitionTimer / transitionDuration;
-    if (t > 1.f) t = 1.f;
+  float t = transitionTimer / transitionDuration;
+  if (t > 1.f)
+    t = 1.f;
 
-    if (fadingOut) {
-        sf::Uint8 alpha = static_cast<sf::Uint8>(255.f * t);
-        fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
+  if (fadingOut) {
+    auto alpha = static_cast<sf::Uint8>(255.f * t);
+    fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
 
-        if (t >= 1.f) {
-            unloadCurrentScene();
-            scenes[queuedScene]();
-            currentScene = queuedScene;
+    if (t >= 1.f) {
+      unloadCurrentScene();
+      scenes[queuedScene]();
+      currentScene = queuedScene;
 
-            fadingOut = false;
-            transitionTimer = 0.f;
-        }
-    } else {
-        sf::Uint8 alpha = static_cast<sf::Uint8>(255.f * (1.f - t));
-        fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
-
-        if (t >= 1.f) {
-            fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
-            transitioning = false;
-        }
+      fadingOut = false;
+      transitionTimer = 0.f;
     }
+  } else {
+    auto alpha = static_cast<sf::Uint8>(255.f * (1.f - t));
+    fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, alpha));
+
+    if (t >= 1.f) {
+      fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
+      transitioning = false;
+    }
+  }
 }
 
-bool SceneManager::isTransitioning(){
-    return transitioning;
+bool SceneManager::isTransitioning() { return transitioning; }
+
+void SceneManager::setContext(GeneralContext &newContext) {
+  currentContext = newContext;
 }
 
-void SceneManager::setContext(GeneralContext& newContext){
-    currentContext = newContext;
-}
-
-const GeneralContext& SceneManager::getContext() const{
-    return currentContext;
+const GeneralContext &SceneManager::getContext() const {
+  return currentContext;
 }
 
 void SceneManager::initFadeOverlay() {
-    if (fadeOverlay) return;
+  if (fadeOverlay)
+    return;
 
-    sf::Texture dummyTexture;
+  sf::Texture dummyTexture;
 
-    RenderizerParameters params{
-        *GameState::getInstance().getMainWindow(),
-        dummyTexture,
-        {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
-        {0.f, 0.f},
-        GameState::getInstance().getUiCamera(),
-        Constants::OVERLAY_LAYER,
-        1.f,
-        true
-    };
+  RenderizerParameters params{
+      *GameState::getInstance().getMainWindow(),
+      dummyTexture,
+      {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
+      {0.f, 0.f},
+      GameState::getInstance().getUiCamera(),
+      Constants::OVERLAY_LAYER,
+      1.f,
+      true};
 
-    fadeOverlay = new RenderableObject(params);
-    fadeOverlay->makePersistentAcrossScenes();
-    fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
+  fadeOverlay = new RenderableObject(params);
+  fadeOverlay->makePersistentAcrossScenes();
+  fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
 }

@@ -6,5 +6,5 @@
 
 namespace script {
 
-    void healthPickup(TangibleObject& camera, const GeneralContext& ctx);
+void healthPickup(TangibleObject &camera, const GeneralContext &ctx);
 }

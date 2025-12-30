@@ -4,10 +4,10 @@
 #include "Renderizer.hpp"
 #include "Scripter.hpp"
 
-class RenderableObject: public GameObject {
+class RenderableObject : public GameObject {
 public:
-    RenderableObject(const RenderizerParameters& params);
-    void update(const GeneralContext& ctx) override;
-    Renderizer renderizer;
-    Scripter<RenderableObject> scripter;
+  RenderableObject(const RenderizerParameters &params);
+  void update(const GeneralContext &ctx) override;
+  Renderizer renderizer;
+  Scripter<RenderableObject> scripter;
 };

@@ -1,5 +1,5 @@
 #pragma once
 
-namespace SceneBuilder{
-    void setupMainLevelScene();
+namespace SceneBuilder {
+void setupMainLevelScene();
 }

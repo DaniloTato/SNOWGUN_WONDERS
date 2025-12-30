@@ -1,7 +1,7 @@
 #pragma once
-#include <SFML/System/Vector2.hpp>
 #include "TangibleObject.hpp"
+#include <SFML/System/Vector2.hpp>
 
 namespace blueprint {
-    TangibleObject* crystalBlueprint(const sf::Vector2f& pos);
+TangibleObject *crystalBlueprint(const sf::Vector2f &pos);
 }

@@ -3,40 +3,37 @@
 
 class UISlider {
 public:
-    UISlider(const sf::Vector2f& position,
-             float width,
-             float minValue,
-             float maxValue,
-             float* boundValue);
+  UISlider(const sf::Vector2f &position, float width, float minValue,
+           float maxValue, float *boundValue);
 
-    void draw(sf::RenderWindow& window);
+  void draw(sf::RenderWindow &window);
 
-    void handleEvent(const sf::Event& ev, sf::RenderWindow& window);
+  void handleEvent(const sf::Event &ev, sf::RenderWindow &window);
 
-    void setValue(float v);
+  void setValue(float v);
 
-    float getValue() const;
+  float getValue() const;
 
-    void bindTo(float* newBound);
+  void bindTo(float *newBound);
 
 private:
-    static float clamp(float v, float a, float b) {
-        return (v < a) ? a : ((v > b) ? b : v);
-    }
+  static float clamp(float v, float a, float b) {
+    return (v < a) ? a : ((v > b) ? b : v);
+  }
 
-    float getPercentage() const;
+  float getPercentage() const;
 
-    sf::Vector2f pos;
-    float width;
-    float minValue;
-    float maxValue;
+  sf::Vector2f pos;
+  float width;
+  float minValue;
+  float maxValue;
 
-    float* valuePtr;
+  float *valuePtr;
 
-    float internalValue;
+  float internalValue;
 
-    sf::RectangleShape track;
-    sf::CircleShape knob;
+  sf::RectangleShape track;
+  sf::CircleShape knob;
 
-    bool dragging = false;
+  bool dragging = false;
 };

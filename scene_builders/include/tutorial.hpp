@@ -1,5 +1,5 @@
 #pragma once
 
-namespace SceneBuilder{
-    void tutorial();
+namespace SceneBuilder {
+void tutorial();
 }

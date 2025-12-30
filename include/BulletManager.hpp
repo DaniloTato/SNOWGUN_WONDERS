@@ -1,50 +1,41 @@
 #pragma once
 #include "Animator.hpp"
-#include "QueuedManager.hpp"
-#include "Bullet.hpp"
 #include "BasicCollider.hpp"
+#include "Bullet.hpp"
+#include "QueuedManager.hpp"
 
 struct BulletCreationRequest {
-    RenderizerParameters params;
-    Bullet::Type type;
-    sf::Vector2f speed;
-    sf::Vector2f accel;
-    float damageRadius;
-    float range;
-    bool shotByPlayer;
+  RenderizerParameters params;
+  Bullet::Type type;
+  sf::Vector2f speed;
+  sf::Vector2f accel;
+  float damageRadius;
+  float range;
+  bool shotByPlayer;
 };
 
-class BulletManager
-    : public QueuedManager<Bullet, BulletCreationRequest>
-{
+class BulletManager : public QueuedManager<Bullet, BulletCreationRequest> {
 public:
+  inline static const bool I_AM_PLAYER = true;
+  inline static const bool I_AM_NOT_PLAYER = false;
 
-    inline static const bool I_AM_PLAYER = true;
-    inline static const bool I_AM_NOT_PLAYER = false;
+  static BulletManager &getInstance();
 
-    static BulletManager& getInstance();
+  void queueSpawn(RenderizerParameters &params, Bullet::Type type,
+                  const sf::Vector2f &speed, const sf::Vector2f &accel,
+                  float damageRadius, float range, bool shotByPlayer);
 
-    void queueSpawn(
-        RenderizerParameters& params,
-        Bullet::Type type,
-        const sf::Vector2f& speed,
-        const sf::Vector2f& accel,
-        float damageRadius,
-        float range,
-        bool shotByPlayer
-    );
+  void queueDeletion(Bullet *bullet);
 
-    void queueDeletion(Bullet* bullet);
+  void update();
 
-    void update();
-
-    Bullet* isCollidingWithBullet(TangibleObject& object, bool amIPlayer);
+  Bullet *isCollidingWithBullet(TangibleObject &object, bool amIPlayer);
 
 private:
-    BulletManager();
+  BulletManager();
 
-    Bullet* createFromRequest(const BulletCreationRequest& req) override;
-    void destroyObject(Bullet* bullet) override;
+  Bullet *createFromRequest(const BulletCreationRequest &req) override;
+  void destroyObject(Bullet *bullet) override;
 
-    Animations cachedAnimations;
+  Animations cachedAnimations;
 };

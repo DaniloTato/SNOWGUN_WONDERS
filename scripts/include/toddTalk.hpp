@@ -1,9 +1,9 @@
 #pragma once
 
-#include "RenderableObject.hpp"
 #include "GeneralContext.hpp"
+#include "RenderableObject.hpp"
 
 namespace script {
 
-    void toddTalk(RenderableObject& renderable, const GeneralContext& ctx);
+void toddTalk(RenderableObject &renderable, const GeneralContext &ctx);
 }

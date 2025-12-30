@@ -1,56 +1,52 @@
 #pragma once
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
-#include <unordered_map>
+#include <SFML/Window/Keyboard.hpp>
 #include <string>
+#include <unordered_map>
 
-enum class MouseButton {
-    Left,
-    Right,
-    Middle
-};
+enum class MouseButton : std::uint8_t { Left, Right, Middle };
 
 class InputManager {
 public:
-    static InputManager& getInstance() {
-        static InputManager instance;
-        return instance;
-    }
+  static InputManager &getInstance() {
+    static InputManager instance;
+    return instance;
+  }
 
-    void handleEvent(const sf::Event& event);
-    void update();  
+  void handleEvent(const sf::Event &event);
+  void update();
 
-    bool isPressed(const std::string& action) const;
-    bool isJustPressed(const std::string& action) const;
-    bool isJustReleased(const std::string& action) const;
+  [[nodiscard]] bool isPressed(const std::string &action) const;
+  [[nodiscard]] bool isJustPressed(const std::string &action) const;
+  [[nodiscard]] bool isJustReleased(const std::string &action) const;
 
-    bool loadBindingsFromJsonFile(const std::string& filePath);
-    void bindKey(const std::string& action, sf::Keyboard::Key key);
+  bool loadBindingsFromJsonFile(const std::string &filePath);
+  void bindKey(const std::string &action, sf::Keyboard::Key key);
 
-    bool isMousePressed(MouseButton button) const;
-    bool isMouseJustPressed(MouseButton button) const;
-    bool isMouseJustReleased(MouseButton button) const;
+  [[nodiscard]] bool isMousePressed(MouseButton button) const;
+  [[nodiscard]] bool isMouseJustPressed(MouseButton button) const;
+  [[nodiscard]] bool isMouseJustReleased(MouseButton button) const;
 
-    sf::Vector2i getMousePosition() const;
+  [[nodiscard]] sf::Vector2i getMousePosition() const;
+  [[nodiscard]] sf::Keyboard::Key
+  keyFromString(const std::string &keyName) const;
 
-    sf::Keyboard::Key keyFromString(const std::string& keyName) const;
+  InputManager(const InputManager &) = delete;
+  InputManager &operator=(const InputManager &) = delete;
+
+  InputManager(InputManager &&) = delete;
+  InputManager &operator=(InputManager &&) = delete;
 
 private:
-    InputManager();
+  InputManager();
 
-    std::unordered_map<sf::Keyboard::Key, bool> currentState;
-    std::unordered_map<sf::Keyboard::Key, bool> previousState;
+  std::unordered_map<sf::Keyboard::Key, bool> currentState;
+  std::unordered_map<sf::Keyboard::Key, bool> previousState;
 
-    std::unordered_map<MouseButton, bool> mouseCurrent;
-    std::unordered_map<MouseButton, bool> mousePrevious;
+  std::unordered_map<MouseButton, bool> mouseCurrent;
+  std::unordered_map<MouseButton, bool> mousePrevious;
 
-    sf::Vector2i lastMouseClickPosition;
+  sf::Vector2i lastMouseClickPosition;
 
-    std::unordered_map<std::string, sf::Keyboard::Key> bindings;
-
-    InputManager(const InputManager&) = delete;
-    InputManager& operator=(const InputManager&) = delete;
-
-    InputManager(InputManager&&) = delete;
-    InputManager& operator=(InputManager&&) = delete;
+  std::unordered_map<std::string, sf::Keyboard::Key> bindings;
 };

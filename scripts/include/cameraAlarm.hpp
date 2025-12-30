@@ -5,6 +5,6 @@
 
 namespace script {
 
-    void cameraAlarm(GameCamera& camera, const GeneralContext& ctx);
+void cameraAlarm(GameCamera &camera, const GeneralContext &ctx);
 
 }

@@ -4,9 +4,10 @@
 
 namespace script {
 
-    void pressStart(ScriptRunner& tangible, const GeneralContext& ctx){
-        if(InputManager::getInstance().isJustPressed("start")){
-            SceneManager::getInstance().loadScene("tutorial");
-        }
-    }
+void pressStart(ScriptRunner &tangible, const GeneralContext &ctx) {
+  if (InputManager::getInstance().isJustPressed("start")) {
+    SceneManager::getInstance().loadScene("tutorial");
+  }
 }
+
+} // namespace script

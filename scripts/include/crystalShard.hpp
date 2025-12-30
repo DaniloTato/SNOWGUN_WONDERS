@@ -6,5 +6,6 @@
 
 namespace script {
 
-    void crystalShard(TangibleObject& camera, const GeneralContext& ctx);
+void crystalShard(TangibleObject &camera, const GeneralContext &ctx);
+
 }

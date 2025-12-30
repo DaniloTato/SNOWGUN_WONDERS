@@ -5,5 +5,7 @@
 #include "GeneralContext.hpp"
 
 namespace script {
-    void chest(TangibleObject& camera, const GeneralContext& ctx);
+
+void chest(TangibleObject &camera, const GeneralContext &ctx);
+
 }

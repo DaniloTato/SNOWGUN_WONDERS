@@ -5,5 +5,5 @@
 
 namespace script {
 
-    void updateLifeCounterScript(ScriptRunner& runner, const GeneralContext& ctx);
+void updateLifeCounterScript(ScriptRunner &runner, const GeneralContext &ctx);
 }

@@ -7,21 +7,21 @@ struct GeneralContext;
 
 class GameObject {
 public:
-    GameObject(sf::Vector2f pos = {0.f, 0.f});
-    virtual ~GameObject();
-    virtual void update(const GeneralContext& ctx) = 0;
+  GameObject(sf::Vector2f pos = {0.f, 0.f});
+  virtual ~GameObject();
+  virtual void update(const GeneralContext &ctx) = 0;
 
-    void makePersistentAcrossScenes();
+  void makePersistentAcrossScenes();
 
-    static std::vector<GameObject*>& getGameObjects();
-    static void destroy(GameObject* g);
+  static std::vector<GameObject *> &getGameObjects();
+  static void destroy(GameObject *g);
 
-    static void destroySceneObjects();
-    
-    sf::Vector2f position;
-    sf::Vector2f offset;
+  static void destroySceneObjects();
+
+  sf::Vector2f position;
+  sf::Vector2f offset;
 
 protected:
-    bool persistentAcrossScenes = false;
-    static std::vector<GameObject*> s_gameObjects;
+  bool persistentAcrossScenes = false;
+  static std::vector<GameObject *> s_gameObjects;
 };

@@ -1,19 +1,14 @@
 #pragma once
-#include <unordered_map>
-#include <string>
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <unordered_map>
 
-template<typename T>
-class Cache {
+template <typename T> class Cache {
 protected:
-    std::unordered_map<std::string, T> cache;
+  std::unordered_map<std::string, T> cache;
 
 public:
-    void load(const std::string& id, const T& obj){
-        cache[id] = obj;
-    }
+  void load(const std::string &id, const T &obj) { cache[id] = obj; }
 
-    T& get(const std::string& id){
-        return cache.at(id);
-    }
+  T &get(const std::string &id) { return cache.at(id); }
 };

@@ -4,36 +4,31 @@
 
 class PhysicsComponent {
 public:
+  enum class SpeedType : std::uint8_t { MOVEMENT, KICK, COUNT };
 
-    enum class SpeedType{
-        MOVEMENT,
-        KICK,
-        COUNT
-    };
+  PhysicsComponent();
+  PhysicsComponent(float gravity);
 
-    PhysicsComponent();
-    PhysicsComponent(float gravity);
+  void updateX(sf::Vector2f &position);
+  void updateY(sf::Vector2f &position);
 
-    void updateX(sf::Vector2f& position);
-    void updateY(sf::Vector2f& position);
+  [[nodiscard]] const sf::Vector2f &getSpeed(SpeedType type) const;
+  [[nodiscard]] float getSpdx(SpeedType type) const;
+  [[nodiscard]] float getSpdy(SpeedType type) const;
 
-    const sf::Vector2f& getSpeed(SpeedType type) const;
-    float getSpdx(SpeedType type) const;
-    float getSpdy(SpeedType type) const;
+  void setSpeed(const sf::Vector2f &newSpeed, SpeedType type);
+  void setSpdx(float x, SpeedType type);
+  void setSpdy(float y, SpeedType type);
 
-    void setSpeed(const sf::Vector2f& newSpeed, SpeedType type);
-    void setSpdx(float x, SpeedType type);
-    void setSpdy(float y, SpeedType type);
+  void turnOffXFriction();
+  void turnOnYFriction();
+  void turnOffYFriction();
 
-    void turnOffXFriction();
-    void turnOnYFriction();
-    void turnOffYFriction();
-
-    float gravity;
-    sf::Vector2f friction;
+  float gravity;
+  sf::Vector2f friction;
 
 private:
-    std::vector<sf::Vector2f> speeds;
-    bool hasXFriction;
-    bool hasYFriction;
+  std::vector<sf::Vector2f> speeds;
+  bool hasXFriction;
+  bool hasYFriction;
 };

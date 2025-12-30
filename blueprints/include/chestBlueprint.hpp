@@ -3,5 +3,5 @@
 #include <SFML/System/Vector2.hpp>
 
 namespace blueprint {
-    TangibleObject* chestBlueprint(const sf::Vector2f& pos);
+TangibleObject *chestBlueprint(const sf::Vector2f &pos);
 }

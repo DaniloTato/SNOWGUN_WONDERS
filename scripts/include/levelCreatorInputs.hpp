@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ScriptRunner.hpp"
 #include "GeneralContext.hpp"
+#include "ScriptRunner.hpp"
 
 namespace script {
 
-    void levelCreatorInputs(ScriptRunner& scriptRunner, const GeneralContext& ctx);
+void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx);
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ScriptRunner.hpp"
 #include "GeneralContext.hpp"
+#include "ScriptRunner.hpp"
 
 namespace script {
 
-    void particleGeneration(ScriptRunner& runner, const GeneralContext& ctx);
+void particleGeneration(ScriptRunner &runner, const GeneralContext &ctx);
 }

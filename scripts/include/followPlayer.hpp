@@ -5,5 +5,5 @@
 
 namespace script {
 
-    void followPlayer(GameCamera& camera, const GeneralContext& ctx);
+void followPlayer(GameCamera &camera, const GeneralContext &ctx);
 }

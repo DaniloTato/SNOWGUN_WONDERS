@@ -9,38 +9,38 @@
 
 class SceneManager {
 public:
-    using SceneSetupFn = std::function<void()>;
+  using SceneSetupFn = std::function<void()>;
 
-    static SceneManager& getInstance();
+  static SceneManager &getInstance();
 
-    void registerScene(const std::string& name, SceneSetupFn setup);
-    void loadScene(const std::string& name);
-    void reloadCurrentScene();
-    bool isTransitioning();
+  void registerScene(const std::string &name, const SceneSetupFn &setup);
+  void loadScene(const std::string &name);
+  void reloadCurrentScene();
+  bool isTransitioning();
 
-    void setContext(GeneralContext& newContext);
-    const GeneralContext& getContext() const;
+  void setContext(GeneralContext &newContext);
+  [[nodiscard]] const GeneralContext &getContext() const;
 
-    void update();
+  void update();
 
 private:
-    SceneManager() = default;
+  SceneManager() = default;
 
-    void beginTransition(const std::string& nextScene);
-    void unloadCurrentScene();
-    void initFadeOverlay();
+  void beginTransition(const std::string &nextScene);
+  void unloadCurrentScene();
+  void initFadeOverlay();
 
-    std::unordered_map<std::string, SceneSetupFn> scenes;
-    std::string currentScene;
-    std::string queuedScene;
+  std::unordered_map<std::string, SceneSetupFn> scenes;
+  std::string currentScene;
+  std::string queuedScene;
 
-    bool transitioning = false;
-    bool fadingOut = true;
+  bool transitioning = false;
+  bool fadingOut = true;
 
-    float transitionTimer = 0.f;
-    float transitionDuration = 0.5f;
+  float transitionTimer = 0.f;
+  float transitionDuration = 0.5f;
 
-    RenderableObject* fadeOverlay = nullptr;
+  RenderableObject *fadeOverlay = nullptr;
 
-    GeneralContext currentContext;
+  GeneralContext currentContext;
 };

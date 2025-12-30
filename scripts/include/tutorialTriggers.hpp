@@ -5,5 +5,5 @@
 
 namespace script {
 
-    void tutorialTriggers(ScriptRunner& renderable, const GeneralContext& ctx);
+void tutorialTriggers(ScriptRunner &renderable, const GeneralContext &ctx);
 }

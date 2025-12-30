@@ -1,5 +1,5 @@
 #pragma once
 
-namespace SceneBuilder{
-    void end();
+namespace SceneBuilder {
+void end();
 }

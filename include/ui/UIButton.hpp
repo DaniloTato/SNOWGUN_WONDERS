@@ -1,23 +1,20 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class UIButton
-{
+class UIButton {
 public:
-    UIButton(const sf::Vector2f& position,
-             const sf::Vector2f& size,
-             const std::string& text,
-             sf::Font& font,
-             const sf::Color& color = sf::Color(60,60,60));
+  UIButton(const sf::Vector2f &position, const sf::Vector2f &size,
+           const std::string &text, sf::Font &font,
+           const sf::Color &color = sf::Color(60, 60, 60));
 
-    void draw(sf::RenderWindow& window);
-    bool isClicked(const sf::Event& event, sf::RenderWindow& window);
+  void draw(sf::RenderWindow &window);
+  bool isClicked(const sf::Event &event, sf::RenderWindow &window);
 
-    void setText(const std::string& t) { label.setString(t); }
-    void setPosition(const sf::Vector2f& p);
+  void setText(const std::string &t) { label.setString(t); }
+  void setPosition(const sf::Vector2f &p);
 
 private:
-    sf::RectangleShape box;
-    sf::Text label;
-    sf::Color color;
+  sf::RectangleShape box;
+  sf::Text label;
+  sf::Color color;
 };

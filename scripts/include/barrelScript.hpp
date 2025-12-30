@@ -5,6 +5,6 @@
 
 namespace script {
 
-    void barrelScript(AnimatedObject& animated, const GeneralContext& ctx);
+void barrelScript(AnimatedObject &animated, const GeneralContext &ctx);
 
 }

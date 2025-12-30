@@ -54,7 +54,12 @@ cache/
 *.iml
 
 .clangd
+.clang-tidy
+compile_commands.json
 
 snowgun
 
 windowsmake.txt
+
+*.py
+*.zip
