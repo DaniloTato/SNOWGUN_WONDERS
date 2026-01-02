@@ -29,7 +29,12 @@ LDFLAGS  += $(SFML_LIBS) -Wl,-rpath,@executable_path/lib
 SRC := $(shell find src scripts/src blueprints/src scene_builders/src -name '*.cpp')
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
 
-all: $(BINDIR)/$(APP_NAME)
+all: $(APP_NAME)
+
+dist: $(BINDIR)/$(APP_NAME)
+
+$(APP_NAME): $(OBJ)
+	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
 
 $(BINDIR)/$(APP_NAME): $(OBJ)
 	mkdir -p $(BINDIR)
@@ -103,11 +108,17 @@ zip: package sign
 	@echo "Created $(ZIP_NAME)"
 
 run: all
+	./$(APP_NAME)
+
+run-dist: all
 	./$(BINDIR)/$(APP_NAME)
 
-full-run: all package bundle-libs sign run
+full-run: dist package bundle-libs sign run
 
 clean:
+	rm -rf $(OBJDIR) $(APP_NAME)
+
+clean-dist:
 	rm -rf dist release $(ZIP_NAME)
 
 .PHONY: all clean run zip package bundle-libs fix-libs fix-lib-deps fix-bin sign full-run

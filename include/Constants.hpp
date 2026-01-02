@@ -16,6 +16,7 @@ inline constexpr int TEXT_LAYER = -100;
 inline constexpr int UI_LAYER = -101;
 inline constexpr int UI_TEXT_LAYER = -105;
 inline constexpr int OVERLAY_LAYER = -200;
+inline constexpr const char *MAIN_WINDOW_NAME = "SnowgunWONDERS";
 const sf::Vector2f STARTING_PLAYER_CAMERA_RELATION = {20, -30};
 
 } // namespace Constants

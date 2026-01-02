@@ -18,6 +18,7 @@
         "kick": "LShift",
         "godMode": "G",
         "changeGun": "F",
-        "start": "Enter"
+        "start": "Enter",
+        "terminal": "P"
     }
 }

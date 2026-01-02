@@ -89,3 +89,7 @@ void GameCamera::setCameraShakePosition(const sf::Vector2f &shakePos) {
 void GameCamera::setImpactZoom(float impactZoom) {
   this->impactZoom = impactZoom;
 }
+
+const sf::Vector2f GameCamera::getDesiredPosition() const {
+  return desiredPosition;
+}

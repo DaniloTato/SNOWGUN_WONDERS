@@ -16,12 +16,21 @@ public:
   void update(const GeneralContext &ctx) override;
 
   void goTo(const sf::Vector2f &pos);
+
   void zoomTo(float desiredZoom);
+
+  [[nodiscard]] const sf::Vector2f getDesiredPosition() const;
+
   [[nodiscard]] float getZoom() const;
+
   [[nodiscard]] float getDesiredZoom() const;
+
   void setCameraShakePosition(const sf::Vector2f &shakePos);
+
   void setImpactZoom(float impactZoom);
+
   void zoomToDesired();
+
   void goToDesired();
 
   [[nodiscard]] const sf::Vector2f screenToWorld(const sf::Vector2f &screenPos,

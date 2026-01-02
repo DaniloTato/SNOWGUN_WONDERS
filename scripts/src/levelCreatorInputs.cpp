@@ -5,6 +5,7 @@
 #include "InputManager.hpp"
 #include "LevelManager.hpp"
 #include "TilePicker.hpp"
+#include "terminalCreationScript.hpp"
 #include <iostream>
 
 namespace script {
@@ -126,5 +127,7 @@ void levelCreatorInputs(ScriptRunner &scriptRunner, const GeneralContext &ctx) {
               << static_cast<int>(mousePosInWorld.y) / Constants::TILE_SIZE
               << ")\n";
   }
+
+  terminalCreationScript(scriptRunner, ctx);
 }
 } // namespace script

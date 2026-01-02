@@ -10,3 +10,7 @@ struct GeneralContext {
   TangibleObject *player;
   sf::Texture *bulletTexture;
 };
+
+struct EmptyContext : public GeneralContext {
+  EmptyContext() : GeneralContext{nullptr, nullptr, nullptr, nullptr} {}
+};

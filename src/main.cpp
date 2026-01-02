@@ -1,10 +1,9 @@
 /*SFML dependency*/
 #include <SFML/Graphics.hpp>
 
+/*Engine Objects*/
 #include "Animator.hpp"
 #include "BulletManager.hpp"
-
-/*Engine Objects*/
 #include "CollectableManager.hpp"
 #include "DialogueManager.hpp"
 #include "EnemyManager.hpp"
@@ -33,6 +32,7 @@
 /*SceneBuilders*/
 #include "Helpers.hpp"
 #include "end.hpp"
+#include "hills.hpp"
 #include "setupLevel2.hpp"
 #include "setupMainLevelScene.hpp"
 #include "titleScreen.hpp"
@@ -136,8 +136,9 @@ int main() {
   sceneManager.registerScene("tutorial", SceneBuilder::tutorial);
   sceneManager.registerScene("titleScreen", SceneBuilder::titleScreen);
   sceneManager.registerScene("end", SceneBuilder::end);
+  sceneManager.registerScene("hills", SceneBuilder::hills);
 
-  sceneManager.loadScene("titleScreen");
+  sceneManager.loadScene("hills");
 
   sf::Clock clock;
 
@@ -145,11 +146,24 @@ int main() {
     sf::Event event;
     inputManager.update();
 
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
-      }
-      inputManager.handleEvent(event);
+    std::vector<sf::RenderWindow *> windows = gameState.getWindows();
+    for (GameState::WindowTypes i = GameState::WindowTypes::MAIN;
+         i != GameState::WindowTypes::COUNT;
+         i = static_cast<GameState::WindowTypes>(static_cast<int>(i) + 1)) {
+
+      auto windowType = static_cast<size_t>(i);
+      if (!windows[windowType] || i == GameState::WindowTypes::TERMINAL)
+        continue;
+
+      if (windows[windowType])
+        while (windows[windowType]->pollEvent(event)) {
+          if (event.type == sf::Event::Closed) {
+            windows[windowType]->close();
+          }
+          if (i == GameState::WindowTypes::MAIN) {
+            inputManager.handleEvent(event);
+          }
+        }
     }
 
     sceneManager.update();
@@ -164,7 +178,21 @@ int main() {
       BulletManager::getInstance().update();
     }
 
-    window.clear(LevelManager::getInstance().getBackgroundColor());
+    for (GameState::WindowTypes i = GameState::WindowTypes::MAIN;
+         i != GameState::WindowTypes::COUNT;
+         i = static_cast<GameState::WindowTypes>(static_cast<int>(i) + 1)) {
+
+      auto windowType = static_cast<size_t>(i);
+      if (!windows[windowType])
+        continue;
+
+      if (i == GameState::WindowTypes::MAIN) {
+        windows[windowType]->clear(
+            LevelManager::getInstance().getBackgroundColor());
+      } else {
+        windows[windowType]->clear();
+      }
+    }
 
     for (GameObject *gameObject : GameObject::getGameObjects()) {
       if (gameObject) {
@@ -173,7 +201,12 @@ int main() {
     }
 
     Renderizer::renderAll();
-    window.display();
+
+    for (auto &window : gameState.getWindows()) {
+      if (window) {
+        window->display();
+      }
+    }
   }
 
   return 0;

@@ -1,6 +1,0 @@
-{
-  "snow": {"tex_x": 0, "tex_y": 0},
-  "wood": {"tex_x": 64, "tex_y": 32},
-  "metal": {"tex_x": 32, "tex_y": 64},
-  "solid": {"tex_x": 32, "tex_y": 16}
-}

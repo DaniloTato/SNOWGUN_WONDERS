@@ -6,7 +6,7 @@ Since **Snowgun is an indie, open-source project**, you need to manually allow i
 This process is **safe**, **common for indie software**, and only needs to be done **once**.
 ---
 
-### 1. Open the Snowgun folder in Terminal
+### 1. Open the Snowgun folder in Terminal##########################
 _________________________________________________________________
 
 1. Open **Finder**

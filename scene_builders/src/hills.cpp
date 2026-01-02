@@ -1,6 +1,4 @@
-#include "tutorial.hpp"
-
-#include "CollectableManager.hpp"
+#include "hills.hpp"
 #include "ColorPalette.hpp"
 #include "DialogueManager.hpp"
 #include "EnemyManager.hpp"
@@ -11,20 +9,14 @@
 #include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "followPlayer.hpp"
-#include "sceneHelperFunctions.hpp"
-
 #include "levelCreatorInputs.hpp"
-#include "particleGeneration.hpp"
-#include "tutorialTriggers.hpp"
+#include "sceneHelperFunctions.hpp"
 #include "updateCrystalCounterScript.hpp"
 #include "updateLifeCounterScript.hpp"
 
-#include <iostream>
-
 namespace SceneBuilder {
 
-void tutorial() {
-
+void hills() {
   GameState &gameState = GameState::getInstance();
   setupCameras(gameState);
 
@@ -46,8 +38,6 @@ void tutorial() {
 
   auto *scriptRunner = new ScriptRunner();
   scriptRunner->scripter.addScript(script::levelCreatorInputs);
-  scriptRunner->scripter.addScript(script::particleGeneration);
-  scriptRunner->scripter.addScript(script::tutorialTriggers);
   scriptRunner->scripter.addScript(script::updateLifeCounterScript);
   scriptRunner->scripter.addScript(script::updateCrystalCounterScript);
 
@@ -64,24 +54,9 @@ void tutorial() {
   setupParticles(window, particleManager, mainCam);
 
   levelManager.loadLevel(window, GameState::getInstance().getMainCamera(),
-                         (Helper::getPath("assets/level_data/tutorial.json")));
+                         (Helper::getPath("assets/level_data/hills.json")));
 
-  levelManager.setBackgroundColor(ColorPalette::ElectricBlue);
-
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {124 * 16, 99 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {138 * 16, 98 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {384 * 16, 76 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {420 * 16, 88 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {374 * 16, 82 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("chest",
-                                                           {234 * 16, 91 * 16});
-  CollectableManager::getInstance().queueCreateCollectable("health",
-                                                           {211 * 16, 95 * 16});
+  levelManager.setBackgroundColor(ColorPalette::PeachCream);
 
   EnemyManager::getInstance().loadSpawnDefinitionsFromJson(
       (Helper::getPath("assets/level_data/tutorialEnemies.json")));
@@ -99,22 +74,8 @@ void tutorial() {
   script::followPlayer(*mainCam, ctx);
   mainCam->goToDesired();
 
-  static sf::Music tutorialMusic;
-  static bool musicStarted = false;
-
-  if (!musicStarted) {
-    if (!tutorialMusic.openFromFile(
-            (Helper::getPath("assets/sounds/tutorial2.wav")))) {
-      std::cerr << "Failed to load tutorial music\n";
-    } else {
-      tutorialMusic.setLoop(true);
-      tutorialMusic.setVolume(100.f);
-      tutorialMusic.play();
-      musicStarted = true;
-    }
-  }
-
   GameState::getInstance().changePlayerHealth(
       3 - GameState::getInstance().getPlayerHealth());
 }
+
 } // namespace SceneBuilder

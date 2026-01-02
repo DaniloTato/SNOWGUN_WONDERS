@@ -9,17 +9,25 @@
 
 class GameState {
 public:
-  enum class CameraList : std::uint8_t { MAIN, UI, COUNT };
+  enum class CameraTypes : std::uint8_t { MAIN, UI, TERMINAL, COUNT };
+  enum class WindowTypes : std::uint8_t { MAIN, TERMINAL, COUNT };
 
   static GameState &getInstance();
 
-  void addCamera(GameCamera *camera);
-  void removeCamera(GameCamera *camera);
-  void createCamera(CameraList type);
+  void createCamera(CameraTypes type);
+
+  void removeWindow(WindowTypes type);
+  void createWindow(WindowTypes type, int width, int height,
+                    const std::string &name);
+
+  [[nodiscard]] const std::vector<sf::RenderWindow *> &getWindows() const;
+
   [[nodiscard]] const std::vector<GameCamera *> &getActiveCameras() const;
   [[nodiscard]] GameCamera *getMainCamera() const;
   [[nodiscard]] GameCamera *getUiCamera() const;
+  [[nodiscard]] GameCamera *getTerminalCamera() const;
   [[nodiscard]] sf::RenderWindow *getMainWindow() const;
+  [[nodiscard]] sf::RenderWindow *getTerminalWindow() const;
   void clearCameras();
   float dt();
   void updateDt();

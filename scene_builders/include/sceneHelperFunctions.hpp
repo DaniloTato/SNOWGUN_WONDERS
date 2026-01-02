@@ -19,4 +19,5 @@ PolyRenderizer *setupParticles(sf::RenderWindow &window,
 RenderizerParameters *setupTextAndDialogue(sf::RenderWindow &window,
                                            DialogueManager &dialogueManager,
                                            GameCamera *camera);
+void ui();
 } // namespace SceneBuilder

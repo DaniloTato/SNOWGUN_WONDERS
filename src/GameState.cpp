@@ -9,7 +9,7 @@ GameState::GameState()
     : activeCameras({}),
       activeWindows({new sf::RenderWindow(
           sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT),
-          "SFML Window")}),
+          Constants::MAIN_WINDOW_NAME)}),
       checkpoint({-1, -1}), playerHealth(3),
       selectedWeapon(Bullet::Type::Normal) {}
 
@@ -18,17 +18,12 @@ GameState &GameState::getInstance() {
   return instance;
 }
 
-void GameState::addCamera(GameCamera *camera) {
-  if (std::find(activeCameras.begin(), activeCameras.end(), camera) ==
-      activeCameras.end()) {
-    activeCameras.push_back(camera);
+void GameState::removeWindow(WindowTypes type) {
+  auto index = static_cast<size_t>(type);
+  if (activeWindows.size() > index && activeWindows[index]) {
+    delete activeWindows[index];
+    activeWindows[index] = nullptr;
   }
-}
-
-void GameState::removeCamera(GameCamera *camera) {
-  activeCameras.erase(
-      std::remove(activeCameras.begin(), activeCameras.end(), camera),
-      activeCameras.end());
 }
 
 const std::vector<GameCamera *> &GameState::getActiveCameras() const {
@@ -36,7 +31,7 @@ const std::vector<GameCamera *> &GameState::getActiveCameras() const {
 }
 
 GameCamera *GameState::getMainCamera() const {
-  size_t mainCameraIndex = static_cast<int>(CameraList::MAIN);
+  size_t mainCameraIndex = static_cast<int>(CameraTypes::MAIN);
   if (activeCameras.size() >= mainCameraIndex) {
     return activeCameras[mainCameraIndex];
   }
@@ -46,6 +41,14 @@ GameCamera *GameState::getMainCamera() const {
 sf::RenderWindow *GameState::getMainWindow() const {
   if (!activeWindows.empty()) {
     return activeWindows.front();
+  }
+  return nullptr;
+}
+
+sf::RenderWindow *GameState::getTerminalWindow() const {
+  size_t terminalWindowIndex = static_cast<int>(WindowTypes::TERMINAL);
+  if (activeWindows.size() >= terminalWindowIndex) {
+    return activeWindows[terminalWindowIndex];
   }
   return nullptr;
 }
@@ -67,19 +70,27 @@ void GameState::updateDt() {
 }
 
 GameCamera *GameState::getUiCamera() const {
-  size_t uiCameraIndex = static_cast<int>(CameraList::UI);
+  size_t uiCameraIndex = static_cast<int>(CameraTypes::UI);
   if (activeCameras.size() >= uiCameraIndex) {
     return activeCameras[uiCameraIndex];
   }
   return nullptr;
 }
 
-void GameState::createCamera(CameraList type) {
+GameCamera *GameState::getTerminalCamera() const {
+  size_t consoleCameraIndex = static_cast<int>(CameraTypes::TERMINAL);
+  if (activeCameras.size() >= consoleCameraIndex) {
+    return activeCameras[consoleCameraIndex];
+  }
+  return nullptr;
+}
+
+void GameState::createCamera(CameraTypes type) {
 
   auto index = static_cast<size_t>(type);
 
-  if (activeCameras.size() < static_cast<int>(CameraList::COUNT)) {
-    activeCameras.resize(static_cast<int>(CameraList::COUNT));
+  if (activeCameras.size() < static_cast<int>(CameraTypes::COUNT)) {
+    activeCameras.resize(static_cast<int>(CameraTypes::COUNT));
   }
 
   if (activeCameras[index]) {
@@ -87,6 +98,23 @@ void GameState::createCamera(CameraList type) {
   }
 
   activeCameras[index] = new GameCamera();
+}
+
+void GameState::createWindow(WindowTypes type, int width, int height,
+                             const std::string &name) {
+
+  auto index = static_cast<size_t>(type);
+
+  if (activeWindows.size() < static_cast<int>(WindowTypes::COUNT)) {
+    activeWindows.resize(static_cast<int>(WindowTypes::COUNT));
+  }
+
+  if (activeWindows[index]) {
+    return;
+  }
+
+  activeWindows[index] =
+      new sf::RenderWindow(sf::VideoMode(width, height), name);
 }
 
 int GameState::getCrystalAmount() const { return crystals; }
@@ -113,4 +141,8 @@ const sf::Vector2f GameState::getCheckpoint() const { return checkpoint; }
 
 bool GameState::hasCheckpoint() const {
   return checkpoint != sf::Vector2f{-1, -1};
+}
+
+const std::vector<sf::RenderWindow *> &GameState::getWindows() const {
+  return activeWindows;
 }

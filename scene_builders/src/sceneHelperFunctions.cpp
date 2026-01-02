@@ -1,8 +1,12 @@
 #include "sceneHelperFunctions.hpp"
+#include "AnimatedObject.hpp"
 #include "Animator.hpp"
+#include "ColorPalette.hpp"
 #include "Constants.hpp"
 #include "GameState.hpp"
 #include "Helpers.hpp"
+#include "RenderableObject.hpp"
+#include "barrelScript.hpp"
 #include "cameraAlarm.hpp"
 #include "dramaticZoom.hpp"
 #include "movement.hpp"
@@ -11,8 +15,8 @@ namespace SceneBuilder {
 
 // Creates cameras and adds standard scripts
 void setupCameras(GameState &gameState) {
-  gameState.createCamera(GameState::CameraList::MAIN);
-  gameState.createCamera(GameState::CameraList::UI);
+  gameState.createCamera(GameState::CameraTypes::MAIN);
+  gameState.createCamera(GameState::CameraTypes::UI);
 
   auto mainCam = gameState.getMainCamera();
   mainCam->zoomTo(3.f);
@@ -69,6 +73,52 @@ RenderizerParameters *setupTextAndDialogue(sf::RenderWindow &window,
                                1.f};
   dialogueManager.attachTextParams(params);
   return params;
+}
+
+void ui() {
+  GameState &gameState = GameState::getInstance();
+  gameState.getUiCamera()->zoomTo(3.f);
+  gameState.getUiCamera()->zoomToDesired();
+
+  sf::Texture dummyTexture;
+  RenderizerParameters topBarParams{*gameState.getMainWindow(),
+                                    dummyTexture,
+                                    {0, 0, Constants::SCREEN_WIDTH / 3 + 1, 32},
+                                    {0.f, 0.f},
+                                    GameState::getInstance().getUiCamera(),
+                                    Constants::UI_LAYER,
+                                    1.f,
+                                    true};
+  auto *topBarUI = new RenderableObject(topBarParams);
+  topBarUI->renderizer.setColor(ColorPalette::Black);
+
+  RenderizerParameters barrelParams{
+      *gameState.getMainWindow(),
+      Helper::loadTexture((Helper::getPath("assets/whiteBarrel.png"))),
+      {0, 0, 76, 78},
+      {-26.f, -26.f},
+      GameState::getInstance().getUiCamera(),
+      Constants::UI_LAYER - 2,
+      1.f,
+  };
+  auto *barrelUI = new AnimatedObject(barrelParams);
+  barrelUI->renderizer.setColor(ColorPalette::NeonMagenta);
+  barrelUI->animator.loadAsepriteAnimations(
+      (Helper::getPath("assets/json/whiteBarrel.json")));
+  barrelUI->animator.play("idle_once");
+  barrelUI->animator.setSpeedMultiplier(2);
+  barrelUI->scripter.addScript(script::barrelScript);
+
+  RenderizerParameters barrelCenterParams{
+      *gameState.getMainWindow(),
+      Helper::loadTexture((Helper::getPath("assets/barrelCenter.png"))),
+      {0, 0, 21, 21},
+      {2.f, 2.f},
+      GameState::getInstance().getUiCamera(),
+      Constants::UI_LAYER - 1,
+      1.f,
+  };
+  new RenderableObject(barrelCenterParams);
 }
 
 } // namespace SceneBuilder

@@ -1,6 +1,5 @@
 #include "GameText.hpp"
 #include "ColorPalette.hpp"
-#include "Constants.hpp"
 #include "GameState.hpp"
 #include "RenderCommand.hpp"
 #include "Renderizer.hpp"
@@ -35,7 +34,7 @@ GameText::GameText(RenderizerParameters params)
 }
 
 void GameText::update(const GeneralContext &ctx) {
-  float dt = 1.f / Constants::FRAME_RATE;
+  float dt = GameState::getInstance().dt();
   globalTime += dt;
   advanceTypewriter();
   updateRenderCommandBuffer();

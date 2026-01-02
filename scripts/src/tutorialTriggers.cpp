@@ -1,5 +1,6 @@
 #include "tutorialTriggers.hpp"
 #include "BasicCollider.hpp"
+#include "Constants.hpp"
 #include "EnemyManager.hpp"
 #include "GameState.hpp"
 #include "GeneralContext.hpp"
@@ -38,6 +39,17 @@ void tutorialTriggers(ScriptRunner &runner, const GeneralContext &ctx) {
       runner.scripter.getState<TutorialTriggersState>("tutorialTriggers");
 
   EnemyManager::getInstance().checkSpawnTriggers(ctx.player->position);
+
+  GameCamera &camera = *GameState::getInstance().getMainCamera();
+  sf::Vector2f playerPosition = *ctx.playerPosition;
+  const sf::Vector2f desiredCamPos = camera.getDesiredPosition();
+  if (desiredCamPos.x > 3000 && desiredCamPos.y > 87 * 16) {
+    camera.goTo({desiredCamPos.x, 87 * 16});
+    if (playerPosition.y >
+        desiredCamPos.y + Constants::SCREEN_HEIGHT / camera.getZoom()) {
+      SceneManager::getInstance().reloadCurrentScene();
+    }
+  }
 
   state.setCheckpointA.check((ctx.player->position.x > 206 * 16), [] {
     GameState::getInstance().setCheckpoint({206 * 16, 94 * 16});
