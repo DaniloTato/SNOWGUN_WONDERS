@@ -30,6 +30,16 @@ void Renderizer::unregisterPair(Renderizer *rend) {
                  registry.end());
 }
 
+void Renderizer::unregisterByWindow(sf::RenderWindow *window) {
+  registry.erase(std::remove_if(registry.begin(), registry.end(),
+                                [&](const RenderEntry &e) {
+                                  return &e.renderizer->getWindow() == window;
+                                }),
+                 registry.end());
+}
+
+const sf::RenderWindow &Renderizer::getWindow() const { return window; }
+
 void Renderizer::assignCamera(GameCamera *cam) { assignedCamera = cam; }
 
 bool Renderizer::isVisible() const {

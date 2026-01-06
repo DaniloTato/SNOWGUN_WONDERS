@@ -5,26 +5,33 @@
 #include "GameState.hpp"
 #include "GameText.hpp"
 #include "Helpers.hpp"
-#include "Renderizer.hpp"
+#include "TerminalExpr.hpp"
+#include "TerminalParser.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <string_view>
 
 static constexpr size_t MAX_LINES = 25;
 
-Terminal::Terminal(sf::RenderWindow &window) : targetWindow(window) {
-  GameState &gameState = GameState::getInstance();
-  gameState.createCamera(GameState::CameraTypes::TERMINAL);
-  camera = gameState.getTerminalCamera();
+std::unordered_map<std::string, TerminalCommands::Entry> Terminal::commandMap;
+std::vector<Terminal *> Terminal::s_activeTerminals;
 
-  sf::Texture &fontTexture =
-      Helper::loadTexture(Helper::getPath("assets/font.png"));
+std::unordered_map<std::string, TerminalCommands::Entry> &
+Terminal::getCommandMap() {
+  return commandMap;
+}
 
-  RenderizerParameters params{targetWindow, fontTexture, sf::IntRect(),
-                              {10.f, 10.f}, camera,      Constants::UI_LAYER,
-                              1.f};
+Terminal::Terminal(sf::RenderWindow *window, GameCamera *camera)
+    : targetWindow(window),
+      text({*targetWindow,
+            Helper::loadTexture(Helper::getPath("assets/font.png")),
+            sf::IntRect(),
+            {10.f, 10.f},
+            camera,
+            Constants::UI_LAYER,
+            1.f}) {
 
-  text = new GameText(params);
-  text->setFontAtlas(fontTexture, 9, 8, 95, 32);
+  s_activeTerminals.push_back(this);
 
   history.emplace_back("<color=cyan>Snowgun Developer Console</color>");
   history.emplace_back("Type <color=yellow>help</color> for commands");
@@ -32,13 +39,7 @@ Terminal::Terminal(sf::RenderWindow &window) : targetWindow(window) {
   rebuildText();
 }
 
-Terminal::~Terminal() { delete text; }
-
 void Terminal::handleEvent(const sf::Event &event) {
-  if (event.type == sf::Event::Closed) {
-    close();
-    return;
-  }
 
   if (event.type == sf::Event::TextEntered) {
     if (event.text.unicode >= 32 && event.text.unicode < 127) {
@@ -49,7 +50,7 @@ void Terminal::handleEvent(const sf::Event &event) {
 
   if (event.type == sf::Event::KeyPressed) {
     if (event.key.code == sf::Keyboard::Escape) {
-      close();
+      kill();
     }
 
     if (event.key.code == sf::Keyboard::Backspace && !input.empty()) {
@@ -71,17 +72,29 @@ void Terminal::handleEvent(const sf::Event &event) {
   }
 }
 
-void Terminal::update() {
-  camera->goTo({0.f, 0.f});
-  camera->goToDesired();
-  camera->zoomTo(1.0f);
-  camera->zoomToDesired();
-}
+void Terminal::kill() { opened = false; }
 
 void Terminal::close() {
-  opened = false;
-  targetWindow.close();
+  kill();
+  destroyWindowOnClose = true;
 }
+
+void Terminal::print(std::string_view message, std::string_view color) {
+  std::string out;
+  if (!color.empty()) {
+    out = "<color=";
+    out += color;
+    out += ">";
+    out += message;
+    out += "</color>";
+  } else {
+    out = message;
+  }
+
+  history.emplace_back(out);
+}
+
+void Terminal::lineJump() { history.emplace_back("<ln>"); }
 
 bool Terminal::isOpen() const { return opened; }
 
@@ -96,30 +109,59 @@ void Terminal::rebuildText() {
 
   markup += "<color=yellow>> " + input + "</color>";
 
-  text->loadFromMarkup(markup);
+  text.loadFromMarkup(markup);
 }
 
-void Terminal::executeCommand(const std::string &command) {
-  if (command == "help") {
-    history.emplace_back("<color=green>Available commands:</color>");
-    history.emplace_back(
-        "  <color=yellow>help</color>        - Show this message");
-    history.emplace_back("  <color=yellow>clear</color>       - Clear console");
-    history.emplace_back("  <color=yellow>exit</color>        - Close console");
-    return;
-  }
+void Terminal::executeCommand(const std::string &input) {
+  try {
+    TerminalParser parser(input);
 
-  if (command == "clear") {
-    history.clear();
-    return;
-  }
+    std::shared_ptr<Expr> expr = parser.parse();
+    if (!expr) {
+      print("Parse error", "red");
+      return;
+    }
 
-  if (command == "exit") {
-    close();
-    return;
-  }
+    TerminalCommands::RuntimeValue value = expr->eval(*this);
 
-  history.emplace_back("<color=red>Unknown command:</color> " + command);
+    std::string out = interpreter.toString(value);
+    print(out);
+    lineJump();
+
+  } catch (const std::exception &e) {
+    print(e.what(), "red");
+  }
 }
 
-sf::RenderWindow *Terminal::getTargetWindow() const { return &targetWindow; }
+sf::RenderWindow *Terminal::getTargetWindow() const { return targetWindow; }
+
+bool Terminal::destroysWindowOnClose() const { return destroyWindowOnClose; }
+
+void Terminal::clear() { history.clear(); }
+
+void Terminal::destroyKilledTerminals() {
+  s_activeTerminals.erase(
+      std::remove_if(s_activeTerminals.begin(), s_activeTerminals.end(),
+                     [](Terminal *t) {
+                       if (!t->isOpen()) {
+                         if (t->destroysWindowOnClose()) {
+                           GameState::getInstance().removeWindow(
+                               t->getTargetWindow());
+                         }
+                         delete t;
+                         return true;
+                       }
+                       return false;
+                     }),
+      s_activeTerminals.end());
+}
+
+void Terminal::registerCommand(const TerminalCommands::Entry &cmd) {
+  commandMap.emplace(cmd.invocation, cmd);
+}
+
+TerminalMemory Terminal::memory;
+
+TerminalMemory &Terminal::getMemory() { return memory; }
+
+TerminalInterpreter &Terminal::getInterpreter() { return interpreter; }

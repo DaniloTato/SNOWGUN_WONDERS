@@ -12,6 +12,13 @@
 
 class GameText : public GameObject {
 public:
+  struct FontAtlas {
+    int glyphW;
+    int glyphH;
+    int cols;
+    int firstChar;
+  };
+
   struct Glyph {
     char c;
     sf::IntRect texRect;
@@ -32,8 +39,7 @@ public:
 
   void update(const GeneralContext &ctx) override;
 
-  void setFontAtlas(sf::Texture &texture, int glyphW, int glyphH, int cols,
-                    int firstChar = 32);
+  void setFontAtlas(FontAtlas atlas);
 
   // Load text using "markup" string. Header directives are processed from lines
   // starting '#'. Example header lines: #effect typewriter 0.04 #position 30 50
@@ -70,6 +76,9 @@ public:
   size_t totalChars() const { return glyphs.size(); }
   size_t visibleChars() const { return revealedCount; }
 
+public:
+  PolyRenderizer renderizer;
+
 private:
   void parseHeaderLine(const std::string &line);
   void parseBody(const std::string &body);
@@ -82,11 +91,7 @@ private:
   void advanceTypewriter();
   void playTypeSound();
 
-  sf::Texture *fontTex = nullptr;
-  int glyphW;
-  int glyphH;
-  int atlasCols;
-  int atlasFirstChar;
+  FontAtlas fontAtlas;
   int lineSpacing;
 
   sf::Vector2f origin = {0.f, 0.f};
@@ -114,5 +119,4 @@ private:
   std::vector<RenderCommand> renderCommandBuffer;
 
   std::map<std::string, sf::Color> colorNameMap;
-  PolyRenderizer renderizer;
 };

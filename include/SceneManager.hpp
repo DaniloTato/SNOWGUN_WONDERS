@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "GeneralContext.hpp"
 #include "RenderableObject.hpp"
 
 class SceneManager {
@@ -17,9 +16,6 @@ public:
   void loadScene(const std::string &name);
   void reloadCurrentScene();
   bool isTransitioning();
-
-  void setContext(GeneralContext &newContext);
-  [[nodiscard]] const GeneralContext &getContext() const;
 
   void update();
 
@@ -41,6 +37,4 @@ private:
   float transitionDuration = 0.5f;
 
   RenderableObject *fadeOverlay = nullptr;
-
-  GeneralContext currentContext;
 };

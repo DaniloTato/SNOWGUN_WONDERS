@@ -1,5 +1,6 @@
 #include "GameText.hpp"
 #include "ColorPalette.hpp"
+#include "Constants.hpp"
 #include "GameState.hpp"
 #include "RenderCommand.hpp"
 #include "Renderizer.hpp"
@@ -17,7 +18,8 @@ std::string trimLeadingSpace(std::string s) {
 }
 
 GameText::GameText(RenderizerParameters params)
-    : lineSpacing(2), renderizer(params) {
+    : renderizer(params), fontAtlas(Constants::DEFAULT_FONT_ATLAS),
+      lineSpacing(2) {
 
   Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 
@@ -41,14 +43,7 @@ void GameText::update(const GeneralContext &ctx) {
   renderizer.updateRenderCommands(renderCommandBuffer);
 }
 
-void GameText::setFontAtlas(sf::Texture &texture, int gW, int gH, int cols,
-                            int firstChar) {
-  fontTex = &texture;
-  glyphW = gW;
-  glyphH = gH;
-  atlasCols = cols;
-  atlasFirstChar = firstChar;
-}
+void GameText::setFontAtlas(FontAtlas atlas) { fontAtlas = atlas; }
 
 void GameText::setSoundPool(const std::vector<std::string> &files) {
   soundBuffers.clear();
@@ -244,13 +239,14 @@ void GameText::pushTextChar(char c, const sf::Color &color, Glyph::Anim anim,
   g.c = c;
 
   int code = static_cast<unsigned char>(c);
-  if (code < atlasFirstChar || !fontTex) {
-    g.texRect = sf::IntRect(0, 0, glyphW, glyphH);
+  if (code < fontAtlas.firstChar) {
+    g.texRect = sf::IntRect(0, 0, fontAtlas.glyphW, fontAtlas.glyphH);
   } else {
-    int idx = code - atlasFirstChar;
-    int col = idx % atlasCols;
-    int row = idx / atlasCols;
-    g.texRect = sf::IntRect(col * glyphW, row * glyphH, glyphW, glyphH);
+    int idx = code - fontAtlas.firstChar;
+    int col = idx % fontAtlas.cols;
+    int row = idx / fontAtlas.cols;
+    g.texRect = sf::IntRect(col * fontAtlas.glyphW, row * fontAtlas.glyphH,
+                            fontAtlas.glyphW, fontAtlas.glyphH);
   }
   g.color = color;
   g.anim = anim;
@@ -319,7 +315,7 @@ void GameText::rebuildLayout() {
       continue;
     }
 
-    auto charW = static_cast<float>(glyphW);
+    auto charW = static_cast<float>(fontAtlas.glyphW);
     if (boundary < 1e5f && curLineWidth + charW > boundary &&
         !currentLine.empty()) {
       // wrap: commit current line
@@ -346,9 +342,9 @@ void GameText::rebuildLayout() {
     float cx = startX;
     for (size_t idx : L) {
       glyphs[idx].basePos = {cx, origin.y + lineY};
-      cx += static_cast<float>(glyphW);
+      cx += static_cast<float>(fontAtlas.glyphW);
     }
-    lineY += static_cast<float>(glyphH + lineSpacing);
+    lineY += static_cast<float>(fontAtlas.glyphH + lineSpacing);
   }
 
   // Assign appearIndex sequentially to all non-newline, so typewriter shows
@@ -371,7 +367,8 @@ void GameText::rebuildLayout() {
 }
 
 float GameText::measureLineWidth(const std::vector<size_t> &lineIndices) const {
-  return static_cast<float>(lineIndices.size()) * static_cast<float>(glyphW);
+  return static_cast<float>(lineIndices.size()) *
+         static_cast<float>(fontAtlas.glyphW);
 }
 
 void GameText::resetTypewriter() {

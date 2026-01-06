@@ -8,7 +8,6 @@
 #include "Helpers.hpp"
 #include "LevelManager.hpp"
 #include "ParticleManager.hpp"
-#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "followPlayer.hpp"
 #include "sceneHelperFunctions.hpp"
@@ -90,7 +89,7 @@ void tutorial() {
   GeneralContext ctx = {&(player->position),
                         dialogueManager.getAttachedTextParams(), player,
                         &bulletTexture};
-  SceneManager::getInstance().setContext(ctx);
+  GameState::getInstance().updateGeneralContext(ctx);
 
   /*Force excecution of camera script to follow player so the camera can go to
   the desired position instantly*/

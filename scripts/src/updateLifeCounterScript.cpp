@@ -33,7 +33,6 @@ void updateLifeCounterScript(ScriptRunner &runner, const GeneralContext &ctx) {
         1.f};
 
     state.lifeCounter = new GameText(params);
-    state.lifeCounter->setFontAtlas(fontTexture, 9, 8, 95, 32);
 
     state.setup = true;
   }

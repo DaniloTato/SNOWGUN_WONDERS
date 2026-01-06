@@ -6,7 +6,6 @@
 #include "GameState.hpp"
 #include "LevelManager.hpp"
 #include "ParticleManager.hpp"
-#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "sceneHelperFunctions.hpp"
 
@@ -62,7 +61,7 @@ void setupLevel2() {
   GeneralContext ctx{&(player->position),
                      dialogueManager.getAttachedTextParams(), player,
                      &Helper::loadTexture("assets\\bullet.png")};
-  SceneManager::getInstance().setContext(ctx);
+  GameState::getInstance().updateGeneralContext(ctx);
 }
 
 } // namespace SceneBuilder

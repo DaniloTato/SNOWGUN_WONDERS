@@ -86,14 +86,6 @@ void SceneManager::update() {
 
 bool SceneManager::isTransitioning() { return transitioning; }
 
-void SceneManager::setContext(GeneralContext &newContext) {
-  currentContext = newContext;
-}
-
-const GeneralContext &SceneManager::getContext() const {
-  return currentContext;
-}
-
 void SceneManager::initFadeOverlay() {
   if (fadeOverlay)
     return;

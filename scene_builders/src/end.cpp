@@ -4,7 +4,6 @@
 #include "DialogueManager.hpp"
 #include "GameState.hpp"
 #include "LevelManager.hpp"
-#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "pressStart.hpp"
 #include "sceneHelperFunctions.hpp"
@@ -45,6 +44,6 @@ void end() {
   // context. Imperative
   GeneralContext ctx = {
       {}, dialogueManager.getAttachedTextParams(), nullptr, &dummy};
-  SceneManager::getInstance().setContext(ctx);
+  GameState::getInstance().updateGeneralContext(ctx);
 }
 } // namespace SceneBuilder

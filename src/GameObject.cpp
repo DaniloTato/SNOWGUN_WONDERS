@@ -38,3 +38,12 @@ void GameObject::destroySceneObjects() {
 }
 
 void GameObject::makePersistentAcrossScenes() { persistentAcrossScenes = true; }
+
+void getTerminalObject() {}
+
+GameObjectDescriptor GameObject::describe() const {
+  GameObjectDescriptor d;
+  d.fields["position"] = GameObjectDescriptor::describeVector2f(position);
+  d.fields["hellooooo"] = ":)";
+  return d;
+}

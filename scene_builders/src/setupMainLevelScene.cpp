@@ -5,7 +5,6 @@
 #include "Helpers.hpp"
 #include "LevelManager.hpp"
 #include "ParticleManager.hpp"
-#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "sceneHelperFunctions.hpp"
 
@@ -56,6 +55,6 @@ void setupMainLevelScene() {
   GeneralContext ctx = {&(player->position),
                         dialogueManager.getAttachedTextParams(), player,
                         &bulletTexture};
-  SceneManager::getInstance().setContext(ctx);
+  GameState::getInstance().updateGeneralContext(ctx);
 }
 } // namespace SceneBuilder

@@ -14,6 +14,7 @@
 #include "Renderizer.hpp"
 #include "SceneManager.hpp"
 #include "SoundManager.hpp"
+#include "Terminal.hpp"
 
 /*Namespaces*/
 #include "Constants.hpp"
@@ -51,11 +52,13 @@ int main() {
   GameState &gameState = GameState::getInstance();
   CollectableManager &collectableManager = CollectableManager::getInstance();
 
-  sf::RenderWindow &window = *gameState.getMainWindow();
-  window.setFramerateLimit(Constants::FRAME_RATE);
+  gameState.getMainWindow()->setFramerateLimit(Constants::FRAME_RATE);
 
   inputManager.loadBindingsFromJsonFile(
       (Helper::getPath("config/control_config.json")));
+
+  // Sets all the commands inside the terminal
+  TerminalCommands::registerAll();
 
   // Enemy Manager Setup
   enemyManager.textureCache.load(
@@ -142,28 +145,29 @@ int main() {
 
   sf::Clock clock;
 
-  while (window.isOpen()) {
+  while (gameState.getMainWindow() && gameState.getMainWindow()->isOpen()) {
+
     sf::Event event;
     inputManager.update();
 
-    std::vector<sf::RenderWindow *> windows = gameState.getWindows();
-    for (GameState::WindowTypes i = GameState::WindowTypes::MAIN;
-         i != GameState::WindowTypes::COUNT;
-         i = static_cast<GameState::WindowTypes>(static_cast<int>(i) + 1)) {
+    const std::vector<sf::RenderWindow *> &windows = gameState.getWindows();
+    for (WindowTypes i = WindowTypes::MAIN; i != WindowTypes::COUNT;
+         i = static_cast<WindowTypes>(static_cast<int>(i) + 1)) {
 
       auto windowType = static_cast<size_t>(i);
-      if (!windows[windowType] || i == GameState::WindowTypes::TERMINAL)
+      if (!windows[windowType] || i == WindowTypes::TERMINAL)
         continue;
 
-      if (windows[windowType])
-        while (windows[windowType]->pollEvent(event)) {
-          if (event.type == sf::Event::Closed) {
-            windows[windowType]->close();
-          }
-          if (i == GameState::WindowTypes::MAIN) {
-            inputManager.handleEvent(event);
-          }
+      while (windows[windowType]->pollEvent(event)) {
+        if (i == WindowTypes::MAIN) {
+          inputManager.handleEvent(event);
         }
+
+        if (event.type == sf::Event::Closed) {
+          GameState::getInstance().removeWindow(i);
+          break;
+        }
+      }
     }
 
     sceneManager.update();
@@ -176,17 +180,17 @@ int main() {
       EnemyManager::getInstance().applyQueues();
       CollectableManager::getInstance().applyQueues();
       BulletManager::getInstance().update();
+      Terminal::destroyKilledTerminals();
     }
 
-    for (GameState::WindowTypes i = GameState::WindowTypes::MAIN;
-         i != GameState::WindowTypes::COUNT;
-         i = static_cast<GameState::WindowTypes>(static_cast<int>(i) + 1)) {
+    for (WindowTypes i = WindowTypes::MAIN; i != WindowTypes::COUNT;
+         i = static_cast<WindowTypes>(static_cast<int>(i) + 1)) {
 
       auto windowType = static_cast<size_t>(i);
       if (!windows[windowType])
         continue;
 
-      if (i == GameState::WindowTypes::MAIN) {
+      if (i == WindowTypes::MAIN) {
         windows[windowType]->clear(
             LevelManager::getInstance().getBackgroundColor());
       } else {
@@ -196,7 +200,7 @@ int main() {
 
     for (GameObject *gameObject : GameObject::getGameObjects()) {
       if (gameObject) {
-        gameObject->update(SceneManager::getInstance().getContext());
+        gameObject->update(GameState::getInstance().getGeneralContext());
       }
     }
 

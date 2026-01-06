@@ -72,7 +72,6 @@ void DialogueManager::attachTextParams(RenderizerParameters *params) {
 
 GameText *DialogueManager::createFromRequest(const TextCreationRequest &req) {
   auto *gt = new GameText(req.params);
-  gt->setFontAtlas(req.params.texture, 9, 8, 95, 32);
   gt->loadFromMarkup(*req.markup);
   return gt;
 }

@@ -36,7 +36,6 @@ void updateCrystalCounterScript(ScriptRunner &runner,
         1.f};
 
     state.crystalCounter = new GameText(params);
-    state.crystalCounter->setFontAtlas(fontTexture, 9, 8, 95, 32);
 
     state.setup = true;
   }

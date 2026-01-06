@@ -3,6 +3,7 @@
 #include "Constants.hpp"
 #include "GameCamera.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "Terminal.hpp"
 #include <SFML/Graphics.hpp>
 
 GameState::GameState()
@@ -21,8 +22,22 @@ GameState &GameState::getInstance() {
 void GameState::removeWindow(WindowTypes type) {
   auto index = static_cast<size_t>(type);
   if (activeWindows.size() > index && activeWindows[index]) {
+    if (activeWindows[index]->isOpen()) {
+      activeWindows[index]->close();
+    }
+
+    Renderizer::unregisterByWindow(activeWindows[index]);
     delete activeWindows[index];
     activeWindows[index] = nullptr;
+  }
+}
+
+void GameState::removeWindow(sf::RenderWindow *reference) {
+  for (size_t i = 0; i < activeWindows.size(); ++i) {
+    if (activeWindows[i] == reference) {
+      removeWindow(static_cast<WindowTypes>(i));
+      return;
+    }
   }
 }
 
@@ -146,3 +161,23 @@ bool GameState::hasCheckpoint() const {
 const std::vector<sf::RenderWindow *> &GameState::getWindows() const {
   return activeWindows;
 }
+
+sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
+  auto index = static_cast<size_t>(type);
+  if (activeWindows.size() > index) {
+    return activeWindows[index];
+  } else {
+    return nullptr;
+  }
+}
+
+void GameState::updateGeneralContext(GeneralContext &ctx) {
+  generalContext = ctx;
+
+  Terminal::getMemory().declareVariable(
+      "player",
+      TerminalCommands::RuntimeValue{
+          TerminalCommands::DataType::GameObjectReference, ctx.player});
+}
+
+const GeneralContext &GameState::getGeneralContext() { return generalContext; }

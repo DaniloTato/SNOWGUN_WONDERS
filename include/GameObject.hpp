@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObjectDescriptor.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -12,6 +13,8 @@ public:
   virtual void update(const GeneralContext &ctx) = 0;
 
   void makePersistentAcrossScenes();
+
+  [[nodiscard]] virtual GameObjectDescriptor describe() const;
 
   static std::vector<GameObject *> &getGameObjects();
   static void destroy(GameObject *g);

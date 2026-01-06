@@ -2,23 +2,34 @@
 
 #include "Bullet.hpp"
 #include "GameCamera.hpp"
+#include "GeneralContext.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <chrono>
 #include <vector>
 
+enum class CameraTypes : std::uint8_t { MAIN, UI, TERMINAL, COUNT };
+enum class WindowTypes : std::uint8_t { MAIN, TERMINAL, COUNT };
+
+struct WindowCreationRequest {
+  WindowTypes type;
+  int width;
+  int height;
+  std::string name;
+};
+
 class GameState {
 public:
-  enum class CameraTypes : std::uint8_t { MAIN, UI, TERMINAL, COUNT };
-  enum class WindowTypes : std::uint8_t { MAIN, TERMINAL, COUNT };
-
   static GameState &getInstance();
 
   void createCamera(CameraTypes type);
 
   void removeWindow(WindowTypes type);
+  void removeWindow(sf::RenderWindow *reference);
   void createWindow(WindowTypes type, int width, int height,
                     const std::string &name);
+
+  sf::RenderWindow *getReferenceByType(WindowTypes type);
 
   [[nodiscard]] const std::vector<sf::RenderWindow *> &getWindows() const;
 
@@ -45,6 +56,9 @@ public:
   [[nodiscard]] Bullet::Type getWeaponSelection() const;
   [[nodiscard]] bool hasCheckpoint() const;
 
+  void updateGeneralContext(GeneralContext &ctx);
+  [[nodiscard]] const GeneralContext &getGeneralContext();
+
   GameState(const GameState &) = delete;
   GameState &operator=(const GameState &) = delete;
 
@@ -53,7 +67,6 @@ public:
 
 private:
   GameState();
-  ~GameState() = default;
 
   std::vector<GameCamera *> activeCameras;
   std::vector<sf::RenderWindow *> activeWindows;
@@ -61,6 +74,8 @@ private:
   std::chrono::high_resolution_clock::time_point lastFrameTime =
       std::chrono::high_resolution_clock::now();
   float dtValue;
+
+  GeneralContext generalContext;
 
   sf::Vector2f checkpoint;
 

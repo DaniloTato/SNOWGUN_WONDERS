@@ -32,12 +32,15 @@ public:
   bool shouldIRender();
   void turnOffCulling();
 
+  const sf::RenderWindow &getWindow() const;
+
   void hide();
 
   bool isVisible() const;
 
   static void registerPair(GameObject *obj, Renderizer *rend, bool isRectShape);
   static void unregisterPair(Renderizer *rend);
+  static void unregisterByWindow(sf::RenderWindow *window);
 
   static void renderAll();
   void showSprite();

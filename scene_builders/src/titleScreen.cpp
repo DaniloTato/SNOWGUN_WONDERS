@@ -6,7 +6,6 @@
 #include "GameState.hpp"
 #include "Helpers.hpp"
 #include "LevelManager.hpp"
-#include "SceneManager.hpp"
 #include "ScriptRunner.hpp"
 #include "pressStart.hpp"
 #include "sceneHelperFunctions.hpp"
@@ -43,7 +42,7 @@ void titleScreen() {
   // context. Imperative
   GeneralContext ctx = {
       {}, dialogueManager.getAttachedTextParams(), nullptr, &dummy};
-  SceneManager::getInstance().setContext(ctx);
+  GameState::getInstance().updateGeneralContext(ctx);
 
   sf::Texture &fontTexture =
       Helper::loadTexture((Helper::getPath("assets/font.png")));
@@ -53,7 +52,6 @@ void titleScreen() {
                               {0.f, 0.f}, mainCam,     Constants::TEXT_LAYER,
                               1.f};
   auto *title = new GameText(params);
-  title->setFontAtlas(fontTexture, 9, 8, 95, 32);
   std::string markupLife =
       "#position 0 90\n"
       "#boundary " +
@@ -65,7 +63,6 @@ void titleScreen() {
   title->loadFromMarkup(markupLife);
 
   auto *enter = new GameText(params);
-  enter->setFontAtlas(fontTexture, 9, 8, 95, 32);
   std::string markupEnter =
       "#position 0 150\n"
       "#boundary " +
@@ -78,7 +75,6 @@ void titleScreen() {
   enter->loadFromMarkup(markupEnter);
 
   auto *version = new GameText(params);
-  version->setFontAtlas(fontTexture, 9, 8, 95, 32);
   std::string markupVersion = "#position 0 30\n"
                               "#boundary " +
                               std::to_string(Constants::SCREEN_WIDTH / 3) +

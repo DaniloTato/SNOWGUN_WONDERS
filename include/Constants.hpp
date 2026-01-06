@@ -2,6 +2,8 @@
 
 #include "SFML/System/Vector2.hpp"
 
+#include "GameText.hpp"
+
 namespace Constants {
 
 inline constexpr int TILE_SIZE = 16;
@@ -18,5 +20,6 @@ inline constexpr int UI_TEXT_LAYER = -105;
 inline constexpr int OVERLAY_LAYER = -200;
 inline constexpr const char *MAIN_WINDOW_NAME = "SnowgunWONDERS";
 const sf::Vector2f STARTING_PLAYER_CAMERA_RELATION = {20, -30};
+const GameText::FontAtlas DEFAULT_FONT_ATLAS = {9, 8, 98, 32};
 
 } // namespace Constants
