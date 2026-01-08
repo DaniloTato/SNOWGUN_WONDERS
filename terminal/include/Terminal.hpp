@@ -2,13 +2,14 @@
 #include "GameCamera.hpp"
 #include "GameText.hpp"
 #include "TerminalCommands.hpp"
+#include "TerminalError.hpp"
 #include "TerminalInterpreter.hpp"
 #include "TerminalMemory.hpp"
 
 class Terminal {
 public:
   Terminal(sf::RenderWindow *window, GameCamera *camera);
-  ~Terminal() = default;
+  ~Terminal();
 
   void handleEvent(const sf::Event &event);
 
@@ -21,40 +22,44 @@ public:
 
   static void destroyKilledTerminals();
 
-  bool destroysWindowOnClose() const;
+  [[nodiscard]] bool destroysWindowOnClose() const;
 
-  static void registerCommand(const TerminalCommands::Entry &cmd);
+  static void registerCommand(const TerminalCommands::CommandEntry &cmd);
 
   void print(std::string_view message, std::string_view color = {});
 
-  static std::unordered_map<std::string, TerminalCommands::Entry> &
+  static std::unordered_map<std::string, TerminalCommands::CommandEntry> &
   getCommandMap();
 
   void lineJump();
 
-  static TerminalMemory &getMemory();
-  TerminalInterpreter &getInterpreter();
+  TerminalError error;
+  TerminalInterpreter interpreter;
+  static TerminalMemory memory;
 
 private:
   void rebuildText();
   void executeCommand(const std::string &command);
 
 private:
-  static TerminalMemory memory;
-  TerminalInterpreter interpreter;
-
   sf::RenderWindow *targetWindow;
 
   std::unordered_map<std::string, std::string> aliases;
 
-  GameText text;
+  GameText *text;
 
   std::deque<std::string> history;
   std::string input;
 
-  static std::unordered_map<std::string, TerminalCommands::Entry> commandMap;
+  static std::unordered_map<std::string, TerminalCommands::CommandEntry>
+      commandMap;
   static std::vector<Terminal *> s_activeTerminals;
 
   bool opened = true;
   bool destroyWindowOnClose = false;
+
+  size_t cursorPos = 0;
+
+  int historyBrowseIndex = -1;
+  std::string savedInput;
 };

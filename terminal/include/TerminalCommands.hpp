@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GameState.hpp"
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 class Terminal;
@@ -11,13 +11,6 @@ struct Variable;
 struct Function;
 
 namespace TerminalCommands {
-
-struct Context {
-  GameState &gameState = GameState::getInstance();
-  Terminal *terminal = nullptr;
-  std::unordered_map<std::string, std::string> aliases =
-      std::unordered_map<std::string, std::string>();
-};
 
 enum class DataType : std::uint8_t {
   Null,
@@ -30,7 +23,9 @@ enum class DataType : std::uint8_t {
   Number,
   List,
   Function,
-  Expression
+  Expression,
+  Bool,
+  Any
 };
 
 struct RuntimeValue {
@@ -42,28 +37,37 @@ struct RuntimeValue {
   using GameObjectReference = GameObject *;
   using RuntimeVariable = Variable *;
   using Number = float;
+  using Bool = bool;
 
   using FunctionPtr = Function *;
   using Expression = std::shared_ptr<Expr>;
 
   std::variant<std::monostate, GameObjectReference, RuntimeVariable, Object,
-               Parameter, DataType, Number, List, FunctionPtr, Expression>
+               Parameter, DataType, Number, List, FunctionPtr, Expression, Bool>
       data = std::monostate();
 };
 
 using ArgsVector = std::vector<RuntimeValue>;
-using CommandFn = RuntimeValue (*)(Terminal *, Context &, const ArgsVector &);
 
-struct Entry {
-  std::string invocation;
-  CommandFn execute = nullptr;
-  std::string description = "no description";
+struct CommandSignature {
+  std::string name;
+  std::string description;
+  size_t minArgs = 0;
+  size_t maxArgs = 0;
+  std::vector<DataType> positionalTypes = {};
+  bool variadic = false;
+};
+
+using CommandFn = RuntimeValue (*)(Terminal *, CommandSignature &,
+                                   const ArgsVector &);
+
+struct CommandEntry {
+  CommandFn function;
+  CommandSignature signature;
+  CommandEntry(CommandFn function, CommandSignature signature)
+      : function(function), signature(std::move(signature)) {}
 };
 
 void registerAll();
-
-RuntimeValue makeObjStrRuntimeValue(const GameObjectDescriptor::Value &value);
-
-RuntimeValue makeObjectView(const GameObject &obj);
 
 } // namespace TerminalCommands

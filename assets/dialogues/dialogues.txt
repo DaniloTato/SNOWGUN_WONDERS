@@ -5,8 +5,8 @@
 #alignment left
 
 Today's a beautiful 
-<anim=shake:1> snowy </anim> day!
-<anim=sin><color=yellow>Day <color=red> 6 </color> of developing</color><ln><color=green> this game.</color></anim>
+\<anim=shake:1\> snowy \</anim\> day!
+\<anim=sin\>\<color=yellow\>Day \<color=red\> 6 \</color\> of developing\</color\>\<ln\>\<color=green\> this game.\</color\>\</anim\>
 
 [Key=NPC1]
 #position 0 200
@@ -36,7 +36,7 @@ Let's see if this works
 
 You kick ass!!!
 Kick harder by pressing
-<color=yellow><anim=sin>LEFT SHIFT</anim></color>
+\<color=yellow\>\<anim=sin\>LEFT SHIFT\</anim\>\</color\>
 
 [Key=thanks]
 #position 5 10
@@ -46,14 +46,14 @@ Kick harder by pressing
 #soundpool {"assets/sounds/shard.wav"}
 
 So... That was it.
-<ln>
-<color=yellow><anim=shake:2>for now!</anim></color>
-<ln>
-expect much more in the <ln> future :D
-<ln>
+\<ln\>
+\<color=yellow\>\<anim=shake:2\>for now!\</anim\>\</color\>
+\<ln\>
+expect much more in the \<ln\> future :D
+\<ln\>
 thanks to those who shared
-this <anim=sin>18</sin> day
+this \<anim=sin\>18\</sin\> day
 journey with me! 
-<ln>
-<ln>
-<color=red>-with love * - Danilo</color>
+\<ln\>
+\<ln\>
+\<color=red\>-with love * - Danilo\</color\>

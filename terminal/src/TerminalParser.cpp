@@ -1,4 +1,5 @@
 #include "TerminalParser.hpp"
+#include <iostream>
 #include <memory>
 
 TerminalParser::TerminalParser(std::string_view input) : src(input) {}
@@ -78,14 +79,14 @@ std::shared_ptr<Expr> TerminalParser::parsePrimary() {
 }
 
 std::shared_ptr<Expr> TerminalParser::parseExpression() {
-  auto lhs = parsePostfix(parsePrimary());
+  auto lhs = parseComparison();
 
   while (true) {
     while (peek() == ' ')
       advance();
 
     if (match('=')) {
-      auto rhs = parseExpression(); // right-associative
+      auto rhs = parseExpression();
       lhs = std::make_shared<AssignmentExpr>(std::move(lhs), std::move(rhs));
     } else {
       break;
@@ -103,8 +104,19 @@ std::shared_ptr<Expr> TerminalParser::parseAtom() {
     return std::make_unique<StringExpr>(parseStringLiteral());
   }
 
+  if (std::isdigit(peek())) {
+    return std::make_shared<NumberExpr>(parseNumber());
+  }
+
   if (match('*')) {
     return std::make_shared<DerefExpr>(parseAtom());
+  }
+
+  if (match('$')) {
+    std::string name = parseIdentifier();
+
+    auto param = std::make_shared<ParameterExpr>(name);
+    return std::make_shared<ValueExpr>(param);
   }
 
   if (match('(')) {
@@ -138,7 +150,8 @@ std::shared_ptr<Expr> TerminalParser::parseArgument() {
   while (peek() == ' ')
     advance();
 
-  if (peek() == '"' || peek() == '*' || peek() == '(' || peek() == '{')
+  if (peek() == '"' || peek() == '*' || peek() == '$' || peek() == '(' ||
+      peek() == '{')
     return parseAtom();
 
   std::string name = parseIdentifier();
@@ -155,4 +168,121 @@ std::shared_ptr<Expr> TerminalParser::parsePostfix(std::shared_ptr<Expr> base) {
     }
   }
   return base;
+}
+
+bool TerminalParser::matchComparison(CompareOp &op) {
+  if (match('=')) {
+    if (match('=')) {
+      op = CompareOp::Equal;
+      return true;
+    }
+    pos--;
+    return false;
+  }
+
+  if (match('!')) {
+    if (match('=')) {
+      op = CompareOp::NotEqual;
+      return true;
+    }
+    throw std::runtime_error("Expected '=' after '!'");
+  }
+
+  if (match('<')) {
+    if (match('=')) {
+      op = CompareOp::LessEqual;
+    } else {
+      op = CompareOp::Less;
+    }
+    return true;
+  }
+
+  if (match('>')) {
+    if (match('=')) {
+      op = CompareOp::GreaterEqual;
+    } else {
+      op = CompareOp::Greater;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+std::shared_ptr<Expr> TerminalParser::parseComparison() {
+  auto lhs = parseAdditive();
+
+  while (true) {
+    while (peek() == ' ')
+      advance();
+
+    CompareOp op;
+    if (!matchComparison(op))
+      break;
+
+    auto rhs = parseAdditive();
+    lhs = std::make_shared<CompareExpr>(op, lhs, rhs);
+  }
+
+  return lhs;
+}
+
+std::shared_ptr<Expr> TerminalParser::parseAdditive() {
+  auto lhs = parseMultiplicative();
+
+  while (true) {
+    while (peek() == ' ')
+      advance();
+
+    if (match('+')) {
+      lhs = std::make_shared<MathExpr>(MathOp::Add, lhs, parseMultiplicative());
+    } else if (match('-')) {
+      lhs = std::make_shared<MathExpr>(MathOp::Sub, lhs, parseMultiplicative());
+    } else {
+      break;
+    }
+  }
+
+  return lhs;
+}
+
+std::shared_ptr<Expr> TerminalParser::parseMultiplicative() {
+  auto lhs = parseUnary();
+
+  while (true) {
+    while (peek() == ' ')
+      advance();
+
+    if (match('*')) {
+      lhs = std::make_shared<MathExpr>(MathOp::Mul, lhs, parseUnary());
+    } else if (match('/')) {
+      lhs = std::make_shared<MathExpr>(MathOp::Div, lhs, parseUnary());
+    } else {
+      break;
+    }
+  }
+
+  return lhs;
+}
+
+std::shared_ptr<Expr> TerminalParser::parseUnary() {
+  while (peek() == ' ')
+    advance();
+
+  if (match('-')) {
+    auto zero = std::make_shared<NumberExpr>(0.0);
+    auto rhs = parseUnary();
+    return std::make_shared<MathExpr>(MathOp::Sub, zero, rhs);
+  }
+
+  return parsePostfix(parsePrimary());
+}
+
+float TerminalParser::parseNumber() {
+  std::string num;
+  while (std::isdigit(peek()) || peek() == '.') {
+    num.push_back(advance());
+  }
+
+  return std::stof(num);
 }

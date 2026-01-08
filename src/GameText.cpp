@@ -153,81 +153,91 @@ void GameText::parseBody(const std::string &body) {
     Glyph::Anim anim;
     float animParam;
   };
+
   std::vector<Attr> stack;
   stack.push_back({sf::Color::White, Glyph::Anim::None, 0.f});
 
   int appearCounter = 0;
 
   for (size_t i = 0; i < body.size();) {
-    char c = body[i];
-    if (c == '<') {
-      // tag
-      size_t j = body.find('>', i + 1);
-      if (j == std::string::npos)
-        break;
-      std::string tag = body.substr(i + 1, j - i - 1);
+
+    // metadata start
+    if (body[i] == '\\' && i + 1 < body.size() && body[i + 1] == '<') {
+
+      // metadata closing
+      size_t j = body.find("\\>", i + 2);
+
+      // malformed tag
+      if (j == std::string::npos) {
+        pushTextChar('<', stack.back().color, stack.back().anim,
+                     stack.back().animParam);
+        glyphs.back().appearIndex = appearCounter++;
+        i += 2;
+        continue;
+      }
+
+      std::string tag = body.substr(i + 2, j - (i + 2));
+
       // trim
-      while (!tag.empty() && isspace((unsigned char)tag.front()))
+      while (!tag.empty() && std::isspace((unsigned char)tag.front()))
         tag.erase(tag.begin());
-      while (!tag.empty() && isspace((unsigned char)tag.back()))
+      while (!tag.empty() && std::isspace((unsigned char)tag.back()))
         tag.pop_back();
 
-      if ((tag.size() >= 3 && tag.substr(0, 3) == "ln>") || tag == "ln") {
+      // tag handling
+      if (tag == "ln") {
         pushTextChar('\n', stack.back().color, stack.back().anim,
                      stack.back().animParam);
-      } else if ((tag.size() >= 6 && tag.substr(0, 6) == "/color") ||
-                 (tag.size() >= 5 && tag.substr(0, 5) == "/anim") ||
-                 (!tag.empty() && tag[0] == '/')) {
-        // pop color - assume nested correctly
+
+      } else if (!tag.empty() && tag[0] == '/') {
+        // closing tag
         if (stack.size() > 1)
           stack.pop_back();
-      } else if (tag.size() >= 5 && tag.substr(0, 5) == "color") {
-        // color=xxx
+
+      } else if (tag.rfind("color", 0) == 0) {
         size_t eq = tag.find('=');
         if (eq != std::string::npos) {
-          std::string spec = tag.substr(eq + 1);
-          sf::Color ccol = parseColorSpec(spec);
+          sf::Color ccol = parseColorSpec(tag.substr(eq + 1));
           stack.push_back({ccol, stack.back().anim, stack.back().animParam});
         }
-      } else if (tag.size() >= 4 && tag.substr(0, 4) == "anim") {
-        // anim=sin  OR anim=shake:2
+
+      } else if (tag.rfind("anim", 0) == 0) {
         size_t eq = tag.find('=');
         if (eq != std::string::npos) {
           std::string spec = tag.substr(eq + 1);
           std::string name = spec;
           float param = 0.f;
+
           size_t colon = spec.find(':');
           if (colon != std::string::npos) {
             name = spec.substr(0, colon);
             param = std::stof(spec.substr(colon + 1));
           }
+
           Glyph::Anim an = Glyph::Anim::None;
           if (name == "sin")
             an = Glyph::Anim::Sin;
           else if (name == "shake")
             an = Glyph::Anim::Shake;
+
           stack.push_back({stack.back().color, an, param});
         }
-      } else {
-        // unknown tag - ignore
       }
 
-      i = j + 1;
+      i = j + 2; // skip "\>"
       continue;
     }
 
-    if (c == '\n') {
+    if (body[i] == '\n') {
       pushTextChar('\n', stack.back().color, stack.back().anim,
                    stack.back().animParam);
       ++i;
       continue;
     }
 
-    // normal character
-    pushTextChar(c, stack.back().color, stack.back().anim,
+    pushTextChar(body[i], stack.back().color, stack.back().anim,
                  stack.back().animParam);
-    // assign appear index in sequential order (skip newline characters for
-    // layout but include them for position)
+
     glyphs.back().appearIndex = appearCounter++;
     ++i;
   }
@@ -403,12 +413,12 @@ void GameText::playTypeSound() {
   if (!useSoundPool || soundBuffers.empty())
     return;
 
-  typingSound.stop();
-  typingSound.setBuffer(soundBuffers[soundPlayIndex]);
-  typingSound.play();
+  // typingSound.stop();
+  // typingSound.setBuffer(soundBuffers[soundPlayIndex]);
+  // typingSound.play();
 
   soundPlayIndex = (soundPlayIndex + 1) % soundBuffers.size();
-  typingSound.stop();
+  // typingSound.stop();
 }
 
 void GameText::updateRenderCommandBuffer() {

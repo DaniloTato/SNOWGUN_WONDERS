@@ -104,7 +104,6 @@ private:
   float typeTimer = 0.f;
 
   std::vector<sf::SoundBuffer> soundBuffers;
-  sf::Sound typingSound;
   size_t soundPlayIndex = 0;
   bool useSoundPool = false;
   bool playSoundOnChars = true;

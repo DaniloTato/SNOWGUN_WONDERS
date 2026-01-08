@@ -14,7 +14,8 @@ INCLUDES = \
 	-I./include/ui \
 	-I./scripts/include \
 	-I./blueprints/include \
-	-I./scene_builders/include
+	-I./scene_builders/include \
+	-I./terminal/include
 
 export PKG_CONFIG_PATH := /opt/homebrew/lib/pkgconfig
 
@@ -26,7 +27,7 @@ JSON_CFLAGS := $(shell pkg-config --cflags nlohmann_json 2>/dev/null)
 CXXFLAGS += $(INCLUDES) $(SFML_CFLAGS) $(JSON_CFLAGS)
 LDFLAGS  += $(SFML_LIBS) -Wl,-rpath,@executable_path/lib
 
-SRC := $(shell find src scripts/src blueprints/src scene_builders/src -name '*.cpp')
+SRC := $(shell find src scripts/src blueprints/src terminal/src scene_builders/src -name '*.cpp')
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
 
 all: $(APP_NAME)

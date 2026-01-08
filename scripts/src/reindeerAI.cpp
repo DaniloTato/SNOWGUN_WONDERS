@@ -33,6 +33,8 @@ void reindeerAI(TangibleObject &tangible, const GeneralContext &ctx) {
 
   auto &state = tangible.scripter.getState<ReindeerAIState>("reindeerAI");
 
+  tangible.collider.computeCollisionGrid(tangible.position);
+
   if (state.fixedY == std::numeric_limits<float>::max()) {
     state.fixedY = tangible.position.y;
   }
@@ -90,5 +92,8 @@ void reindeerAI(TangibleObject &tangible, const GeneralContext &ctx) {
   }
 
   tangible.physics.updateX(tangible.position);
+
+  tangible.collider.horizontalLevelCollision(tangible.position);
+  tangible.collider.verticalLevelCollision(tangible.position);
 }
 } // namespace script

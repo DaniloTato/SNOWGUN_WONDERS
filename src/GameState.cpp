@@ -174,7 +174,7 @@ sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
 void GameState::updateGeneralContext(GeneralContext &ctx) {
   generalContext = ctx;
 
-  Terminal::getMemory().declareVariable(
+  Terminal::memory.declareVariable(
       "player",
       TerminalCommands::RuntimeValue{
           TerminalCommands::DataType::GameObjectReference, ctx.player});

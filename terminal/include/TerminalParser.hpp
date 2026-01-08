@@ -10,12 +10,19 @@ public:
   std::shared_ptr<Expr> parse();
 
 private:
+  std::string parseStringLiteral();
+  float parseNumber();
+
   std::shared_ptr<Expr> parseExpression();
   std::shared_ptr<Expr> parseArgument();
   std::shared_ptr<Expr> parsePrimary();
   std::shared_ptr<Expr> parsePostfix(std::shared_ptr<Expr> base);
   std::shared_ptr<Expr> parseAtom();
-  std::string parseStringLiteral();
+  bool matchComparison(CompareOp &op);
+  std::shared_ptr<Expr> parseComparison();
+  std::shared_ptr<Expr> parseMultiplicative();
+  std::shared_ptr<Expr> parseAdditive();
+  std::shared_ptr<Expr> parseUnary();
 
   [[nodiscard]] char peek() const;
   char advance();

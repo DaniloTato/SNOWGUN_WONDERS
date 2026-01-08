@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameObjectDescriptor.hpp"
 #include "TerminalCommands.hpp"
 #include <string>
 
@@ -8,6 +9,10 @@ public:
   std::string toString(const TerminalCommands::RuntimeValue &value);
   [[nodiscard]] TerminalCommands::DataType
   stringToDataType(std::string_view strvw);
+
+  static TerminalCommands::RuntimeValue
+  makeObjStrRuntimeValue(const GameObjectDescriptor::Value &value);
+  static TerminalCommands::RuntimeValue makeObjectView(const GameObject &obj);
 
 private:
   std::string nullToString();

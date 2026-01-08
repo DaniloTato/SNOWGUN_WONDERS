@@ -1,4 +1,5 @@
 #include "TerminalInterpreter.hpp"
+#include "GameObject.hpp"
 #include "TerminalMemory.hpp"
 
 #include <sstream>
@@ -41,17 +42,22 @@ TerminalInterpreter::toString(const TerminalCommands::RuntimeValue &value) {
                    value.data));
 
   case TerminalCommands::DataType::Object:
-    return "__object__<ln>" +
+    return "__object__\\<ln\\>" +
            objectToString(
                std::get<TerminalCommands::RuntimeValue::Object>(value.data));
 
   case TerminalCommands::DataType::Number:
-    return "__number__<ln>" +
+    return "__number__\\<ln\\>" +
            std::to_string(
                std::get<TerminalCommands::RuntimeValue::Number>(value.data));
 
   case TerminalCommands::DataType::Type:
     return "__type__";
+
+  case TerminalCommands::DataType::Bool:
+    return std::get<TerminalCommands::RuntimeValue::Bool>(value.data)
+               ? "__bool__ true"
+               : "__bool__ false";
 
   case TerminalCommands::DataType::Function:
     return "__function__";
@@ -68,7 +74,7 @@ TerminalInterpreter::toString(const TerminalCommands::RuntimeValue &value) {
     TerminalCommands::RuntimeValue::List list =
         std::get<TerminalCommands::RuntimeValue::List>(value.data);
     for (auto &i : list) {
-      out += "<ln>";
+      out += "\\<ln\\>";
       out += "---" + toString(i);
     }
     return out;
@@ -144,4 +150,51 @@ std::string TerminalInterpreter::objectToString(
 
   oss << "}";
   return oss.str();
+}
+
+TerminalCommands::RuntimeValue TerminalInterpreter::makeObjStrRuntimeValue(
+    const GameObjectDescriptor::Value &value) {
+  using V = GameObjectDescriptor::Value;
+  using namespace TerminalCommands;
+
+  return std::visit(
+      [&](auto &&v) -> RuntimeValue {
+        using T = std::decay_t<decltype(v)>;
+
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return {DataType::Null, std::monostate{}};
+
+        } else if constexpr (std::is_arithmetic_v<T>) {
+          return {DataType::Parameter, std::to_string(v)};
+
+        } else if constexpr (std::is_same_v<T, bool>) {
+          return {DataType::Parameter, v ? "true" : "false"};
+
+        } else if constexpr (std::is_same_v<T, std::string>) {
+          return {DataType::Parameter, v};
+
+        } else if constexpr (std::is_same_v<T, V::Object>) {
+          RuntimeValue::Object obj;
+          for (const auto &[k, child] : v) {
+            obj[k] = makeObjStrRuntimeValue(child);
+          }
+          return {DataType::Object, std::move(obj)};
+        }
+      },
+      value.data);
+}
+
+TerminalCommands::RuntimeValue
+TerminalInterpreter::makeObjectView(const GameObject &obj) {
+
+  using namespace TerminalCommands;
+
+  RuntimeValue::Object out;
+  GameObjectDescriptor d = obj.describe();
+
+  for (const auto &[key, value] : d.fields) {
+    out[key] = makeObjStrRuntimeValue(value);
+  }
+
+  return {DataType::Object, std::move(out)};
 }
