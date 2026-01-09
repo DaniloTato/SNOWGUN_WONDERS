@@ -236,12 +236,45 @@ TerminalCommands::RuntimeValue ifCommand(Terminal *owner,
 
   const RuntimeValue &boolSatement = args[0];
   const RuntimeValue &bodyExpr = args[1];
-  const RuntimeValue &elseBodyExpr = args[2];
+  RuntimeValue elseBodyExpr = {};
+  if (args.size() >= 3) {
+    elseBodyExpr = args[2];
+  }
 
   if (std::get<TerminalCommands::RuntimeValue::Bool>(boolSatement.data)) {
     return bodyExpr;
   } else {
+    if (elseBodyExpr.type == DataType::Null)
+      return {};
     return elseBodyExpr;
+  }
+
+  return {};
+}
+
+TerminalCommands::RuntimeValue doifCommand(Terminal *owner,
+                                           CommandSignature &signature,
+                                           const ArgsVector &args) {
+
+  owner->error.validate(signature, args);
+
+  const RuntimeValue &boolSatement = args[0];
+  const RuntimeValue &bodyExpr = args[1];
+  std::shared_ptr<Expr> elseBody;
+  if (args.size() >= 3) {
+    elseBody =
+        std::get<TerminalCommands::RuntimeValue::Expression>(args[2].data);
+  }
+
+  auto ifBody =
+      std::get<TerminalCommands::RuntimeValue::Expression>(bodyExpr.data);
+
+  if (std::get<TerminalCommands::RuntimeValue::Bool>(boolSatement.data)) {
+    return ifBody->eval(*owner);
+  } else {
+    if (elseBody)
+      return elseBody->eval(*owner);
+    return {};
   }
 
   return {};
@@ -344,6 +377,15 @@ void registerAll() {
       .maxArgs = 3,
       .positionalTypes = {DataType::Bool, DataType::Any, DataType::Any}};
   Terminal::registerCommand({ifCommand, ifSignature});
+
+  CommandSignature doifSignature = {.name = "doif",
+                                    .description = "equivalent of do(if)",
+                                    .minArgs = 2,
+                                    .maxArgs = 3,
+                                    .positionalTypes = {DataType::Bool,
+                                                        DataType::Expression,
+                                                        DataType::Expression}};
+  Terminal::registerCommand({doifCommand, doifSignature});
 }
 
 } // namespace TerminalCommands

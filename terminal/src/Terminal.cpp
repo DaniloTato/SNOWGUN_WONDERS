@@ -96,36 +96,34 @@ void Terminal::handleEvent(const sf::Event &event) {
       return;
     }
 
-    // UP (history back)
     if (event.key.code == sf::Keyboard::Up) {
-      if (history.empty())
+      if (inputHistory.empty())
         return;
 
       if (historyBrowseIndex == -1) {
         savedInput = input;
-        historyBrowseIndex = static_cast<int>(history.size()) - 1;
+        historyBrowseIndex = static_cast<int>(inputHistory.size()) - 1;
       } else if (historyBrowseIndex > 0) {
         historyBrowseIndex--;
       }
 
-      input = history[historyBrowseIndex];
+      input = inputHistory[historyBrowseIndex];
       cursorPos = input.size();
       rebuildText();
       return;
     }
 
-    // DOWN (history forward)
     if (event.key.code == sf::Keyboard::Down) {
       if (historyBrowseIndex == -1)
         return;
 
       historyBrowseIndex++;
 
-      if (historyBrowseIndex >= static_cast<int>(history.size())) {
+      if (historyBrowseIndex >= static_cast<int>(inputHistory.size())) {
         historyBrowseIndex = -1;
         input = savedInput;
       } else {
-        input = history[historyBrowseIndex];
+        input = inputHistory[historyBrowseIndex];
       }
 
       cursorPos = input.size();
@@ -135,6 +133,9 @@ void Terminal::handleEvent(const sf::Event &event) {
 
     // ENTER
     if (event.key.code == sf::Keyboard::Enter) {
+      if (inputHistory.empty() || inputHistory.back() != input) {
+        inputHistory.push_back(input);
+      }
       history.push_back(input);
       executeCommand(input);
 
@@ -188,6 +189,8 @@ void Terminal::rebuildText() {
 
   std::string visibleInput = input;
   visibleInput.insert(cursorPos, "|");
+
+  visibleInput = highlighter.applyParenHighlight(visibleInput);
 
   markup += "\\<color=yellow\\>> " + visibleInput + "\\</color\\>";
 

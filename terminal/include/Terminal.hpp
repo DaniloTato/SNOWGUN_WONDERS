@@ -1,6 +1,7 @@
 #pragma once
 #include "GameCamera.hpp"
 #include "GameText.hpp"
+#include "Highlighter.hpp"
 #include "TerminalCommands.hpp"
 #include "TerminalError.hpp"
 #include "TerminalInterpreter.hpp"
@@ -36,6 +37,7 @@ public:
   TerminalError error;
   TerminalInterpreter interpreter;
   static TerminalMemory memory;
+  Highlighter highlighter;
 
 private:
   void rebuildText();
@@ -49,6 +51,7 @@ private:
   GameText *text;
 
   std::deque<std::string> history;
+  std::vector<std::string> inputHistory;
   std::string input;
 
   static std::unordered_map<std::string, TerminalCommands::CommandEntry>
