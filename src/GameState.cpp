@@ -174,10 +174,7 @@ sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
 void GameState::updateGeneralContext(GeneralContext &ctx) {
   generalContext = ctx;
 
-  Terminal::memory.declareVariable(
-      "player",
-      TerminalCommands::RuntimeValue{
-          TerminalCommands::DataType::GameObjectReference, ctx.player});
+  // Here goes the updating of refs for snowlang to use
 }
 
 const GeneralContext &GameState::getGeneralContext() { return generalContext; }

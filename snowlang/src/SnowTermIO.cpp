@@ -1,0 +1,30 @@
+#include "SnowTermIO.hpp"
+#include "Terminal.hpp"
+
+SnowTermIO::SnowTermIO(Terminal &t) : terminal(t) {}
+
+void SnowTermIO::write(const std::string &text) { terminal.print(text); }
+
+void SnowTermIO::writeLn(const std::string &text) { terminal.printLn(text); }
+
+bool SnowTermIO::hasLine() { return !inputQueue.empty(); }
+
+std::string SnowTermIO::readLine() {
+  if (inputQueue.empty())
+    return {};
+
+  auto line = std::move(inputQueue.front());
+  inputQueue.pop();
+  return line;
+}
+
+void SnowTermIO::pushLine(std::string line) { inputQueue.push(std::move(line)); }
+
+bool SnowTermIO::writeFile(const std::string &path, const std::string &contents, bool append) {
+  std::ofstream file(path, append ? std::ios::app : std::ios::trunc);
+  if (!file)
+    return false;
+
+  file << contents;
+  return true;
+}

@@ -70,16 +70,20 @@ void GameText::loadFromMarkup(const std::string &markup) {
   std::string body;
   bool inHeader = true;
   while (std::getline(ss, line)) {
-    if (line.empty())
+    if (line.empty()) {
       continue;
-    std::string trim = trimLeadingSpace(line);
-    if (inHeader && !trim.empty() && trim[0] == '#') {
-      parseHeaderLine(trim);
-    } else {
-      inHeader = false;
-      body += trim;
-      body += '\n';
     }
+    if (inHeader) {
+      std::string trim = trimLeadingSpace(line);
+      if (!trim.empty() && trim[0] == '#') {
+        parseHeaderLine(trim);
+        continue;
+      }
+      inHeader = false;
+    }
+
+    body += line;
+    body += '\n';
   }
 
   parseBody(body);

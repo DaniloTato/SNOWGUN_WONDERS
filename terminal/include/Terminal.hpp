@@ -2,10 +2,8 @@
 #include "GameCamera.hpp"
 #include "GameText.hpp"
 #include "Highlighter.hpp"
-#include "TerminalCommands.hpp"
-#include "TerminalError.hpp"
-#include "TerminalInterpreter.hpp"
-#include "TerminalMemory.hpp"
+#include "SnowTermIO.hpp"
+#include "SnowlangInstance.hpp"
 
 class Terminal {
 public:
@@ -19,29 +17,25 @@ public:
   void kill();
   void close();
   void clear();
+
+  void update();
+
   [[nodiscard]] bool isOpen() const;
 
   static void destroyKilledTerminals();
 
   [[nodiscard]] bool destroysWindowOnClose() const;
 
-  static void registerCommand(const TerminalCommands::CommandEntry &cmd);
-
   void print(std::string_view message, std::string_view color = {});
+  void printLn(std::string_view message, std::string_view color = {});
 
-  static std::unordered_map<std::string, TerminalCommands::CommandEntry> &
-  getCommandMap();
-
-  void lineJump();
-
-  TerminalError error;
-  TerminalInterpreter interpreter;
-  static TerminalMemory memory;
   Highlighter highlighter;
 
 private:
   void rebuildText();
-  void executeCommand(const std::string &command);
+  void executeSnowlang();
+  void trimHistoryToFit();
+  void commitLine();
 
 private:
   sf::RenderWindow *targetWindow;
@@ -50,12 +44,14 @@ private:
 
   GameText *text;
 
+  SnowTermIO snowlangIO;
+  SnowlangInstance snowlang;
+
   std::deque<std::string> history;
   std::vector<std::string> inputHistory;
   std::string input;
+  std::string currentLine;
 
-  static std::unordered_map<std::string, TerminalCommands::CommandEntry>
-      commandMap;
   static std::vector<Terminal *> s_activeTerminals;
 
   bool opened = true;

@@ -1,0 +1,15 @@
+#include "Cell.hpp"
+#include "SnowlangInstance.hpp"
+
+void Cell::setCellValue(RuntimeValue newValue) {
+  value = std::move(newValue);
+  notify();
+}
+
+const RuntimeValue &Cell::getCellValue() { return value; }
+
+void Cell::notify() {
+  for (auto &watcher : watchers) {
+    watcher.owner->evaluator.runLambda(watcher.lambda);
+  }
+}

@@ -43,6 +43,8 @@ void terminalCreationScript(ScriptRunner &renderable,
       state.terminal->handleEvent(event);
     }
 
+    state.terminal->update();
+
     if (!state.terminal->isOpen()) {
       state.terminal = nullptr;
     }

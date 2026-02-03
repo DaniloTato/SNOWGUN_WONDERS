@@ -57,9 +57,6 @@ int main() {
   inputManager.loadBindingsFromJsonFile(
       (Helper::getPath("config/control_config.json")));
 
-  // Sets all the commands inside the terminal
-  TerminalCommands::registerAll();
-
   // Enemy Manager Setup
   enemyManager.textureCache.load(
       "toy", Helper::loadTexture(getPath("assets/toy.png")));
