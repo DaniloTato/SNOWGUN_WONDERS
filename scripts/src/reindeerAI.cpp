@@ -74,13 +74,13 @@ void reindeerAI(TangibleObject &tangible, const GeneralContext &ctx) {
         sf::Vector2f bulletVel = dir * PROJECTILE_SPEED;
 
         RenderizerParameters bulletParams{
-            *GameState::getInstance().getMainWindow(),
-            *ctx.bulletTexture,
-            {0, 0, 15, 15},
-            tangible.position,
-            GameState::getInstance().getMainCamera(),
-            0.f,
-            1.f};
+            .window = *GameState::getInstance().getMainWindow(),
+            .texture = *ctx.bulletTexture,
+            .rect = {0, 0, 15, 15},
+            .position = tangible.position,
+            .camera = GameState::getInstance().getMainCamera(),
+            .layer = 0.f,
+            .parallax = 1.f};
 
         BulletManager::getInstance().queueSpawn(
             bulletParams, Bullet::Type::Normal, bulletVel, {0, 0}, 3, 300,

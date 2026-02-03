@@ -140,7 +140,8 @@ void GameText::parseHeaderLine(const std::string &line) {
   } else if (key == "alignment") {
     std::string a;
     if (tk >> a) {
-      std::transform(a.begin(), a.end(), a.begin(), ::tolower);
+      std::ranges::transform(a, a.begin(),
+                             [](unsigned char c) { return std::tolower(c); });
       if (a == "center")
         setAlignment(Align::Center);
       else if (a == "right")
@@ -198,14 +199,14 @@ void GameText::parseBody(const std::string &body) {
         if (stack.size() > 1)
           stack.pop_back();
 
-      } else if (tag.rfind("color", 0) == 0) {
+      } else if (tag.starts_with("color")) {
         size_t eq = tag.find('=');
         if (eq != std::string::npos) {
           sf::Color ccol = parseColorSpec(tag.substr(eq + 1));
           stack.push_back({ccol, stack.back().anim, stack.back().animParam});
         }
 
-      } else if (tag.rfind("anim", 0) == 0) {
+      } else if (tag.starts_with("anim")) {
         size_t eq = tag.find('=');
         if (eq != std::string::npos) {
           std::string spec = tag.substr(eq + 1);
@@ -278,7 +279,8 @@ sf::Color GameText::parseColorSpec(const std::string &s) const {
   while (!t.empty() && isspace((unsigned char)t.back()))
     t.pop_back();
   // lower
-  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+  std::ranges::transform(t, t.begin(),
+                         [](unsigned char c) { return std::tolower(c); });
   if (t.empty())
     return sf::Color::White;
   if (t[0] == '#') {
@@ -458,7 +460,7 @@ void GameText::updateRenderCommandBuffer() {
       pos.y += jitterY;
     }
 
-    RenderCommand render = {g.texRect, pos, g.color};
+    RenderCommand render = {.rect = g.texRect, .pos = pos, .color = g.color};
     renderCommandBuffer.push_back(render);
   }
 }

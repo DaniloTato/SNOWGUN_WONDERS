@@ -30,10 +30,13 @@ void updateCrystalCounterScript(ScriptRunner &runner,
     auto &window = *GameState::getInstance().getMainWindow();
     auto *camera = GameState::getInstance().getUiCamera();
 
-    RenderizerParameters params{
-        window,     fontTexture, sf::IntRect(),
-        {0.f, 0.f}, camera,      Constants::UI_TEXT_LAYER,
-        1.f};
+    RenderizerParameters params{.window = window,
+                                .texture = fontTexture,
+                                .rect = sf::IntRect(),
+                                .position = {0.f, 0.f},
+                                .camera = camera,
+                                .layer = Constants::UI_TEXT_LAYER,
+                                .parallax = 1.f};
 
     state.crystalCounter = new GameText(params);
 

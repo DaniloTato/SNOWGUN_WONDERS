@@ -67,8 +67,10 @@ void missileAI(TangibleObject &tangible, const GeneralContext &ctx) {
          explosionCenter.y - status.currentExplosionRadius -
              tangible.position.y});
 
-    AttackHitbox explosionHitbox = {explosionCollider, true, EXPLOSION_DAMAGE,
-                                    10.f};
+    AttackHitbox explosionHitbox = {.collider = explosionCollider,
+                                    .active = true,
+                                    .damage = EXPLOSION_DAMAGE,
+                                    .remainingTime = 10.f};
 
     tangible.attackHitbox = explosionHitbox;
     return;

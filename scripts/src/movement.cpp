@@ -153,8 +153,10 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
       BasicCollider kickCollider;
       kickCollider.setSize({8.f, 20.f});
       kickCollider.setOffset({tangible.direction == 1 ? 12.f : -2, 0.f});
-      AttackHitbox kickHitbox = {kickCollider, true, KICK_DAMAGE,
-                                 KICK_DURATION};
+      AttackHitbox kickHitbox = {.collider = kickCollider,
+                                 .active = true,
+                                 .damage = KICK_DAMAGE,
+                                 .remainingTime = KICK_DURATION};
       tangible.attackHitbox = kickHitbox;
       /*Crete Kick Hitbox*/
     }
@@ -173,13 +175,14 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
     /*Kick logic*/
   }
 
-  RenderizerParameters bulletParams{*GameState::getInstance().getMainWindow(),
-                                    *ctx.bulletTexture,
-                                    {0, 0, 15, 15},
-                                    tangible.position,
-                                    GameState::getInstance().getMainCamera(),
-                                    0.f,
-                                    1.f};
+  RenderizerParameters bulletParams{
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = *ctx.bulletTexture,
+      .rect = {0, 0, 15, 15},
+      .position = tangible.position,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = 0.f,
+      .parallax = 1.f};
 
   state.movementLock -= GameState::getInstance().dt();
 

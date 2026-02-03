@@ -29,14 +29,14 @@ public:
     sf::Texture dummyTexture;
 
     RenderizerParameters params{
-        window,
-        dummyTexture,
-        {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
-        {0.f, 0.f},
-        GameState::getInstance().getUiCamera(),
-        -100.f,
-        1.f,
-        true};
+        .window = window,
+        .texture = dummyTexture,
+        .rect = {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
+        .position = {0.f, 0.f},
+        .camera = GameState::getInstance().getUiCamera(),
+        .layer = -100.f,
+        .parallax = 1.f,
+        .registerAsRectShape = true};
 
     overlay = std::make_unique<RenderableObject>(params);
     overlay->renderizer.setColor(sf::Color(255, 0, 0, 0));
