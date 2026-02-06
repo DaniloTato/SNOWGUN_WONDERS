@@ -21,6 +21,8 @@ template <typename T>
 struct has_toString<T, std::void_t<decltype(std::declval<const T &>().toString())>>
     : std::true_type {};
 
+namespace Snowlang {
+
 struct Debug {
 #ifdef DEBUG
   static constexpr bool enabled = true;
@@ -61,3 +63,5 @@ private:
     return oss.str();
   }
 };
+
+} // namespace Snowlang

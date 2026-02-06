@@ -2,7 +2,7 @@
 #include "RuntimeValue.hpp"
 #include <string>
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue echoCommand(const CommandContext &ctx) {
   std::string out;
@@ -39,4 +39,4 @@ RuntimeValue echoCommand(const CommandContext &ctx) {
   return {out};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

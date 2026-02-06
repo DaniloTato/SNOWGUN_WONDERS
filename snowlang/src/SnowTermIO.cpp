@@ -1,6 +1,8 @@
 #include "SnowTermIO.hpp"
 #include "Terminal.hpp"
 
+namespace Snowlang {
+
 SnowTermIO::SnowTermIO(Terminal &t) : terminal(t) {}
 
 void SnowTermIO::write(const std::string &text) { terminal.print(text); }
@@ -28,3 +30,5 @@ bool SnowTermIO::writeFile(const std::string &path, const std::string &contents,
   file << contents;
   return true;
 }
+
+} // namespace Snowlang

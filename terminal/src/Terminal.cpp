@@ -48,6 +48,7 @@ Terminal::Terminal(sf::RenderWindow *window, GameCamera *camera)
            .parallax = 1.f})) {
 
   s_activeTerminals.push_back(this);
+  text->makePersistentAcrossScenes();
 
   history.emplace_back(R"(\<color=cyan\>Snowgun Developer Console\</color\>)");
   history.emplace_back(R"(Type \<color=yellow\>help\</color\> for commands)");

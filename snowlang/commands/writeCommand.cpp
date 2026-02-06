@@ -2,7 +2,7 @@
 #include "SnowErr.hpp"
 #include "SnowlangInstance.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue writeCommand(const CommandContext &ctx) {
 
@@ -33,4 +33,4 @@ RuntimeValue writeCommand(const CommandContext &ctx) {
   return {ok};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

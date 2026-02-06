@@ -3,7 +3,7 @@
 #include "SnowlangHelper.hpp"
 #include "SnowlangInstance.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue taskCommand(const CommandContext &ctx) {
 
@@ -63,4 +63,4 @@ RuntimeValue taskCommand(const CommandContext &ctx) {
   return {static_cast<float>(newId)};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

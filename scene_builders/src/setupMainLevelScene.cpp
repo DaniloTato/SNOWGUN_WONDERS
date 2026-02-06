@@ -52,9 +52,10 @@ void setupMainLevelScene() {
                          (Helper::getPath("assets/level_data/barracks.json")));
 
   // context. Imperative
-  GeneralContext ctx = {&(player->position),
-                        dialogueManager.getAttachedTextParams(), player,
-                        &bulletTexture};
+  GeneralContext ctx = {.playerPosition = &(player->position),
+                        .textParams = dialogueManager.getAttachedTextParams(),
+                        .player = player,
+                        .bulletTexture = &bulletTexture};
   GameState::getInstance().updateGeneralContext(ctx);
 }
 } // namespace SceneBuilder

@@ -1,13 +1,16 @@
 #pragma once
 
 #include <memory>
-class SnowlangInstance;
 
 #include "Cell.hpp"
 #include "CommandSignature.hpp"
 #include "LambdaInstance.hpp"
 #include "Location.hpp"
 #include "RuntimeValue.hpp"
+
+namespace Snowlang {
+
+class SnowlangInstance;
 
 struct CallFrame {
   // Watch out. Raw ptr is used on CallFrame for performance reasons.
@@ -39,3 +42,5 @@ public:
   void popCallFrame();
   CallFrame &currentCallFrame();
 };
+
+} // namespace Snowlang

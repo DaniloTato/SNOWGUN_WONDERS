@@ -3,7 +3,6 @@
 #include "Constants.hpp"
 #include "GameCamera.hpp"
 #include "SFML/System/Vector2.hpp"
-#include "Terminal.hpp"
 #include <SFML/Graphics.hpp>
 
 GameState::GameState()
@@ -69,8 +68,11 @@ sf::RenderWindow *GameState::getTerminalWindow() const {
 }
 
 void GameState::clearCameras() {
-  for (auto &i : activeCameras) {
-    GameObject::destroy(i);
+  for (size_t i = 0; i < activeCameras.size(); i++) {
+    if (activeCameras[i] &&
+        static_cast<CameraTypes>(i) != CameraTypes::TERMINAL) {
+      GameObject::destroy(activeCameras[i]);
+    }
   }
   activeCameras.clear();
 }
@@ -113,6 +115,10 @@ void GameState::createCamera(CameraTypes type) {
   }
 
   activeCameras[index] = new GameCamera();
+
+  if (type == CameraTypes::TERMINAL) {
+    activeCameras[index]->makePersistentAcrossScenes();
+  }
 }
 
 void GameState::createWindow(WindowTypes type, int width, int height,
@@ -174,7 +180,55 @@ sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
 void GameState::updateGeneralContext(GeneralContext &ctx) {
   generalContext = ctx;
 
-  // Here goes the updating of refs for snowlang to use
+  // Exposed Context for Snowlang
+  exposedGameState.fields["player"] =
+      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
+          .getValue =
+              [this]() {
+                return GameObjectExposure::Value{
+                    .value = generalContext.player->describe()};
+              },
+          .setValue =
+              [](const GameObjectExposure::Value &v) {
+                // player Object not mutable
+              }});
+
+  exposedGameState.fields["hp"] =
+      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
+          .getValue =
+              [this]() {
+                return GameObjectExposure::Value{
+                    static_cast<float>(playerHealth)};
+              },
+          .setValue =
+              [this](GameObjectExposure::Value v) {
+                playerHealth = static_cast<int>(std::get<float>(v.value));
+              }});
+
+  exposedGameState.fields["crystals"] =
+      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
+          .getValue =
+              [this]() {
+                return GameObjectExposure::Value{static_cast<float>(crystals)};
+              },
+          .setValue =
+              [this](GameObjectExposure::Value v) {
+                crystals = static_cast<int>(std::get<float>(v.value));
+              }});
+
+  exposedGameState.fields["camera"] = std::make_shared<
+      GameObjectExposure::Field>(GameObjectExposure::Field{
+      .getValue =
+          []() {
+            return GameObjectExposure::Value{
+                .value =
+                    GameObjectExposure::Descriptor::describeActiveCameraList()};
+          },
+      .setValue = [](const GameObjectExposure::Value &v) {}});
+}
+
+const GameObjectExposure::Descriptor &GameState::getExposedGameState() const {
+  return exposedGameState;
 }
 
 const GeneralContext &GameState::getGeneralContext() { return generalContext; }

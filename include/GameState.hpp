@@ -2,6 +2,7 @@
 
 #include "Bullet.hpp"
 #include "GameCamera.hpp"
+#include "GameObjectExposure.hpp"
 #include "GeneralContext.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -59,6 +60,9 @@ public:
   void updateGeneralContext(GeneralContext &ctx);
   [[nodiscard]] const GeneralContext &getGeneralContext();
 
+  [[nodiscard]] const GameObjectExposure::Descriptor &
+  getExposedGameState() const;
+
   GameState(const GameState &) = delete;
   GameState &operator=(const GameState &) = delete;
 
@@ -76,6 +80,8 @@ private:
   float dtValue;
 
   GeneralContext generalContext;
+
+  GameObjectExposure::Descriptor exposedGameState;
 
   sf::Vector2f checkpoint;
 

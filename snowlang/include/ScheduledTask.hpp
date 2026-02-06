@@ -2,6 +2,8 @@
 #include "LambdaInstance.hpp"
 #include <sstream>
 
+namespace Snowlang {
+
 struct ScheduledTask {
   size_t id;
   std::shared_ptr<LambdaInstance> lambda;
@@ -25,3 +27,5 @@ struct ScheduledTask {
 private:
   bool paused = false;
 };
+
+} // namespace Snowlang

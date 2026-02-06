@@ -5,8 +5,12 @@
 #include "Resolver.hpp"
 #include "SnowIO.hpp"
 
+#include "GameObjectExposure.hpp"
+
 #include "ScheduledTask.hpp"
 #include <string>
+
+namespace Snowlang {
 
 class SnowlangInstance {
 private:
@@ -20,6 +24,8 @@ private:
 
   std::vector<ScheduledTask> scheduledTasks;
   size_t nextTaskId = 0;
+  void bindGameState();
+  static std::unique_ptr<SnowlangInstance> latestInstance;
 
 public:
   SnowlangInstance(SnowIO &ioInterface);
@@ -29,14 +35,19 @@ public:
   void update(double deltaTime);
   [[nodiscard]] const std::vector<ScheduledTask> &getTasks() const;
 
-  bool togglePauseTask(size_t id);
-
   void scheduleTask(ScheduledTask &&task);
+  bool togglePauseTask(size_t id);
   bool killTask(size_t id);
   void killAllTasks();
   [[nodiscard]] size_t taskCount() const;
 
   size_t getNewTaskId();
+
+  ObjectRef adaptDescriptor(const GameObjectExposure::Descriptor &desc);
+  RuntimeValue adaptValue(const GameObjectExposure::Value &v);
+  GameObjectExposure::Value adaptBack(const RuntimeValue &rv);
+
+  static SnowlangInstance &getLatestSnowlangInstance();
 
 public:
   Memory memory;
@@ -45,3 +56,5 @@ public:
   SnowIO &io;
   Debug debug;
 };
+
+} // namespace Snowlang

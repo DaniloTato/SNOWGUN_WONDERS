@@ -2,7 +2,7 @@
 #include "RuntimeValue.hpp"
 #include "SnowlangInstance.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue printCommand(const CommandContext &ctx) {
 
@@ -25,4 +25,4 @@ RuntimeValue printCommand(const CommandContext &ctx) {
   return {false};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

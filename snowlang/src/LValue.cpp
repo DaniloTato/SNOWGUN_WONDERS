@@ -1,6 +1,8 @@
 #include "LValue.hpp"
 #include "SnowErr.hpp"
 
+namespace Snowlang {
+
 void LValue::LValueWrite(RuntimeValue value, SnowlangInstance &snowlang) {
   switch (kind) {
 
@@ -15,7 +17,25 @@ void LValue::LValueWrite(RuntimeValue value, SnowlangInstance &snowlang) {
   }
 
   case Kind::ObjectField: {
-    object->fields[field] = value;
+    if (!object) {
+      throwError(SnowErr::Phase::Evaluator, "[LValueWrite] null object reference", SourceSpan{});
+    }
+
+    auto it = object->fields.find(field);
+    if (it == object->fields.end()) {
+      throwError(SnowErr::Phase::Evaluator, "[LValueWrite] object has no field '" + field + "'",
+                 SourceSpan{});
+    }
+
+    RuntimeValue &target = it->second;
+
+    if (std::holds_alternative<RuntimeValue::GameObjectRef>(target.data)) {
+      auto &ref = std::get<RuntimeValue::GameObjectRef>(target.data);
+      ref.setter(value);
+      return;
+    }
+
+    target = value;
     break;
   }
 
@@ -53,7 +73,13 @@ RuntimeValue LValue::LValueRead(SnowlangInstance &snowlang, const SourceSpan &sp
                  span);
     }
 
-    return it->second;
+    RuntimeValue &val = it->second;
+
+    if (std::holds_alternative<RuntimeValue::GameObjectRef>(val.data)) {
+      return std::get<RuntimeValue::GameObjectRef>(val.data).getter();
+    }
+
+    return val;
   }
 
   case Kind::ListElement: {
@@ -70,9 +96,16 @@ RuntimeValue LValue::LValueRead(SnowlangInstance &snowlang, const SourceSpan &sp
                  "index=" + std::to_string(index) + ", size=" + std::to_string(list.size()));
     }
 
-    return list[index];
+    RuntimeValue &elem = list[index];
+    if (std::holds_alternative<RuntimeValue::GameObjectRef>(elem.data)) {
+      return std::get<RuntimeValue::GameObjectRef>(elem.data).getter();
+    }
+
+    return elem;
   }
   }
 
   return {};
 }
+
+} // namespace Snowlang

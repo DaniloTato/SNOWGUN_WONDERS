@@ -4,6 +4,8 @@
 #include "RuntimeValue.hpp"
 #include "Tokenizer.hpp"
 
+namespace Snowlang {
+
 class SnowlangInstance;
 struct LValue;
 
@@ -44,3 +46,5 @@ public:
                          ObjectRef thisObject = nullptr, SourceSpan span = SourceSpan{});
   void execStmt(const RStmtPtr &);
 };
+
+} // namespace Snowlang

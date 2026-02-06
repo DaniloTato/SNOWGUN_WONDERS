@@ -8,6 +8,8 @@
 #include <iostream>
 #include <vector>
 
+namespace Snowlang {
+
 // ---------------- Constructor ----------------
 
 Parser::Parser(const std::vector<Token> &t) : tokens(t) {}
@@ -499,3 +501,5 @@ ExprPtr Parser::parseObjectExpr() {
 
   return std::make_shared<ObjectExpr>(std::move(fields));
 }
+
+} // namespace Snowlang

@@ -59,10 +59,7 @@ void Animator::loadAsepriteAnimations(const std::string &filename) {
     anim.loop = name.find("_once") == std::string::npos;
 
     // Sort by local frame index
-    std::sort(frames.begin(), frames.end(),
-              [](const ParsedFrame &a, const ParsedFrame &b) {
-                return a.index < b.index;
-              });
+    std::ranges::sort(frames, std::ranges::less{}, &ParsedFrame::index);
 
     int expectedRow = -1;
     bool rowMismatch = false;

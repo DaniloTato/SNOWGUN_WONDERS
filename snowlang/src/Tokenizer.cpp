@@ -3,6 +3,8 @@
 #include <cctype>
 #include <cstddef>
 
+namespace Snowlang {
+
 Tokenizer::Tokenizer(const std::string &source) : input(source) {}
 
 void Tokenizer::mergeTokens(std::vector<Token> &tokenVec, TokenType left, TokenType right,
@@ -324,3 +326,5 @@ std::vector<Token> Tokenizer::tokenize() {
   mergeTokens(tokens, TokenType::RBracket, TokenType::EndSTMT, MergeType::Right);
   return tokens;
 }
+
+} // namespace Snowlang

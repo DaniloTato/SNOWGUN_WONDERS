@@ -8,6 +8,8 @@
 
 #include <string>
 
+namespace Snowlang {
+
 struct LValue {
   enum class Kind : std::uint8_t { Variable, ObjectField, ListElement };
 
@@ -23,3 +25,5 @@ struct LValue {
   void LValueWrite(RuntimeValue value, SnowlangInstance &snowlang);
   RuntimeValue LValueRead(SnowlangInstance &snowlang, const SourceSpan &span) const;
 };
+
+} // namespace Snowlang

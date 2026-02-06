@@ -93,14 +93,14 @@ void SceneManager::initFadeOverlay() {
   sf::Texture dummyTexture;
 
   RenderizerParameters params{
-      *GameState::getInstance().getMainWindow(),
-      dummyTexture,
-      {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
-      {0.f, 0.f},
-      GameState::getInstance().getUiCamera(),
-      Constants::OVERLAY_LAYER,
-      1.f,
-      true};
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = dummyTexture,
+      .rect = {0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT},
+      .position = {0.f, 0.f},
+      .camera = GameState::getInstance().getUiCamera(),
+      .layer = Constants::OVERLAY_LAYER,
+      .parallax = 1.f,
+      .registerAsRectShape = true};
 
   fadeOverlay = new RenderableObject(params);
   fadeOverlay->makePersistentAcrossScenes();

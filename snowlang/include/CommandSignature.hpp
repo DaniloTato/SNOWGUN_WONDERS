@@ -3,6 +3,8 @@
 #include "RuntimeValue.hpp"
 #include <functional>
 
+namespace Snowlang {
+
 class SnowlangInstance;
 struct Executor;
 
@@ -14,3 +16,5 @@ struct CommandSignature {
 
   CommandSignature(CommandFn function) : function(std::move(function)) {}
 };
+
+} // namespace Snowlang

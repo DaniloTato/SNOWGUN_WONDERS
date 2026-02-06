@@ -12,6 +12,8 @@
 #include <string>
 #include <unordered_map>
 
+namespace Snowlang {
+
 Resolver::Resolver(SnowlangInstance *owner) : owner(owner) {}
 
 bool Resolver::isAssignable(const RExprPtr &expr) {
@@ -400,3 +402,5 @@ RExprPtr Resolver::resolveExpr(const ExprPtr &expr) {
 const std::unordered_map<std::string, size_t> &Resolver::getGlobalSymbols() const {
   return globalSymbols;
 }
+
+} // namespace Snowlang

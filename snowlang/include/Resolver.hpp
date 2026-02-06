@@ -9,6 +9,8 @@
 
 #include "Location.hpp"
 
+namespace Snowlang {
+
 class SnowlangInstance;
 
 using PatternPtr = std::shared_ptr<Pattern>;
@@ -74,3 +76,5 @@ public:
 
   bool isAssignable(const RExprPtr &expr);
 };
+
+} // namespace Snowlang

@@ -4,7 +4,7 @@
 #include <string>
 #include <typeinfo>
 
-namespace ParserPrint {
+namespace Snowlang::ParserPrint {
 
 static void indentPad(SnowIO &io, size_t indent) {
   for (size_t i = 0; i < indent; ++i)
@@ -264,4 +264,4 @@ void printExpr(SnowIO &io, const ExprPtr &expr, size_t indent) {
   io.writeLn("<Unknown Expr>");
 }
 
-} // namespace ParserPrint
+} // namespace Snowlang::ParserPrint

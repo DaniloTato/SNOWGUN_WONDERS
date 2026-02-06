@@ -1,7 +1,7 @@
 #include "Commands.hpp"
 #include "RuntimeValue.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue listCommand(const CommandContext &ctx) {
   RuntimeValue::List list;
@@ -11,4 +11,4 @@ RuntimeValue listCommand(const CommandContext &ctx) {
   return list;
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

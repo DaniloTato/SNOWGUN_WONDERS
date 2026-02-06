@@ -2,7 +2,7 @@
 #include "RuntimeValue.hpp"
 #include "SnowlangHelper.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 using CommandFlags = std::unordered_map<std::string, RuntimeValue>;
 
 struct CommandContext {
@@ -32,5 +32,6 @@ RuntimeValue printCommand(const CommandContext &ctx);
 RuntimeValue writeCommand(const CommandContext &ctx);
 RuntimeValue watchCommand(const CommandContext &ctx);
 RuntimeValue taskCommand(const CommandContext &ctx);
+RuntimeValue gameGetCommand(const CommandContext &ctx);
 void DefineCommands(SnowlangInstance &snowlang);
-} // namespace Commands
+} // namespace Snowlang::Commands

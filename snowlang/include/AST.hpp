@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+namespace Snowlang {
+
 //-------Expressions------
 struct Expr : public Node {
   ~Expr() override = default;
@@ -206,3 +208,5 @@ struct MemberAccessExpr : Expr {
 
   MemberAccessExpr(ExprPtr b, std::string m) : base(std::move(b)), member(std::move(m)) {}
 };
+
+} // namespace Snowlang

@@ -42,8 +42,10 @@ void end() {
   sf::Texture dummy;
 
   // context. Imperative
-  GeneralContext ctx = {
-      {}, dialogueManager.getAttachedTextParams(), nullptr, &dummy};
+  GeneralContext ctx = {.playerPosition = {},
+                        .textParams = dialogueManager.getAttachedTextParams(),
+                        .player = nullptr,
+                        .bulletTexture = &dummy};
   GameState::getInstance().updateGeneralContext(ctx);
 }
 } // namespace SceneBuilder

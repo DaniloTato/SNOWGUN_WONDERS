@@ -40,17 +40,23 @@ void titleScreen() {
   sf::Texture dummy;
 
   // context. Imperative
-  GeneralContext ctx = {
-      {}, dialogueManager.getAttachedTextParams(), nullptr, &dummy};
+  GeneralContext ctx = {.playerPosition = {},
+                        .textParams = dialogueManager.getAttachedTextParams(),
+                        .player = nullptr,
+                        .bulletTexture = &dummy};
   GameState::getInstance().updateGeneralContext(ctx);
 
   sf::Texture &fontTexture =
       Helper::loadTexture((Helper::getPath("assets/font.png")));
 
   // title text
-  RenderizerParameters params{window,     fontTexture, sf::IntRect(),
-                              {0.f, 0.f}, mainCam,     Constants::TEXT_LAYER,
-                              1.f};
+  RenderizerParameters params{.window = window,
+                              .texture = fontTexture,
+                              .rect = sf::IntRect(),
+                              .position = {0.f, 0.f},
+                              .camera = mainCam,
+                              .layer = Constants::TEXT_LAYER,
+                              .parallax = 1.f};
   auto *title = new GameText(params);
   std::string markupLife =
       "#position 0 90\n"

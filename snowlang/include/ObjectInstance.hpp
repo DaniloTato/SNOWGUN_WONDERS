@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+namespace Snowlang {
+
 struct RuntimeValue;
 
 struct ObjectInstance {
@@ -10,3 +12,5 @@ struct ObjectInstance {
 };
 
 using ObjectRef = std::shared_ptr<ObjectInstance>;
+
+} // namespace Snowlang

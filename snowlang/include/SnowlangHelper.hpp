@@ -5,7 +5,8 @@
 #include "Tokenizer.hpp"
 #include <typeinfo>
 
-namespace SnowlangHelper {
+namespace Snowlang::SnowlangHelper {
+
 template <typename T> struct RuntimeValueTo {
 
   RuntimeValueTo(const SourceSpan &span) : span(span) {}
@@ -129,4 +130,5 @@ inline float toNumber(const RuntimeValue &v) {
 
   return 0.0f;
 }
-} // namespace SnowlangHelper
+
+} // namespace Snowlang::SnowlangHelper

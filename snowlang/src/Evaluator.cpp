@@ -16,6 +16,8 @@
 #include <string>
 #include <variant>
 
+namespace Snowlang {
+
 Evaluator::Evaluator(SnowlangInstance *owner) : owner(owner) {}
 
 CommandSignature Evaluator::tryGetCommandId(size_t slot, const SourceSpan &span) {
@@ -169,7 +171,11 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
       throwError(SnowErr::Phase::Evaluator, "index out of bounds", indexing->index->span);
     }
 
-    return list[i];
+    RuntimeValue val = list[i];
+    if (std::holds_alternative<RuntimeValue::GameObjectRef>(val.data)) {
+      return std::get<RuntimeValue::GameObjectRef>(val.data).getter();
+    }
+    return val;
   }
 
   // ----------- commands -------
@@ -389,7 +395,13 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
       throwError(SnowErr::Phase::Evaluator, "object has no member '" + m->member + "'", m->span);
     }
 
-    return it->second;
+    RuntimeValue val = it->second;
+
+    if (std::holds_alternative<RuntimeValue::GameObjectRef>(val.data)) {
+      return std::get<RuntimeValue::GameObjectRef>(val.data).getter();
+    }
+
+    return val;
   }
 
   // ---------- this ----------
@@ -573,3 +585,5 @@ RuntimeValue Evaluator::runLambda(const std::shared_ptr<LambdaInstance> &lambda,
 
   return {};
 }
+
+} // namespace Snowlang

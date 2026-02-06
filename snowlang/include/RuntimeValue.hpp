@@ -1,9 +1,12 @@
 #pragma once
 #include "LambdaInstance.hpp"
 #include "ObjectInstance.hpp"
+#include <functional>
 #include <memory>
 #include <variant>
 #include <vector>
+
+namespace Snowlang {
 
 struct RExpr;
 using RExprPtr = std::shared_ptr<RExpr>;
@@ -13,6 +16,11 @@ using RStmtPtr = std::shared_ptr<RStmt>;
 
 struct RuntimeValue {
 
+  struct GameObjectRef {
+    std::function<RuntimeValue()> getter;
+    std::function<void(const RuntimeValue &)> setter;
+  };
+
   struct Lambda {
     std::shared_ptr<LambdaInstance> instance;
     Lambda(std::shared_ptr<LambdaInstance> instance) : instance(std::move(instance)) {}
@@ -21,12 +29,13 @@ struct RuntimeValue {
 
   using List = std::vector<RuntimeValue>;
   using Null = std::monostate;
+
   using RuntimeType =
-      std::variant<Null, float, bool, std::string, List, Lambda, ObjectRef, CellPtr>;
+      std::variant<Null, float, bool, std::string, List, Lambda, ObjectRef, CellPtr, GameObjectRef>;
+
   RuntimeType data;
 
   RuntimeValue() : data(Null{}) {}
-
   RuntimeValue(float v) : data(v) {}
   RuntimeValue(bool v) : data(v) {}
   RuntimeValue(const std::string &v) : data(v) {}
@@ -34,8 +43,14 @@ struct RuntimeValue {
   RuntimeValue(const Lambda &v) : data(v) {}
   RuntimeValue(const CellPtr &v) : data(v) {}
   RuntimeValue(const ObjectRef &v) : data(v) {}
+  RuntimeValue(const GameObjectRef &ref) : data(ref) {}
 
   [[nodiscard]] std::string toString(bool showDataTypes = false) const;
+  [[nodiscard]] bool isRef() const;
+  [[nodiscard]] RuntimeValue readRef() const;
+  void writeRef(const RuntimeValue &v);
 };
 
 using ValuePtr = std::shared_ptr<RuntimeValue>;
+
+} // namespace Snowlang

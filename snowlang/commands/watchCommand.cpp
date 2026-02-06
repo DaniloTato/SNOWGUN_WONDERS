@@ -3,7 +3,7 @@
 #include "RuntimeValue.hpp"
 #include "SnowlangHelper.hpp"
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue watchCommand(const CommandContext &ctx) {
 
@@ -21,4 +21,4 @@ RuntimeValue watchCommand(const CommandContext &ctx) {
   return {};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

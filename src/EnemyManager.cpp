@@ -172,25 +172,17 @@ void EnemyManager::addSpawnDefinition(const EnemySpawnDefinition &def) {
 }
 
 void EnemyManager::removeSpawnDefinition(const std::string &id) {
-  spawnDefinitions.erase(std::remove_if(spawnDefinitions.begin(),
-                                        spawnDefinitions.end(),
-                                        [&](const EnemySpawnDefinition &def) {
-                                          return def.id == id;
-                                        }),
-                         spawnDefinitions.end());
+  std::erase_if(spawnDefinitions,
+                [&](const auto &def) { return def.id == id; });
 }
 
 void EnemyManager::removeSpawnDefinition(const sf::Vector2f &position,
                                          float tolerance) {
-  float tolSq = tolerance * tolerance;
-
-  spawnDefinitions.erase(
-      std::remove_if(spawnDefinitions.begin(), spawnDefinitions.end(),
-                     [&](const EnemySpawnDefinition &def) {
-                       sf::Vector2f d = def.spawnPoint - position;
-                       return (d.x * d.x + d.y * d.y) <= tolSq;
-                     }),
-      spawnDefinitions.end());
+  const float tolSq = tolerance * tolerance;
+  std::erase_if(spawnDefinitions, [&](const auto &def) {
+    sf::Vector2f d = def.spawnPoint - position;
+    return (d.x * d.x + d.y * d.y) <= tolSq;
+  });
 }
 
 std::vector<EnemyManager::EnemySpawnDefinition> &

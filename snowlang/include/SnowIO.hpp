@@ -6,6 +6,8 @@
 #include <sys/select.h>
 #include <unistd.h>
 
+namespace Snowlang {
+
 struct SnowIO {
   virtual ~SnowIO() = default;
 
@@ -77,3 +79,5 @@ struct BufferIO : SnowIO {
     return true;
   }
 };
+
+} // namespace Snowlang

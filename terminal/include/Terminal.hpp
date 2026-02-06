@@ -42,10 +42,10 @@ private:
 
   std::unordered_map<std::string, std::string> aliases;
 
-  GameText *text;
+  Snowlang::SnowTermIO snowlangIO;
+  Snowlang::SnowlangInstance snowlang;
 
-  SnowTermIO snowlangIO;
-  SnowlangInstance snowlang;
+  GameText *text;
 
   std::deque<std::string> history;
   std::vector<std::string> inputHistory;

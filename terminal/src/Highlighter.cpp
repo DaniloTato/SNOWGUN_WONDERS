@@ -1,4 +1,3 @@
-#pragma once
 #include "Highlighter.hpp"
 
 #include <string>

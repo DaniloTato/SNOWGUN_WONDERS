@@ -27,8 +27,13 @@ void setupCameras(GameState &gameState) {
 // Create player object with common setup
 TangibleObject *createPlayer(sf::RenderWindow &window, sf::Texture &texture,
                              GameCamera *camera, sf::Vector2f position) {
-  RenderizerParameters params{window, texture, {0, 0, 17, 17}, position, camera,
-                              -0.1f,  1.f};
+  RenderizerParameters params{.window = window,
+                              .texture = texture,
+                              .rect = {0, 0, 17, 17},
+                              .position = position,
+                              .camera = camera,
+                              .layer = -0.1f,
+                              .parallax = 1.f};
   auto *player = new TangibleObject(
       params, Animator::getAsepriteJSONAnimations(
                   (Helper::getPath("assets/json/snowman_animation.json"))));
@@ -52,10 +57,13 @@ PolyRenderizer *setupParticles(sf::RenderWindow &window,
                                GameCamera *camera) {
   static sf::Texture &particleTexture =
       Helper::loadTexture((Helper::getPath("assets/particles.png")));
-  RenderizerParameters params{
-      window,     particleTexture, sf::IntRect(0, 0, 0, 0),
-      {0.f, 0.f}, camera,          -10.f,
-      0.7f};
+  RenderizerParameters params{.window = window,
+                              .texture = particleTexture,
+                              .rect = sf::IntRect(0, 0, 0, 0),
+                              .position = {0.f, 0.f},
+                              .camera = camera,
+                              .layer = -10.f,
+                              .parallax = 0.7f};
   auto *pr = new PolyRenderizer(params);
   particleManager.attachPolyRederizer(pr);
   return pr;
@@ -67,10 +75,13 @@ RenderizerParameters *setupTextAndDialogue(sf::RenderWindow &window,
                                            GameCamera *camera) {
   static sf::Texture &fontTexture =
       Helper::loadTexture((Helper::getPath("assets/font.png")));
-  auto *params =
-      new RenderizerParameters{window,     fontTexture, sf::IntRect(),
-                               {0.f, 0.f}, camera,      Constants::TEXT_LAYER,
-                               1.f};
+  auto *params = new RenderizerParameters{.window = window,
+                                          .texture = fontTexture,
+                                          .rect = sf::IntRect(),
+                                          .position = {0.f, 0.f},
+                                          .camera = camera,
+                                          .layer = Constants::TEXT_LAYER,
+                                          .parallax = 1.f};
   dialogueManager.attachTextParams(params);
   return params;
 }
@@ -81,25 +92,27 @@ void ui() {
   gameState.getUiCamera()->zoomToDesired();
 
   sf::Texture dummyTexture;
-  RenderizerParameters topBarParams{*gameState.getMainWindow(),
-                                    dummyTexture,
-                                    {0, 0, Constants::SCREEN_WIDTH / 3 + 1, 32},
-                                    {0.f, 0.f},
-                                    GameState::getInstance().getUiCamera(),
-                                    Constants::UI_LAYER,
-                                    1.f,
-                                    true};
+  RenderizerParameters topBarParams{
+      .window = *gameState.getMainWindow(),
+      .texture = dummyTexture,
+      .rect = {0, 0, Constants::SCREEN_WIDTH / 3 + 1, 32},
+      .position = {0.f, 0.f},
+      .camera = GameState::getInstance().getUiCamera(),
+      .layer = Constants::UI_LAYER,
+      .parallax = 1.f,
+      .registerAsRectShape = true};
   auto *topBarUI = new RenderableObject(topBarParams);
   topBarUI->renderizer.setColor(ColorPalette::Black);
 
   RenderizerParameters barrelParams{
-      *gameState.getMainWindow(),
-      Helper::loadTexture((Helper::getPath("assets/whiteBarrel.png"))),
-      {0, 0, 76, 78},
-      {-26.f, -26.f},
-      GameState::getInstance().getUiCamera(),
-      Constants::UI_LAYER - 2,
-      1.f,
+      .window = *gameState.getMainWindow(),
+      .texture =
+          Helper::loadTexture((Helper::getPath("assets/whiteBarrel.png"))),
+      .rect = {0, 0, 76, 78},
+      .position = {-26.f, -26.f},
+      .camera = GameState::getInstance().getUiCamera(),
+      .layer = Constants::UI_LAYER - 2,
+      .parallax = 1.f,
   };
   auto *barrelUI = new AnimatedObject(barrelParams);
   barrelUI->renderizer.setColor(ColorPalette::NeonMagenta);
@@ -110,13 +123,14 @@ void ui() {
   barrelUI->scripter.addScript(script::barrelScript);
 
   RenderizerParameters barrelCenterParams{
-      *gameState.getMainWindow(),
-      Helper::loadTexture((Helper::getPath("assets/barrelCenter.png"))),
-      {0, 0, 21, 21},
-      {2.f, 2.f},
-      GameState::getInstance().getUiCamera(),
-      Constants::UI_LAYER - 1,
-      1.f,
+      .window = *gameState.getMainWindow(),
+      .texture =
+          Helper::loadTexture((Helper::getPath("assets/barrelCenter.png"))),
+      .rect = {0, 0, 21, 21},
+      .position = {2.f, 2.f},
+      .camera = GameState::getInstance().getUiCamera(),
+      .layer = Constants::UI_LAYER - 1,
+      .parallax = 1.f,
   };
   new RenderableObject(barrelCenterParams);
 }

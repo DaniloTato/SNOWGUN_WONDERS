@@ -1,6 +1,7 @@
 #include "Renderizer.hpp"
 #include "Constants.hpp"
 #include "GameState.hpp"
+#include "Helpers.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/System/Vector2.hpp"
 
@@ -23,19 +24,14 @@ void Renderizer::registerPair(GameObject *obj, Renderizer *rend,
 }
 
 void Renderizer::unregisterPair(Renderizer *rend) {
-  registry.erase(std::remove_if(registry.begin(), registry.end(),
-                                [&](const RenderEntry &e) {
-                                  return e.renderizer == rend;
-                                }),
-                 registry.end());
+  std::erase_if(registry,
+                [&](const RenderEntry &e) { return e.renderizer == rend; });
 }
 
 void Renderizer::unregisterByWindow(sf::RenderWindow *window) {
-  registry.erase(std::remove_if(registry.begin(), registry.end(),
-                                [&](const RenderEntry &e) {
-                                  return &e.renderizer->getWindow() == window;
-                                }),
-                 registry.end());
+  std::erase_if(registry, [&](const RenderEntry &e) {
+    return &e.renderizer->getWindow() == window;
+  });
 }
 
 const sf::RenderWindow &Renderizer::getWindow() const { return window; }
@@ -70,17 +66,34 @@ void Renderizer::render(GameObject *obj) {
 
   sprite.setColor(color);
 
+  sf::Vector2f screenPos;
+
   if (!assignedCamera) {
     sprite.setPosition(position);
     if (hasCulling && !isVisible())
       return;
     sprite.setScale(1.f, 1.f);
   } else {
-    sf::Vector2f screenPos = assignedCamera->worldToScreen(position, paralax);
+    screenPos = assignedCamera->worldToScreen(position, paralax);
     sprite.setPosition(screenPos);
     if (hasCulling && !isVisible())
       return;
     sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
+  }
+
+  if (obj->getExposesId()) {
+    static sf::Font idTextFont;
+    static bool fontLoaded;
+    if (!fontLoaded) {
+      idTextFont.loadFromFile(Helper::getPath("assets/fonts/ARIAL.TTF"));
+      fontLoaded = true;
+    }
+    sf::Text idText;
+    idText.setFont(idTextFont);
+    idText.setString(std::to_string(obj->getId()));
+    idText.setPosition(screenPos);
+    idText.setCharacterSize(11);
+    window.draw(idText);
   }
 
   window.draw(sprite);
@@ -121,10 +134,9 @@ void Renderizer::setRect(const sf::IntRect &newRect, int direction) {
 }
 
 void Renderizer::renderAll() {
-  std::stable_sort(registry.begin(), registry.end(),
-                   [](const RenderEntry &a, const RenderEntry &b) {
-                     return a.renderizer->getLayer() > b.renderizer->getLayer();
-                   });
+  std::ranges::stable_sort(
+      registry, std::greater<float>{},
+      [](const RenderEntry &e) { return e.renderizer->getLayer(); });
 
   for (auto &entry : registry) {
 

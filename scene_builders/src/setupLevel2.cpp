@@ -35,8 +35,13 @@ void setupLevel2() {
   // Todd setup
   static sf::Texture &toddTexture =
       Helper::loadTexture(Helper::getPath("assets/todd.png"));
-  RenderizerParameters toddParams{
-      window, toddTexture, {0, 0, 16, 16}, {128.f, 0.f}, mainCam, 0.f, 1.f};
+  RenderizerParameters toddParams{.window = window,
+                                  .texture = toddTexture,
+                                  .rect = {0, 0, 16, 16},
+                                  .position = {128.f, 0.f},
+                                  .camera = mainCam,
+                                  .layer = 0.f,
+                                  .parallax = 1.f};
   auto *todd = new RenderableObject(toddParams);
   todd->scripter.addScript(script::toddTalk);
   dialogueManager.assignDialogue(todd, "Greeting");
@@ -58,9 +63,11 @@ void setupLevel2() {
 
   LevelManager::getInstance().setBackgroundColor(ColorPalette::ElectricBlue);
 
-  GeneralContext ctx{&(player->position),
-                     dialogueManager.getAttachedTextParams(), player,
-                     &Helper::loadTexture("assets\\bullet.png")};
+  GeneralContext ctx{.playerPosition = &(player->position),
+                     .textParams = dialogueManager.getAttachedTextParams(),
+                     .player = player,
+                     .bulletTexture =
+                         &Helper::loadTexture("assets\\bullet.png")};
   GameState::getInstance().updateGeneralContext(ctx);
 }
 

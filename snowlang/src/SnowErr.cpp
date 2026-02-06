@@ -1,6 +1,8 @@
 #include "SnowErr.hpp"
 #include <sstream>
 
+namespace Snowlang {
+
 SnowErr::SnowErr(Diagnostic d) : diag(std::move(d)) {}
 
 const char *SnowErr::what() const noexcept { return diag.message.c_str(); }
@@ -79,6 +81,10 @@ const char *phaseToString(SnowErr::Phase p) {
     return "EVALUATOR";
   case SnowErr::Phase::Memory:
     return "MEMORY";
+  case SnowErr::Phase::GameObjRefLoading:
+    return "GameObjRefLoading";
   }
   return "unknown";
 }
+
+} // namespace Snowlang

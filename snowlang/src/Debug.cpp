@@ -1,5 +1,7 @@
 #include "Debug.hpp"
 
+namespace Snowlang {
+
 Debug::Debug(SnowIO &ioInterface) : io(ioInterface) {}
 
 std::string Debug::locationToString(const Location &location) {
@@ -8,3 +10,5 @@ std::string Debug::locationToString(const Location &location) {
   return "Location: " + std::to_string(location.slot) +
          " type: " + typeNames[static_cast<int>(location.type)];
 }
+
+} // namespace Snowlang

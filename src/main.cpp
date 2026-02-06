@@ -43,6 +43,9 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <cstdio>
+#include <iostream>
+
 using namespace Helper;
 
 int main() {
@@ -143,7 +146,7 @@ int main() {
   sf::Clock clock;
 
   while (gameState.getMainWindow() && gameState.getMainWindow()->isOpen()) {
-
+    std::cout << "working \n";
     sf::Event event;
     inputManager.update();
 

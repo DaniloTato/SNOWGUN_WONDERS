@@ -1,6 +1,8 @@
 #include "Cell.hpp"
 #include "SnowlangInstance.hpp"
 
+namespace Snowlang {
+
 void Cell::setCellValue(RuntimeValue newValue) {
   value = std::move(newValue);
   notify();
@@ -13,3 +15,5 @@ void Cell::notify() {
     watcher.owner->evaluator.runLambda(watcher.lambda);
   }
 }
+
+} // namespace Snowlang

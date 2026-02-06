@@ -6,13 +6,24 @@
 #include "SnowErr.hpp"
 #include "Tokenizer.hpp"
 
+#include "GameObjectExposure.hpp"
+#include "GameState.hpp"
+
 #include <fstream>
 #include <sstream>
+
+namespace Snowlang {
 
 SnowlangInstance::SnowlangInstance(SnowIO &ioInterface)
     : memory(this), resolver(this), evaluator(this), io(ioInterface), debug(ioInterface) {
   Commands::DefineCommands(*this);
+  bindGameState();
+  latestInstance = std::make_unique<SnowlangInstance>(*this);
 }
+
+std::unique_ptr<SnowlangInstance> SnowlangInstance::latestInstance;
+
+SnowlangInstance &SnowlangInstance::getLatestSnowlangInstance() { return *latestInstance; }
 
 void SnowlangInstance::run(const std::string &source) {
   if (source.empty()) {
@@ -136,3 +147,98 @@ size_t SnowlangInstance::taskCount() const { return scheduledTasks.size(); }
 size_t SnowlangInstance::getNewTaskId() { return nextTaskId; }
 
 const std::vector<ScheduledTask> &SnowlangInstance::getTasks() const { return scheduledTasks; }
+
+RuntimeValue SnowlangInstance::adaptValue(const GameObjectExposure::Value &v) {
+
+  return std::visit(
+      [&](auto &&arg) -> RuntimeValue {
+        using T = std::decay_t<decltype(arg)>;
+
+        if constexpr (std::is_same_v<T, float> || std::is_same_v<T, bool> ||
+                      std::is_same_v<T, std::string>) {
+
+          return RuntimeValue(arg);
+        } else if constexpr (std::is_same_v<T, GameObjectExposure::Value::List>) {
+          RuntimeValue::List runtimeList;
+          for (const auto &elem : arg) {
+            runtimeList.push_back(adaptValue(elem));
+          }
+          return {runtimeList};
+
+        } else if constexpr (std::is_same_v<T, GameObjectExposure::Value::Ref>) {
+          return RuntimeValue::GameObjectRef{
+              .getter = [this, field = arg]() { return adaptValue(field->getValue()); },
+              .setter = [this,
+                         field = arg](const RuntimeValue &rv) { field->setValue(adaptBack(rv)); }};
+
+        } else if constexpr (std::is_same_v<T, GameObjectExposure::Value::Object>) {
+          return RuntimeValue(adaptDescriptor(*arg));
+        }
+      },
+      v.value);
+}
+
+ObjectRef SnowlangInstance::adaptDescriptor(const GameObjectExposure::Descriptor &desc) {
+
+  auto obj = std::make_shared<ObjectInstance>();
+
+  for (const auto &[name, fieldPtr] : desc.fields) {
+
+    auto value = fieldPtr->getValue();
+
+    if (std::holds_alternative<GameObjectExposure::Value::Object>(value.value)) {
+      obj->fields[name] =
+          RuntimeValue(adaptDescriptor(*std::get<GameObjectExposure::Value::Object>(value.value)));
+    } else {
+      obj->fields[name] = RuntimeValue::GameObjectRef{
+          .getter = [this, fieldPtr]() { return adaptValue(fieldPtr->getValue()); },
+          .setter = [this,
+                     fieldPtr](const RuntimeValue &rv) { fieldPtr->setValue(adaptBack(rv)); }};
+    }
+  }
+
+  return obj;
+}
+
+GameObjectExposure::Value SnowlangInstance::adaptBack(const RuntimeValue &rv) {
+  return std::visit(
+      [&](auto &&arg) -> GameObjectExposure::Value {
+        using T = std::decay_t<decltype(arg)>;
+
+        if constexpr (std::is_same_v<T, float> || std::is_same_v<T, bool> ||
+                      std::is_same_v<T, std::string>) {
+
+          return GameObjectExposure::Value{arg};
+
+        } else if constexpr (std::is_same_v<T, RuntimeValue::List>) {
+
+          GameObjectExposure::Value::List list;
+          list.reserve(arg.size());
+
+          for (const auto &elem : arg) {
+            list.push_back(adaptBack(elem));
+          }
+
+          return GameObjectExposure::Value{.value = list};
+
+        } else {
+          throwError(SnowErr::Phase::GameObjRefLoading, "Unsupported assignment at adaptBack()",
+                     SourceSpan{});
+        }
+      },
+      rv.data);
+}
+
+void SnowlangInstance::bindGameState() {
+  auto &gs = GameState::getInstance();
+  const auto &desc = gs.getExposedGameState();
+
+  auto snowlangGameState = RuntimeValue(adaptDescriptor(desc));
+
+  resolver.resolveVarCreation(
+      "state", SourceSpan{} /*Dummy Source Span (Only has error throwing purposes)*/);
+  // Location Assumes no other vars have been declared beforehand.
+  memory.write(Location{Location::Type::Global, 0}, snowlangGameState);
+}
+
+} // namespace Snowlang

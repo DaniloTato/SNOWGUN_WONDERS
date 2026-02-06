@@ -3,6 +3,8 @@
 
 class Terminal;
 
+namespace Snowlang {
+
 class SnowTermIO final : public SnowIO {
 public:
   explicit SnowTermIO(Terminal &terminal);
@@ -21,3 +23,5 @@ private:
   Terminal &terminal;
   std::queue<std::string> inputQueue;
 };
+
+} // namespace Snowlang

@@ -5,9 +5,18 @@
 #include <string>
 #include <vector>
 
+namespace Snowlang {
+
 class SnowErr : public std::exception {
 public:
-  enum class Phase : std::uint8_t { Tokenizer, Parser, Resolver, Evaluator, Memory };
+  enum class Phase : std::uint8_t {
+    Tokenizer,
+    Parser,
+    Resolver,
+    Evaluator,
+    Memory,
+    GameObjRefLoading
+  };
 
   struct Diagnostic {
     Phase phase;
@@ -45,3 +54,5 @@ private:
                              const SourceSpan &span, const std::string &note);
 
 const char *phaseToString(SnowErr::Phase p);
+
+} // namespace Snowlang

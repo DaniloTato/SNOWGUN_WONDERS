@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+namespace Snowlang {
+
 struct CaptureDesc {
   Location source;
   CaptureDesc(Location source) : source(source) {};
@@ -232,3 +234,5 @@ struct RBoolExpr : RExpr {
   bool val;
   explicit RBoolExpr(bool val) : RExpr(ExprKind::Bool), val(val) {}
 };
+
+} // namespace Snowlang

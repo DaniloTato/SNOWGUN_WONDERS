@@ -2,6 +2,8 @@
 #include "ResolvedAST.hpp"
 #include <memory>
 
+namespace Snowlang {
+
 struct Cell;
 using CellPtr = std::shared_ptr<Cell>;
 
@@ -18,3 +20,5 @@ struct LambdaInstance {
       : id(id), paramSlots(std::move(params)), body(std::move(body)), frameSize(frameSize),
         captures(std::move(captures)) {}
 };
+
+} // namespace Snowlang

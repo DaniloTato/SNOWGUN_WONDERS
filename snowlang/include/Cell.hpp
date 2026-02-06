@@ -2,6 +2,8 @@
 #include "RuntimeValue.hpp"
 #include <memory>
 
+namespace Snowlang {
+
 class SnowlangInstance;
 struct LambdaInstance;
 
@@ -24,3 +26,5 @@ private:
 };
 
 using CellPtr = std::shared_ptr<Cell>;
+
+} // namespace Snowlang

@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-namespace Commands {
+namespace Snowlang::Commands {
 
 RuntimeValue runCommand(const CommandContext &ctx) {
   // run will later turn into a statment, not a command
@@ -22,4 +22,4 @@ RuntimeValue runCommand(const CommandContext &ctx) {
   return {};
 }
 
-} // namespace Commands
+} // namespace Snowlang::Commands

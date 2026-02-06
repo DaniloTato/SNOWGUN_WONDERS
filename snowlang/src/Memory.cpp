@@ -4,6 +4,8 @@
 #include "SnowErr.hpp"
 #include "SnowlangInstance.hpp"
 
+namespace Snowlang {
+
 Memory::Memory(SnowlangInstance *owner) : owner(owner) {}
 
 const RuntimeValue &Memory::read(const Location &loc) {
@@ -124,3 +126,5 @@ CellPtr Memory::readCell(const Location &loc) {
 
   throw SnowErr::MemoryErr("invalid location");
 }
+
+} // namespace Snowlang

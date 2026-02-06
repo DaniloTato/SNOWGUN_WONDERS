@@ -1,0 +1,1 @@
+let tp = (x,y){$state.player.pos.x = $x; $state.player.pos.y = $y};

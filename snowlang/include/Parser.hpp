@@ -6,6 +6,8 @@
 #include "SnowIO.hpp"
 #include "Tokenizer.hpp"
 
+namespace Snowlang {
+
 class Parser {
   std::vector<Token> tokens;
   size_t pos = 0;
@@ -65,3 +67,5 @@ private:
   const Token &consume(TokenType t, const std::string &msg);
   ExprPtr parseCommandOrExpr();
 };
+
+} // namespace Snowlang

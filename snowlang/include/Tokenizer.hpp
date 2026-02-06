@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+namespace Snowlang {
+
 enum class TokenType : std::uint8_t {
   Identifier,
   Number,
@@ -94,3 +96,5 @@ private:
 
   void skipWhitespace();
 };
+
+} // namespace Snowlang

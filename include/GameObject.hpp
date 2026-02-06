@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObjectDescriptor.hpp"
+#include "GameObjectExposure.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -14,12 +14,16 @@ public:
 
   void makePersistentAcrossScenes();
 
-  [[nodiscard]] virtual GameObjectDescriptor describe() const;
+  virtual std::shared_ptr<GameObjectExposure::Descriptor> describe();
+  unsigned int getId();
 
   static std::vector<GameObject *> &getGameObjects();
   static void destroy(GameObject *g);
 
   static void destroySceneObjects();
+
+  void setExposesId(bool value);
+  [[nodiscard]] bool getExposesId() const;
 
   sf::Vector2f position;
   sf::Vector2f offset;
@@ -27,4 +31,9 @@ public:
 protected:
   bool persistentAcrossScenes = false;
   static std::vector<GameObject *> s_gameObjects;
+
+private:
+  unsigned int id;
+  static unsigned int nextId;
+  bool exposesId;
 };

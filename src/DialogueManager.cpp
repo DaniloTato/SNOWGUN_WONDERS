@@ -23,7 +23,7 @@ bool DialogueManager::loadDialoguesFromFile(const std::string &filename) {
   std::stringstream currentDialogue;
 
   while (std::getline(file, line)) {
-    if (line.rfind("[Key=", 0) == 0) {
+    if (line.starts_with("[Key=")) {
       if (!currentKey.empty()) {
         dialogues[currentKey] = currentDialogue.str();
         currentDialogue.str("");
