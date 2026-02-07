@@ -41,14 +41,19 @@ void tutorial() {
 
   LevelManager &levelManager = LevelManager::getInstance();
   ParticleManager &particleManager = ParticleManager::getInstance();
-  mainCam->scripter.addScript(script::followPlayer);
+  mainCam->scripter.addScript("followPlayer", script::followPlayer);
 
   auto *scriptRunner = new ScriptRunner();
-  scriptRunner->scripter.addScript(script::levelCreatorInputs);
-  scriptRunner->scripter.addScript(script::particleGeneration);
-  scriptRunner->scripter.addScript(script::tutorialTriggers);
-  scriptRunner->scripter.addScript(script::updateLifeCounterScript);
-  scriptRunner->scripter.addScript(script::updateCrystalCounterScript);
+  scriptRunner->scripter.addScript("levelCreatorInputs",
+                                   script::levelCreatorInputs);
+  scriptRunner->scripter.addScript("particleGenerator",
+                                   script::particleGeneration);
+  scriptRunner->scripter.addScript("tutorialTriggers",
+                                   script::tutorialTriggers);
+  scriptRunner->scripter.addScript("updateLifeCounterScript",
+                                   script::updateLifeCounterScript);
+  scriptRunner->scripter.addScript("updateCrystalCounterScript",
+                                   script::updateCrystalCounterScript);
 
   // Player setup
   TangibleObject *player = createPlayer(

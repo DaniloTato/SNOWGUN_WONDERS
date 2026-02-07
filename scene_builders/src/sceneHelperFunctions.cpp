@@ -20,8 +20,8 @@ void setupCameras(GameState &gameState) {
 
   auto mainCam = gameState.getMainCamera();
   mainCam->zoomTo(3.f);
-  mainCam->scripter.addScript(script::dramaticZoom);
-  mainCam->scripter.addScript(script::cameraAlarm);
+  mainCam->scripter.addScript("dramaticZoom", script::dramaticZoom);
+  mainCam->scripter.addScript("cameraAlarm", script::cameraAlarm);
 }
 
 // Create player object with common setup
@@ -39,7 +39,7 @@ TangibleObject *createPlayer(sf::RenderWindow &window, sf::Texture &texture,
                   (Helper::getPath("assets/json/snowman_animation.json"))));
   player->collider.setSize({16.f, 16.f});
   player->collider.setOffset({1.f, 2.f});
-  player->scripter.addScript(script::movement);
+  player->scripter.addScript("movement", script::movement);
   player->animator.setSpeedMultiplier(1.8f);
 
   if (!GameState::getInstance().hasCheckpoint()) {
@@ -120,7 +120,7 @@ void ui() {
       (Helper::getPath("assets/json/whiteBarrel.json")));
   barrelUI->animator.play("idle_once");
   barrelUI->animator.setSpeedMultiplier(2);
-  barrelUI->scripter.addScript(script::barrelScript);
+  barrelUI->scripter.addScript("barrelScript", script::barrelScript);
 
   RenderizerParameters barrelCenterParams{
       .window = *gameState.getMainWindow(),

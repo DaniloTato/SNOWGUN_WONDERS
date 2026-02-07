@@ -31,8 +31,7 @@ struct Descriptor {
   std::unordered_map<std::string, Field::Ptr> fields;
   static Value::Object describeVector2f(sf::Vector2f &v);
   static Value::Object describeActiveCameraList();
-  static Value::Object describeCamera(GameCamera *cam);
-  static Value describeRefList(std::span<Field::Ptr> fields);
+  static Value::List describeRefList(std::span<Field::Ptr> fields);
 };
 
 extern std::function<void(std::string)> logger;
@@ -45,6 +44,18 @@ template <> inline Value toValue<float>(float v) { return Value{v}; }
 
 template <> inline Value toValue<bool>(bool v) { return Value{v}; }
 
+template <> inline Value toValue<Value::Object>(Value::Object v) {
+  return Value{std::move(v)};
+}
+
+template <> inline Value toValue<Value::List>(Value::List v) {
+  return Value{std::move(v)};
+}
+
+template <> inline Value toValue<int>(int v) {
+  return Value{static_cast<float>(v)};
+}
+
 template <> inline Value toValue<std::string>(std::string v) {
   return Value{std::move(v)};
 }
@@ -56,6 +67,14 @@ template <typename T> inline T fromValue(const Value &v) {
     throw std::runtime_error(
         "Type mismatch in fromValue: expected type does not match actual");
   }
+}
+
+template <> inline int fromValue<int>(const Value &v) {
+  if (auto f = std::get_if<float>(&v.value)) {
+    return static_cast<int>(*f);
+  }
+
+  throw std::runtime_error("Type mismatch in fromValue<int>: expected float");
 }
 
 template <typename T, typename Getter, typename Setter>
@@ -104,7 +123,7 @@ template <typename T> Field::Ptr makePublicField(T &var) {
 }
 
 template <typename T, typename Getter>
-Field::Ptr makeConstField(Getter &&getter) {
+Field::Ptr makeUnmutableField(Getter &&getter) {
   return std::make_shared<Field>(Field{
       .getValue =
           [g = std::forward<Getter>(getter)]() { return toValue<T>(g()); },

@@ -33,7 +33,7 @@ void titleScreen() {
   LevelManager &levelManager = LevelManager::getInstance();
 
   auto *scriptRunner = new ScriptRunner();
-  scriptRunner->scripter.addScript(script::pressStart);
+  scriptRunner->scripter.addScript("pressStart", script::pressStart);
 
   levelManager.setBackgroundColor(ColorPalette::ElectricBlue);
 

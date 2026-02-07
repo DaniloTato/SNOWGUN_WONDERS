@@ -63,6 +63,9 @@ public:
   [[nodiscard]] const GameObjectExposure::Descriptor &
   getExposedGameState() const;
 
+  void setPrintingObjectIds(bool value);
+  [[nodiscard]] bool getPrintingObjectIds() const;
+
   GameState(const GameState &) = delete;
   GameState &operator=(const GameState &) = delete;
 
@@ -88,4 +91,6 @@ private:
   int crystals;
   int playerHealth;
   Bullet::Type selectedWeapon;
+
+  bool printingGameObjectIds = false;
 };

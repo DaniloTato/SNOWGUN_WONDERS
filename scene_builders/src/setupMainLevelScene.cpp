@@ -23,10 +23,11 @@ void setupMainLevelScene() {
 
   setupCameras(gameState);
   auto mainCam = gameState.getMainCamera();
-  mainCam->scripter.addScript(script::roomCamera);
+  mainCam->scripter.addScript("roomCamera", script::roomCamera);
 
   auto *scriptRunner = new ScriptRunner();
-  scriptRunner->scripter.addScript(script::levelCreatorInputs);
+  scriptRunner->scripter.addScript("levelCreatorInputs",
+                                   script::levelCreatorInputs);
 
   // Player setup
   TangibleObject *player = createPlayer(

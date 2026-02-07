@@ -180,51 +180,25 @@ sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
 void GameState::updateGeneralContext(GeneralContext &ctx) {
   generalContext = ctx;
 
-  // Exposed Context for Snowlang
   exposedGameState.fields["player"] =
-      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
-          .getValue =
-              [this]() {
-                return GameObjectExposure::Value{
-                    .value = generalContext.player->describe()};
-              },
-          .setValue =
-              [](const GameObjectExposure::Value &v) {
-                // player Object not mutable
-              }});
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] { return generalContext.player->describe(); });
 
   exposedGameState.fields["hp"] =
-      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
-          .getValue =
-              [this]() {
-                return GameObjectExposure::Value{
-                    static_cast<float>(playerHealth)};
-              },
-          .setValue =
-              [this](GameObjectExposure::Value v) {
-                playerHealth = static_cast<int>(std::get<float>(v.value));
-              }});
+      GameObjectExposure::makePublicField(playerHealth);
 
   exposedGameState.fields["crystals"] =
-      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
-          .getValue =
-              [this]() {
-                return GameObjectExposure::Value{static_cast<float>(crystals)};
-              },
-          .setValue =
-              [this](GameObjectExposure::Value v) {
-                crystals = static_cast<int>(std::get<float>(v.value));
-              }});
+      GameObjectExposure::makePublicField(crystals);
 
-  exposedGameState.fields["camera"] = std::make_shared<
-      GameObjectExposure::Field>(GameObjectExposure::Field{
-      .getValue =
-          []() {
-            return GameObjectExposure::Value{
-                .value =
-                    GameObjectExposure::Descriptor::describeActiveCameraList()};
-          },
-      .setValue = [](const GameObjectExposure::Value &v) {}});
+  exposedGameState.fields["camera"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [] {
+            return GameObjectExposure::Descriptor::describeActiveCameraList();
+          });
+
+  exposedGameState.fields["print_id"] = GameObjectExposure::makeField<bool>(
+      [] { return GameState::getInstance().getPrintingObjectIds(); },
+      [](bool v) { GameState::getInstance().setPrintingObjectIds(v); });
 }
 
 const GameObjectExposure::Descriptor &GameState::getExposedGameState() const {
@@ -232,3 +206,9 @@ const GameObjectExposure::Descriptor &GameState::getExposedGameState() const {
 }
 
 const GeneralContext &GameState::getGeneralContext() { return generalContext; }
+
+void GameState::setPrintingObjectIds(bool value) {
+  printingGameObjectIds = value;
+}
+
+bool GameState::getPrintingObjectIds() const { return printingGameObjectIds; }

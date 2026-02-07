@@ -3,30 +3,47 @@
 
 namespace Snowlang {
 
+namespace {
+
+static std::string indent(int n) {
+  const std::size_t spaces = static_cast<std::size_t>(n) * 2u;
+  return std::string(spaces, ' '); // NOLINT(modernize-return-braced-init-list)
+}
+
+} // namespace
+
+std::string RuntimeValue::objectToString(const ObjectInstance &obj, bool showDataTypes,
+                                         int indentLevel) {
+
+  std::string out = "{\n";
+
+  for (const auto &[name, value] : obj.fields) {
+    out += indent(indentLevel + 1);
+    out += name + " = ";
+    out += value.toStringImpl(showDataTypes, indentLevel + 1);
+    out += "\n";
+  }
+
+  out += indent(indentLevel) + "}";
+  return out;
+}
+
 std::string RuntimeValue::toString(bool showDataTypes) const {
+  return toStringImpl(showDataTypes, 0);
+}
+
+std::string RuntimeValue::toStringImpl(bool showDataTypes, int indentLevel) const {
   return std::visit(
-      [showDataTypes](auto &&val) -> std::string {
+      [&](auto &&val) -> std::string {
         using T = std::decay_t<decltype(val)>;
 
-        if constexpr (std::is_same_v<T, float>) {
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return "<NULL>";
+        }
+
+        else if constexpr (std::is_same_v<T, float>) {
           const std::string data = std::to_string(val);
           return showDataTypes ? "<Number>: " + data : data;
-        }
-
-        else if constexpr (std::is_same_v<T, std::string>) {
-          return showDataTypes ? "<String>: " + val : val;
-        }
-
-        else if constexpr (std::is_same_v<T, RuntimeValue::List>) {
-          if (!showDataTypes)
-            return "<List>";
-          return "<List>(" + std::to_string(val.size()) + ")";
-        }
-
-        else if constexpr (std::is_same_v<T, RuntimeValue::Lambda>) {
-          if (!showDataTypes)
-            return "<Lambda>";
-          return "<Lambda>: " + std::to_string(val.instance->id);
         }
 
         else if constexpr (std::is_same_v<T, bool>) {
@@ -34,20 +51,50 @@ std::string RuntimeValue::toString(bool showDataTypes) const {
           return showDataTypes ? "<Bool>: " + data : data;
         }
 
-        else if constexpr (std::is_same_v<T, std::monostate>) {
-          return "<NULL>";
+        else if constexpr (std::is_same_v<T, std::string>) {
+          return showDataTypes ? "<String>: " + val : val;
         }
 
-        else if constexpr (std::is_same_v<T, ObjectRef>) {
-          return "<Object>";
+        else if constexpr (std::is_same_v<T, List>) {
+          if (!showDataTypes)
+            return "<List>";
+          return "<List>(" + std::to_string(val.size()) + ")";
+        }
+
+        else if constexpr (std::is_same_v<T, Lambda>) {
+          if (!showDataTypes)
+            return "<Lambda>";
+          return "<Lambda>: " + std::to_string(val.instance->id);
         }
 
         else if constexpr (std::is_same_v<T, CellPtr>) {
-          return showDataTypes ? "<Address> -> " + val->getCellValue().toString(true) : "<CellRef>";
+          if (!val)
+            return "<CellRef:null>";
+          return showDataTypes ? "<Address> -> " +
+                                     val->getCellValue().toStringImpl(showDataTypes, indentLevel)
+                               : "<CellRef>";
         }
 
         else if constexpr (std::is_same_v<T, GameObjectRef>) {
-          return "<GameObjectRef>";
+          RuntimeValue resolved = val.getter();
+          return resolved.toStringImpl(showDataTypes, indentLevel);
+        }
+
+        else if constexpr (std::is_same_v<T, ObjectRef>) {
+          if (!val)
+            return "<Object:null>";
+
+          std::string out = "\\<color=lightblue\\>{\n";
+
+          for (const auto &[name, field] : val->fields) {
+            out += indent(indentLevel + 1);
+            out += name + " = ";
+            out += field.toStringImpl(showDataTypes, indentLevel + 1);
+            out += "\n";
+          }
+
+          out += indent(indentLevel) + "}\\</color\\>";
+          return out;
         }
 
         else {

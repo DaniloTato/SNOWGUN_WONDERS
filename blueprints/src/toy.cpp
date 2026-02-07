@@ -10,13 +10,14 @@ TangibleObject *toy(const sf::Vector2f &pos) {
 
   const std::string id = "toy";
 
-  RenderizerParameters params{*GameState::getInstance().getMainWindow(),
-                              EnemyManager::getInstance().textureCache.get(id),
-                              {0, 0, 17, 17},
-                              pos,
-                              GameState::getInstance().getMainCamera(),
-                              0.f,
-                              1.f};
+  RenderizerParameters params{
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = EnemyManager::getInstance().textureCache.get(id),
+      .rect = {0, 0, 17, 17},
+      .position = pos,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = 0.f,
+      .parallax = 1.f};
 
   auto *toy = new TangibleObject(
       params, EnemyManager::getInstance().animationCache.get(id));
@@ -26,7 +27,7 @@ TangibleObject *toy(const sf::Vector2f &pos) {
 
   toy->animator.play("walking");
 
-  toy->scripter.addScript(script::enemyPatrol);
+  toy->scripter.addScript("enemyPatrol", script::enemyPatrol);
   toy->direction = -1;
 
   return toy;

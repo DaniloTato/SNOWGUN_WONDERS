@@ -11,13 +11,13 @@ TangibleObject *healthBlueprint(const sf::Vector2f &pos) {
   const std::string id = "health";
 
   RenderizerParameters params{
-      *GameState::getInstance().getMainWindow(),
-      CollectableManager::getInstance().textureCache.get(id),
-      {0, 0, 16, 16},
-      pos,
-      GameState::getInstance().getMainCamera(),
-      0.f,
-      1.f};
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = CollectableManager::getInstance().textureCache.get(id),
+      .rect = {0, 0, 16, 16},
+      .position = pos,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = 0.f,
+      .parallax = 1.f};
 
   auto *hp = new TangibleObject(
       params, CollectableManager::getInstance().animationCache.get(id));
@@ -25,7 +25,7 @@ TangibleObject *healthBlueprint(const sf::Vector2f &pos) {
   hp->collider.setSize({16.f, 16.f});
   hp->animator.play("idle");
 
-  hp->scripter.addScript(script::healthPickup);
+  hp->scripter.addScript("healthPickup", script::healthPickup);
 
   return hp;
 }

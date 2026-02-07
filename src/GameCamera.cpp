@@ -93,3 +93,27 @@ void GameCamera::setImpactZoom(float impactZoom) {
 const sf::Vector2f GameCamera::getDesiredPosition() const {
   return desiredPosition;
 }
+
+GameObjectExposure::Value::Object GameCamera::describe() {
+
+  auto desc = std::make_shared<GameObjectExposure::Descriptor>();
+
+  desc->fields["zoom"] = GameObjectExposure::makeField<float>(
+      [this]() { return getDesiredZoom(); }, [this](float v) { zoomTo(v); });
+
+  desc->fields["scripts"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] { return scripter.describe(); });
+
+  desc->fields["desired_pos"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            return GameObjectExposure::Descriptor::describeVector2f(
+                desiredPosition);
+          });
+
+  auto gameObjectDescriptions = GameObject::describe();
+  desc->fields.merge(gameObjectDescriptions->fields);
+
+  return desc;
+}

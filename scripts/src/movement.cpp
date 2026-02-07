@@ -33,31 +33,8 @@ struct MovementState {
 
 void movement(TangibleObject &tangible, const GeneralContext &ctx) {
 
-  playerDamage(tangible, ctx, 1.f, {5, -3});
-
   if (InputManager::getInstance().isJustPressed("changeGun")) {
     tangible.playSound("doKick");
-  }
-
-  if (PlayerDamageFunctions::isKnocked(tangible) ||
-      GameState::getInstance().getPlayerHealth() <= 0) {
-
-    tangible.physics.updateX(tangible.position);
-    tangible.collider.horizontalLevelCollision(tangible.position);
-
-    tangible.physics.updateY(tangible.position);
-
-    if (tangible.collider.verticalLevelCollision(tangible.position)) {
-      tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
-      if (GameState::getInstance().getPlayerHealth() > 0) {
-        PlayerDamageFunctions::QuitKnockedState(tangible);
-      } else {
-        SceneManager::getInstance().reloadCurrentScene();
-      }
-    }
-
-    tangible.animator.play("damaged_once");
-    return;
   }
 
   auto &state = tangible.scripter.getState<MovementState>("movement");
@@ -92,6 +69,30 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
     tangible.physics.updateY(tangible.position);
 
   } else {
+
+    playerDamage(tangible, ctx, 1.f, {5, -3});
+
+    if (PlayerDamageFunctions::isKnocked(tangible) ||
+        GameState::getInstance().getPlayerHealth() <= 0) {
+
+      tangible.physics.updateX(tangible.position);
+      tangible.collider.horizontalLevelCollision(tangible.position);
+
+      tangible.physics.updateY(tangible.position);
+
+      if (tangible.collider.verticalLevelCollision(tangible.position)) {
+        tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
+        if (GameState::getInstance().getPlayerHealth() > 0) {
+          PlayerDamageFunctions::QuitKnockedState(tangible);
+        } else {
+          SceneManager::getInstance().reloadCurrentScene();
+        }
+      }
+
+      tangible.animator.play("damaged_once");
+      return;
+    }
+
     tangible.physics.turnOffYFriction();
     tangible.physics.gravity = 0.3f;
 

@@ -6,6 +6,7 @@
 namespace ColorPalette {
 
 inline const sf::Color ElectricBlue = sf::Color(0, 0, 252);
+inline const sf::Color LightBlue = sf::Color(60, 188, 252);
 inline const sf::Color LimeGreen = sf::Color(184, 248, 24);
 inline const sf::Color Cyan = sf::Color(0, 252, 252);
 inline const sf::Color HotPink = sf::Color(248, 120, 248);

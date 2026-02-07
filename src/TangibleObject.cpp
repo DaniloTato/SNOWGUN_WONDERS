@@ -32,3 +32,16 @@ bool TangibleObject::isPlayingAnySound() const {
   }
   return false;
 }
+
+GameObjectExposure::Value::Object TangibleObject::describe() {
+  auto desc = std::make_shared<GameObjectExposure::Descriptor>();
+
+  desc->fields["scripts"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] { return scripter.describe(); });
+
+  auto gameObjectDescriptions = GameObject::describe();
+  desc->fields.merge(gameObjectDescriptions->fields);
+
+  return desc;
+}

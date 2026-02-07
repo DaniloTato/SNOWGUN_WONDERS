@@ -5,7 +5,7 @@
 
 unsigned int GameObject::nextId = 0;
 
-GameObject::GameObject(sf::Vector2f pos) : position(pos), exposesId(true) {
+GameObject::GameObject(sf::Vector2f pos) : position(pos) {
   s_gameObjects.push_back(this);
   id = nextId++;
 }
@@ -58,10 +58,6 @@ void GameObject::makePersistentAcrossScenes() { persistentAcrossScenes = true; }
 
 unsigned int GameObject::getId() { return id; }
 
-void GameObject::setExposesId(bool value) { exposesId = value; }
-
-bool GameObject::getExposesId() const { return exposesId; }
-
 void getTerminalObject() {}
 
 GameObjectExposure::Value::Object GameObject::describe() {
@@ -69,28 +65,16 @@ GameObjectExposure::Value::Object GameObject::describe() {
   auto desc = std::make_shared<GameObjectExposure::Descriptor>();
 
   desc->fields["pos"] =
-      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
-          .getValue =
-              [this]() {
-                return GameObjectExposure::Value{
-                    GameObjectExposure::Descriptor::describeVector2f(position)};
-              },
-          .setValue =
-              [](const GameObjectExposure::Value &) {
-                // optional: disallow replacing the whole vector
-              }});
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            return GameObjectExposure::Descriptor::describeVector2f(position);
+          });
 
   desc->fields["offset"] =
-      std::make_shared<GameObjectExposure::Field>(GameObjectExposure::Field{
-          .getValue =
-              [this]() {
-                return GameObjectExposure::Value{
-                    GameObjectExposure::Descriptor::describeVector2f(offset)};
-              },
-          .setValue =
-              [](const GameObjectExposure::Value &) {
-                // optional
-              }});
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            return GameObjectExposure::Descriptor::describeVector2f(offset);
+          });
 
   return desc;
 }

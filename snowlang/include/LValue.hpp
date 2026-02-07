@@ -15,11 +15,11 @@ struct LValue {
 
   Kind kind;
 
-  Location location;
-  ObjectRef object;
-  std::string field;
+  Location location = Location{};
+  ObjectRef object = nullptr;
+  std::string field = "";
 
-  std::unique_ptr<LValue> base;
+  std::unique_ptr<LValue> base = nullptr;
   int index = 0;
 
   void LValueWrite(RuntimeValue value, SnowlangInstance &snowlang);

@@ -12,13 +12,13 @@ TangibleObject *chestBlueprint(const sf::Vector2f &pos) {
   const std::string id = "chest";
 
   RenderizerParameters params{
-      *GameState::getInstance().getMainWindow(),
-      CollectableManager::getInstance().textureCache.get(id),
-      {0, 0, 16, 16},
-      pos,
-      GameState::getInstance().getMainCamera(),
-      0.f,
-      1.f};
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = CollectableManager::getInstance().textureCache.get(id),
+      .rect = {0, 0, 16, 16},
+      .position = pos,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = 0.f,
+      .parallax = 1.f};
 
   auto *chest = new TangibleObject(
       params, CollectableManager::getInstance().animationCache.get(id));
@@ -28,7 +28,7 @@ TangibleObject *chestBlueprint(const sf::Vector2f &pos) {
 
   chest->animator.play("closed");
 
-  chest->scripter.addScript(script::chest);
+  chest->scripter.addScript("chest", script::chest);
 
   return chest;
 }

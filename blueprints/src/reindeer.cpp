@@ -10,13 +10,14 @@ TangibleObject *reindeer(const sf::Vector2f &pos) {
 
   const std::string id = "reindeer";
 
-  RenderizerParameters params{*GameState::getInstance().getMainWindow(),
-                              EnemyManager::getInstance().textureCache.get(id),
-                              {0, 0, 32, 16},
-                              pos,
-                              GameState::getInstance().getMainCamera(),
-                              0.f,
-                              1.f};
+  RenderizerParameters params{
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = EnemyManager::getInstance().textureCache.get(id),
+      .rect{0, 0, 32, 16},
+      .position = pos,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = 0.f,
+      .parallax = 1.f};
 
   auto *heli = new TangibleObject(
       params, EnemyManager::getInstance().animationCache.get(id));
@@ -26,7 +27,7 @@ TangibleObject *reindeer(const sf::Vector2f &pos) {
 
   heli->animator.play("fly");
 
-  heli->scripter.addScript(script::reindeerAI);
+  heli->scripter.addScript("reindeerAI", script::reindeerAI);
 
   return heli;
 }

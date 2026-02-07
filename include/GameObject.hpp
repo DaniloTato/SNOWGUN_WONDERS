@@ -22,9 +22,6 @@ public:
 
   static void destroySceneObjects();
 
-  void setExposesId(bool value);
-  [[nodiscard]] bool getExposesId() const;
-
   sf::Vector2f position;
   sf::Vector2f offset;
 
@@ -35,5 +32,4 @@ protected:
 private:
   unsigned int id;
   static unsigned int nextId;
-  bool exposesId;
 };

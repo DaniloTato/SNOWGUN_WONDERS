@@ -81,7 +81,9 @@ void Renderizer::render(GameObject *obj) {
     sprite.setScale(assignedCamera->getZoom(), assignedCamera->getZoom());
   }
 
-  if (obj->getExposesId()) {
+  window.draw(sprite);
+
+  if (GameState::getInstance().getPrintingObjectIds()) {
     static sf::Font idTextFont;
     static bool fontLoaded;
     if (!fontLoaded) {
@@ -95,8 +97,6 @@ void Renderizer::render(GameObject *obj) {
     idText.setCharacterSize(11);
     window.draw(idText);
   }
-
-  window.draw(sprite);
 }
 
 void Renderizer::renderRectShape(GameObject *obj) {

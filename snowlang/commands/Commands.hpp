@@ -33,5 +33,6 @@ RuntimeValue writeCommand(const CommandContext &ctx);
 RuntimeValue watchCommand(const CommandContext &ctx);
 RuntimeValue taskCommand(const CommandContext &ctx);
 RuntimeValue gameGetCommand(const CommandContext &ctx);
+RuntimeValue findClassCommand(const CommandContext &ctx);
 void DefineCommands(SnowlangInstance &snowlang);
 } // namespace Snowlang::Commands

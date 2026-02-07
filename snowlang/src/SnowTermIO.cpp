@@ -5,9 +5,13 @@ namespace Snowlang {
 
 SnowTermIO::SnowTermIO(Terminal &t) : terminal(t) {}
 
-void SnowTermIO::write(const std::string &text) { terminal.print(text); }
+void SnowTermIO::write(const std::string &text) {
+  terminal.print("\\<color=purple\\>" + text + "\\</color\\>");
+}
 
-void SnowTermIO::writeLn(const std::string &text) { terminal.printLn(text); }
+void SnowTermIO::writeLn(const std::string &text) {
+  terminal.printLn("\\<color=purple\\>" + text + "\\</color\\>");
+}
 
 bool SnowTermIO::hasLine() { return !inputQueue.empty(); }
 

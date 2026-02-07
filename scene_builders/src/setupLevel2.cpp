@@ -26,11 +26,13 @@ void setupLevel2() {
 
   setupCameras(gameState);
   auto mainCam = gameState.getMainCamera();
-  mainCam->scripter.addScript(script::followPlayer);
+  mainCam->scripter.addScript("followPlayer", script::followPlayer);
 
   auto *scriptRunner = new ScriptRunner();
-  scriptRunner->scripter.addScript(script::levelCreatorInputs);
-  scriptRunner->scripter.addScript(script::particleGeneration);
+  scriptRunner->scripter.addScript("levelCreatorInputs",
+                                   script::levelCreatorInputs);
+  scriptRunner->scripter.addScript("particleGeneration",
+                                   script::particleGeneration);
 
   // Todd setup
   static sf::Texture &toddTexture =
@@ -43,7 +45,7 @@ void setupLevel2() {
                                   .layer = 0.f,
                                   .parallax = 1.f};
   auto *todd = new RenderableObject(toddParams);
-  todd->scripter.addScript(script::toddTalk);
+  todd->scripter.addScript("toddTalk", script::toddTalk);
   dialogueManager.assignDialogue(todd, "Greeting");
 
   // Player

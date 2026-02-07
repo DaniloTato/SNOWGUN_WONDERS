@@ -10,13 +10,14 @@ TangibleObject *missileBlueprint(const sf::Vector2f &pos) {
 
   const std::string id = "missile";
 
-  RenderizerParameters params{*GameState::getInstance().getMainWindow(),
-                              EnemyManager::getInstance().textureCache.get(id),
-                              {0, 0, 48, 48},
-                              pos,
-                              GameState::getInstance().getMainCamera(),
-                              -11.f,
-                              1.f};
+  RenderizerParameters params{
+      .window = *GameState::getInstance().getMainWindow(),
+      .texture = EnemyManager::getInstance().textureCache.get(id),
+      .rect = {0, 0, 48, 48},
+      .position = pos,
+      .camera = GameState::getInstance().getMainCamera(),
+      .layer = -11.f,
+      .parallax = 1.f};
 
   auto *missile = new TangibleObject(
       params, EnemyManager::getInstance().animationCache.get(id));
@@ -26,7 +27,7 @@ TangibleObject *missileBlueprint(const sf::Vector2f &pos) {
 
   missile->animator.play("idle");
 
-  missile->scripter.addScript(script::missileAI);
+  missile->scripter.addScript("missileAI", script::missileAI);
   missile->direction = -1;
 
   return missile;

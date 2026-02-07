@@ -5,7 +5,6 @@
 #include "Helpers.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
-#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -276,11 +275,9 @@ void ParticleManager::updateParticles() {
     }
   }
 
-  particles.erase(std::remove_if(particles.begin(), particles.end(),
-                                 [](const Particle &p) {
-                                   return p.lifetime <= 0.f || p.forceDeath;
-                                 }),
-                  particles.end());
+  std::erase_if(particles, [](const Particle &p) {
+    return p.lifetime <= 0.f || p.forceDeath;
+  });
 }
 
 void ParticleManager::updateRenderCommandBuffer() {

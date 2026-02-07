@@ -544,12 +544,19 @@ RuntimeValue Evaluator::evalCommand(const RCommandExpr &cmd, const SourceSpan &s
     args.push_back(evalExpr(arg));
   }
 
+  auto command = tryGetCommandId(cmd.id, span);
+
   std::unordered_map<std::string, RuntimeValue> flagValues;
   for (auto &[name, expr] : cmd.flags) {
+    if (name == "help") {
+      owner->io.writeLn(R"(------------------\<color=white\>\<ln\>)" + command.description +
+                        R"(\<ln\>\</color\>------------------\<ln\>)");
+      return {};
+    }
+
     flagValues[name] = evalExpr(expr);
   }
 
-  auto command = tryGetCommandId(cmd.id, span);
   return command.function(
       Commands::CommandContext{.snowlang = *owner, .cmd = cmd, .args = args, .flags = flagValues});
 }

@@ -33,6 +33,8 @@ public:
 
   void goToDesired();
 
+  GameObjectExposure::Value::Object describe() override;
+
   [[nodiscard]] const sf::Vector2f screenToWorld(const sf::Vector2f &screenPos,
                                                  float parallax) const;
   [[nodiscard]] const sf::Vector2f worldToScreen(const sf::Vector2f &worldPos,

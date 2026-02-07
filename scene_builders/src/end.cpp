@@ -5,6 +5,7 @@
 #include "GameState.hpp"
 #include "LevelManager.hpp"
 #include "ScriptRunner.hpp"
+#include "Scripter.hpp"
 #include "pressStart.hpp"
 #include "sceneHelperFunctions.hpp"
 #include <cstddef>
@@ -35,7 +36,7 @@ void end() {
   LevelManager &levelManager = LevelManager::getInstance();
 
   auto *scriptRunner = new ScriptRunner();
-  scriptRunner->scripter.addScript(script::pressStart);
+  scriptRunner->scripter.addScript("pressStart", script::pressStart);
 
   levelManager.setBackgroundColor(ColorPalette::Black);
 

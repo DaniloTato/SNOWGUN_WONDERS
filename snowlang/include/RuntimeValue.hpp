@@ -49,6 +49,10 @@ struct RuntimeValue {
   [[nodiscard]] bool isRef() const;
   [[nodiscard]] RuntimeValue readRef() const;
   void writeRef(const RuntimeValue &v);
+
+private:
+  [[nodiscard]] std::string toStringImpl(bool showDataTypes, int indent) const;
+  std::string objectToString(const ObjectInstance &obj, bool showDataTypes, int indentLevel);
 };
 
 using ValuePtr = std::shared_ptr<RuntimeValue>;

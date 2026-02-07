@@ -23,74 +23,29 @@ Value::Object Descriptor::describeActiveCameraList() {
   auto desc = std::make_shared<Descriptor>();
 
   desc->fields["main"] = makeConstFieldValue([]() -> Value {
-    return Value{.value =
-                     describeCamera(GameState::getInstance().getMainCamera())};
+    return Value{.value = GameState::getInstance().getMainCamera()->describe()};
   });
 
   desc->fields["ui"] = makeConstFieldValue([]() -> Value {
-    return Value{.value =
-                     describeCamera(GameState::getInstance().getUiCamera())};
+    return Value{.value = GameState::getInstance().getUiCamera()->describe()};
   });
 
   desc->fields["terminal"] = makeConstFieldValue([]() -> Value {
-    return Value{
-        .value = describeCamera(GameState::getInstance().getTerminalCamera())};
+    return Value{.value =
+                     GameState::getInstance().getTerminalCamera()->describe()};
   });
 
   return desc;
 }
 
-Value::Object Descriptor::describeCamera(GameCamera *cam) {
-  static std::unordered_map<GameCamera *, Value::Object> cache;
-
-  if (auto it = cache.find(cam); it != cache.end())
-    return it->second;
-
-  auto desc = std::make_shared<Descriptor>();
-
-  desc->fields["pos"] = makeFieldValue(
-      [cam]() {
-        auto fx = makeConstField<float>(
-            [cam]() { return cam->getDesiredPosition().x; });
-
-        auto fy = makeConstField<float>(
-            [cam]() { return cam->getDesiredPosition().y; });
-
-        std::array<Field::Ptr, 2> fields{fx, fy};
-        return describeRefList(fields);
-      },
-
-      [cam](const Value &v) {
-        auto list = fromValue<Value::List>(v);
-        float index0 = cam->getDesiredPosition().x;
-        if (list.size() >= 1) {
-          index0 = fromValue<float>(list[0]);
-        }
-
-        float index1 = cam->getDesiredPosition().y;
-        if (list.size() >= 2) {
-          index1 = fromValue<float>(list[1]);
-        }
-
-        cam->goTo({index0, index1});
-      });
-
-  desc->fields["zoom"] =
-      makeField<float>([cam]() { return cam->getDesiredZoom(); },
-                       [cam](float v) { cam->zoomTo(v); });
-
-  cache[cam] = desc;
-  return desc;
-}
-
-Value Descriptor::describeRefList(std::span<Field::Ptr> fields) {
+Value::List Descriptor::describeRefList(std::span<Field::Ptr> fields) {
   Value::List list;
 
   for (auto &field : fields) {
     list.push_back(Value{.value = field});
   }
 
-  return Value{.value = list};
+  return list;
 }
 
 } // namespace GameObjectExposure

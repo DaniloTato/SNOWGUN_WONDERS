@@ -27,7 +27,8 @@ GameText::GameText(RenderizerParameters params)
   colorNameMap["black"] = sf::Color::Black;
   colorNameMap["red"] = ColorPalette::MexicanPink;
   colorNameMap["green"] = sf::Color::Green;
-  colorNameMap["blue"] = sf::Color::Blue;
+  colorNameMap["blue"] = ColorPalette::ElectricBlue;
+  colorNameMap["lightblue"] = ColorPalette::LightBlue;
   colorNameMap["yellow"] = ColorPalette::LimeGreen;
   colorNameMap["cyan"] = sf::Color::Cyan;
   colorNameMap["magenta"] = sf::Color::Magenta;

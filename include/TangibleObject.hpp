@@ -28,6 +28,8 @@ public:
   void playSound(const std::string &id, float volume = 100.f);
   bool isPlayingAnySound() const;
 
+  GameObjectExposure::Value::Object describe() override;
+
   std::optional<AttackHitbox> attackHitbox;
   int direction = 1;
   bool makesDamageTroughContact =
