@@ -21,7 +21,7 @@ struct CallFrame {
 
 class Memory {
 private:
-  std::unordered_map<size_t, CellPtr> globalSlots;
+  std::vector<CellPtr> globalSlots;
   std::vector<CallFrame> callStack;
   [[maybe_unused]] SnowlangInstance *owner;
 

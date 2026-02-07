@@ -56,5 +56,6 @@ private:
 };
 
 using ValuePtr = std::shared_ptr<RuntimeValue>;
+using RuntimeValueRef = const RuntimeValue &;
 
 } // namespace Snowlang

@@ -13,11 +13,10 @@ const RuntimeValue &Memory::read(const Location &loc) {
 
   switch (loc.type) {
   case Location::Type::Global: {
-    auto it = globalSlots.find(loc.slot);
-    if (it == globalSlots.end() || !it->second) {
+    if (loc.slot >= globalSlots.size() || !globalSlots[loc.slot]) {
       throw SnowErr::MemoryErr("uninitialized global variable");
     }
-    return it->second->getCellValue();
+    return globalSlots[loc.slot]->getCellValue();
   }
 
   case Location::Type::Local: {
@@ -41,10 +40,15 @@ const RuntimeValue &Memory::read(const Location &loc) {
 void Memory::write(const Location &location, RuntimeValue &value) {
   switch (location.type) {
   case Location::Type::Global: {
+    if (location.slot >= globalSlots.size()) {
+      globalSlots.resize(location.slot + 1);
+    }
+
     auto &slot = globalSlots[location.slot];
     if (!slot) {
       slot = std::make_shared<Cell>();
     }
+
     slot->setCellValue(value);
     break;
   }

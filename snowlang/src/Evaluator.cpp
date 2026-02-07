@@ -152,8 +152,8 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
   // ----------- indexing [] -------
   case ExprKind::Indexing: {
     auto *indexing = static_cast<RIndexExpr *>(expr.get());
-    RuntimeValue base = evalExpr(indexing->base);
-    RuntimeValue index = evalExpr(indexing->index);
+    RuntimeValueRef base = evalExpr(indexing->base);
+    RuntimeValueRef index = evalExpr(indexing->index);
 
     if (!std::holds_alternative<float>(index.data)) {
       throwError(SnowErr::Phase::Evaluator, "index must be a number", indexing->index->span);
@@ -217,11 +217,12 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
     owner->debug.logln("[Evaluator] Call expression");
 
     ObjectRef thisObject = nullptr;
-    RuntimeValue calleeValue;
+    const RuntimeValue *calleeValue;
+    RuntimeValue tempCallee;
 
     if (call->callee->kind == ExprKind::MemberAccess) {
       auto *m = static_cast<RMemberAccessExpr *>(call->callee.get());
-      RuntimeValue base = evalExpr(m->base);
+      RuntimeValueRef base = evalExpr(m->base);
       if (!std::holds_alternative<ObjectRef>(base.data)) {
         throwError(SnowErr::Phase::Evaluator, "method call on non-object", m->span);
       }
@@ -230,18 +231,19 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
       if (it == thisObject->fields.end()) {
         throwError(SnowErr::Phase::Evaluator, "object has no method '" + m->member + "'", m->span);
       }
-      calleeValue = it->second;
+      calleeValue = &it->second;
     } else {
-      calleeValue = evalExpr(call->callee);
+      tempCallee = evalExpr(call->callee);
+      calleeValue = &tempCallee; // NOLINT
     }
 
-    if (!std::holds_alternative<RuntimeValue::Lambda>(calleeValue.data)) {
+    if (!std::holds_alternative<RuntimeValue::Lambda>(calleeValue->data)) {
       throwError(SnowErr::Phase::Evaluator, "attempted to call a non-function value",
                  call->callee->span);
     }
 
-    auto &lambdaVal = std::get<RuntimeValue::Lambda>(calleeValue.data);
-    std::shared_ptr<LambdaInstance> &lambdaInstance = lambdaVal.instance;
+    auto &lambdaVal = std::get<RuntimeValue::Lambda>(calleeValue->data);
+    const std::shared_ptr<LambdaInstance> &lambdaInstance = lambdaVal.instance;
 
     owner->debug.logln("  Calling lambda id=" + std::to_string(lambdaInstance->id));
 
@@ -260,8 +262,8 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
   case ExprKind::Binary: {
     auto *b = static_cast<RBinaryExpr *>(expr.get());
 
-    RuntimeValue lhs = evalExpr(b->left);
-    RuntimeValue rhs = evalExpr(b->right);
+    RuntimeValueRef lhs = evalExpr(b->left);
+    RuntimeValueRef rhs = evalExpr(b->right);
 
     switch (b->op) {
 
@@ -382,7 +384,7 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
   // ---------- member access ----------
   case ExprKind::MemberAccess: {
     auto *m = static_cast<RMemberAccessExpr *>(expr.get());
-    RuntimeValue base = evalExpr(m->base);
+    RuntimeValueRef base = evalExpr(m->base);
 
     if (!std::holds_alternative<ObjectRef>(base.data)) {
       throwError(SnowErr::Phase::Evaluator, "access to non-object", m->span);
@@ -448,7 +450,7 @@ void Evaluator::execStmt(const RStmtPtr &stmt) {
   // ---------- return ----------
   case StmtKind::Return: {
     auto *ret = static_cast<RReturnStmt *>(stmt.get());
-    RuntimeValue retRes = evalExpr(ret->toReturn);
+    RuntimeValueRef retRes = evalExpr(ret->toReturn);
     owner->debug.logln("[Evaluator] throw ReturnSignal with content: ", retRes);
 
     throw ReturnSignal{retRes};
@@ -479,8 +481,7 @@ void Evaluator::execStmt(const RStmtPtr &stmt) {
     auto *whilestmt = static_cast<RWhileStmt *>(stmt.get());
 
     while (true) {
-      RuntimeValue conditionRes;
-      conditionRes = evalExpr(whilestmt->condition);
+      RuntimeValueRef conditionRes = evalExpr(whilestmt->condition);
       bool conditionBool = SnowlangHelper::RuntimeValueTo<bool>(whilestmt->span)(conditionRes);
       ;
 
@@ -501,7 +502,7 @@ void Evaluator::execStmt(const RStmtPtr &stmt) {
   // ---------- if ----------
   case StmtKind::If: {
     auto *ifstmt = static_cast<RIfStmt *>(stmt.get());
-    RuntimeValue conditionRes = evalExpr(ifstmt->condition);
+    RuntimeValueRef conditionRes = evalExpr(ifstmt->condition);
 
     if (!std::holds_alternative<bool>(conditionRes.data)) {
       throwError(SnowErr::Phase::Evaluator, "if condition must evaluate to a boolean",

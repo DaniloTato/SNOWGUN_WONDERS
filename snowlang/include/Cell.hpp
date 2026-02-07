@@ -18,6 +18,7 @@ struct Cell {
 
   void setCellValue(RuntimeValue newValue);
   const RuntimeValue &getCellValue();
+  RuntimeValue &getMutableCellValue();
 
   void notify();
 

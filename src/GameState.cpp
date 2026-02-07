@@ -212,3 +212,7 @@ void GameState::setPrintingObjectIds(bool value) {
 }
 
 bool GameState::getPrintingObjectIds() const { return printingGameObjectIds; }
+
+// void GameState::setFrameRate(int value) { frameRate = value }
+
+// int GameState::getFrameRate() const { return frameRate; }

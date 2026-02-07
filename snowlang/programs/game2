@@ -37,11 +37,11 @@ let screen_canvas = false;
 
 let clearScreen = {
   let y = 0;
-  $screen_canvas = list;
+	let empty_list = list;
+  $screen_canvas = $empty_list;
 
   while ($y < $screen_height) do
-    $screen_canvas = $screen_canvas + 0;
-    $screen_canvas[$y] = list;
+    push $empty_list @screen_canvas;
 
     let x = 0;
     while ($x < $screen_width) do

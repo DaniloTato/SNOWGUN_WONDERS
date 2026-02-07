@@ -10,6 +10,8 @@ void Cell::setCellValue(RuntimeValue newValue) {
 
 const RuntimeValue &Cell::getCellValue() { return value; }
 
+RuntimeValue &Cell::getMutableCellValue() { return value; }
+
 void Cell::notify() {
   for (auto &watcher : watchers) {
     watcher.owner->evaluator.runLambda(watcher.lambda);

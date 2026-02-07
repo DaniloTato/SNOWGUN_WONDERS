@@ -19,6 +19,11 @@ struct WindowCreationRequest {
   std::string name;
 };
 
+struct GameWindow {
+  sf::RenderWindow *window;
+  int frameRate;
+};
+
 class GameState {
 public:
   static GameState &getInstance();
@@ -65,6 +70,9 @@ public:
 
   void setPrintingObjectIds(bool value);
   [[nodiscard]] bool getPrintingObjectIds() const;
+
+  void setFrameRate(WindowTypes type, int value);
+  [[nodiscard]] int getFrameRate(WindowTypes type) const;
 
   GameState(const GameState &) = delete;
   GameState &operator=(const GameState &) = delete;

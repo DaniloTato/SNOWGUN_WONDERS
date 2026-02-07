@@ -100,3 +100,19 @@ Options:
 \<ln\>
 Example:
   find_class "script_runner" --print --max=10
+
+
+
+[push]
+\<color=yellow\>usage: push <value> <@list>\</color\>
+\<ln\>
+\<color=cyan\>Appends a value to the end of a list by reference.\</color\>
+\<ln\>
+Notes:
+  - The second argument must be a reference to a list (use @)
+  - The list is modified in place
+  - Any value type can be pushed
+\<ln\>
+Example:
+  let l = list 1 2 3
+  push 4 @l

@@ -48,6 +48,7 @@ void newCommand(SnowlangInstance &snowlang, const std::string &name, const Comma
 void DefineCommands(Snowlang::SnowlangInstance &snowlang) {
   newCommand(snowlang, "echo", Snowlang::Commands::echoCommand);
   newCommand(snowlang, "list", Snowlang::Commands::listCommand);
+  newCommand(snowlang, "push", Snowlang::Commands::pushCommand);
   newCommand(snowlang, "run", Snowlang::Commands::runCommand);
   newCommand(snowlang, "print", Snowlang::Commands::printCommand);
   newCommand(snowlang, "write", Snowlang::Commands::writeCommand);
