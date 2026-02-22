@@ -1,32 +1,45 @@
 #include "PhysicsComponent.hpp"
+#include "GameState.hpp"
 #include "SFML/System/Vector2.hpp"
 
+#include <iostream>
+
 PhysicsComponent::PhysicsComponent()
-    : gravity(0.3f), friction({0.9f, 0.9f}), hasXFriction(true),
+    : gravity(1100.f), friction({6.f, 6.f}), hasXFriction(true),
       hasYFriction(false) {
   speeds.resize(static_cast<std::size_t>(SpeedType::COUNT));
 }
 
 void PhysicsComponent::updateX(sf::Vector2f &position) {
+  float dt = GameState::getInstance().dt();
+
   for (sf::Vector2f &speed : speeds) {
     if (hasXFriction) {
-      speed.x *= friction.x;
+      speed.x -= speed.x * friction.x * dt;
     }
-    position.x += speed.x;
+
+    position.x += speed.x * dt;
   }
 }
 
 void PhysicsComponent::updateY(sf::Vector2f &position) {
+  float dt = GameState::getInstance().dt();
+
   for (size_t i = 0; i < speeds.size(); i++) {
 
-    if (hasYFriction) {
-      speeds[i].y *= friction.y;
+    if (i == static_cast<int>(SpeedType::MOVEMENT)) {
+      speeds[i].y += gravity * dt;
     }
 
-    if (i == static_cast<int>(SpeedType::MOVEMENT)) {
-      speeds[i].y += gravity;
+    if (hasYFriction) {
+      speeds[i].y -= speeds[i].y * friction.y * dt;
     }
-    position.y += speeds[i].y;
+
+    position.y += speeds[i].y * dt;
+
+    if (dt > 0.1) {
+      std::cout << dt << "\n";
+    }
   }
 }
 
@@ -59,3 +72,24 @@ void PhysicsComponent::setSpdy(float y, SpeedType type) {
 void PhysicsComponent::turnOnYFriction() { hasYFriction = true; }
 
 void PhysicsComponent::turnOffYFriction() { hasYFriction = false; }
+
+GameObjectExposure::Value::Object PhysicsComponent::describe() {
+  auto desc = std::make_shared<GameObjectExposure::Descriptor>();
+
+  desc->fields["spd"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            return GameObjectExposure::Descriptor::describeVector2f(
+                speeds[static_cast<int>(SpeedType::MOVEMENT)]);
+          });
+
+  desc->fields["friction"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            return GameObjectExposure::Descriptor::describeVector2f(friction);
+          });
+
+  desc->fields["gravity"] = GameObjectExposure::makePublicField<float>(gravity);
+
+  return desc;
+}

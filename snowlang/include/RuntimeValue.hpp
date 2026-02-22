@@ -47,8 +47,14 @@ struct RuntimeValue {
 
   [[nodiscard]] std::string toString(bool showDataTypes = false) const;
   [[nodiscard]] bool isRef() const;
+  [[nodiscard]] bool isNull() const;
   [[nodiscard]] RuntimeValue readRef() const;
+
   void writeRef(const RuntimeValue &v);
+
+  template <typename T> [[nodiscard]] bool holds_alternative() const {
+    return std::holds_alternative<T>(data);
+  }
 
 private:
   [[nodiscard]] std::string toStringImpl(bool showDataTypes, int indent) const;

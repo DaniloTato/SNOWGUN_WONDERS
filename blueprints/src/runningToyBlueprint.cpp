@@ -26,7 +26,7 @@ TangibleObject *runningToyBlueprint(const sf::Vector2f &pos) {
 
   toy->animator.play("walking");
 
-  toy->scripter.addScript("runningToy", script::runningToy);
+  toy->scripter.addScript("behaviour", script::runningToy);
 
   toy->makesDamageTroughContact = false;
 

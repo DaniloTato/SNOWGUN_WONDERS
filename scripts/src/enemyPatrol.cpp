@@ -3,6 +3,10 @@
 
 namespace script {
 
+namespace {
+const float ENEMY_SPEED = 55.f;
+}
+
 void enemyPatrol(TangibleObject &tangible, const GeneralContext &ctx) {
 
   script::damageable(tangible, ctx, 10, 0.6f, 0.65f);
@@ -14,7 +18,8 @@ void enemyPatrol(TangibleObject &tangible, const GeneralContext &ctx) {
   }
 
   if (!beingHurt) {
-    tangible.physics.setSpdx(static_cast<float>(tangible.direction),
+    tangible.physics.setSpdx(static_cast<float>(tangible.direction) *
+                                 ENEMY_SPEED,
                              PhysicsComponent::SpeedType::MOVEMENT);
   }
   tangible.physics.updateX(tangible.position);

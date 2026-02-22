@@ -3,9 +3,8 @@
 
 #include "Constants.hpp"
 #include "GameCamera.hpp"
-#include "GameState.hpp"
-#include "InputManager.hpp"
 #include "LevelManager.hpp"
+#include "SceneManager.hpp"
 
 namespace script {
 
@@ -19,15 +18,15 @@ void followPlayer(GameCamera &camera, const GeneralContext &ctx) {
       playerPosition -
       (halfViewSize - LevelManager::getInstance().getCameraPlayerRelation());
 
-  camera.goTo(desiredCamPos);
-
-  if (InputManager::getInstance().isJustPressed("zoomIn")) {
-    GameState::getInstance().getMainCamera()->zoomTo(
-        GameState::getInstance().getMainCamera()->getDesiredZoom() + 1.0f);
-  } else if (InputManager::getInstance().isJustPressed("zoomOut")) {
-    GameState::getInstance().getMainCamera()->zoomTo(
-        GameState::getInstance().getMainCamera()->getDesiredZoom() - 1.0f);
+  if (desiredCamPos.x > 3000 && desiredCamPos.y > 87 * 16) {
+    desiredCamPos.y = 87 * 16;
+    if (playerPosition.y >
+        desiredCamPos.y + Constants::SCREEN_HEIGHT / camera.getZoom()) {
+      SceneManager::getInstance().reloadCurrentScene();
+    }
   }
+
+  camera.goTo(desiredCamPos);
 }
 
 } // namespace script

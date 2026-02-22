@@ -1,0 +1,48 @@
+let tp = (x,y){
+  let p = $state.player;
+  $p.pos.x = $x;
+  $p.physics.spd.x = 0;
+  $p.pos.y = $y;
+  $p.physics.spd.y = 0;
+};
+
+let moon_gravity = {
+  $state.player.physics.gravity = 300;
+};
+
+let jupiter_gravity= {
+  $state.player.physics.gravity = 1700;
+};
+
+let earth_gravity = {
+  $state.player.physics.gravity = 1050;
+};
+
+let step = (n){
+  $state.window.main.paused = false;
+  let id = task --do={$state.window.main.paused = true; task --kill=$id } --every=$n ;
+};
+
+let id = {
+  if($state.print_id) do
+    $state.print_id = false;
+  done else do
+    $state.print_id = true;
+  done;
+};
+
+let posses = (id){
+  let e = game_get $id;
+  $e.scripts.behaviour = false;
+  $state.player.scripts.movement = false;
+  add_script $id "tangible" "move_with_keys" ;
+
+  $state.camera.main.scripts.followplayer = false;
+
+  let cam_id = $state.camera.main.id;
+
+  add_script $cam_id "camera" "follow_id" ;
+
+  $state.window.main.paused = false;
+  let task_id = task --do={share "camera_follow_id" $id; task --killall ;} --every=0.1;
+};

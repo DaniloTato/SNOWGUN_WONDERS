@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObjectExposure.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <vector>
 
@@ -23,6 +24,8 @@ public:
   void turnOffXFriction();
   void turnOnYFriction();
   void turnOffYFriction();
+
+  GameObjectExposure::Value::Object describe();
 
   float gravity;
   sf::Vector2f friction;

@@ -28,7 +28,7 @@ TangibleObject *chestBlueprint(const sf::Vector2f &pos) {
 
   chest->animator.play("closed");
 
-  chest->scripter.addScript("chest", script::chest);
+  chest->scripter.addScript("behaviour", script::chest);
 
   return chest;
 }

@@ -28,7 +28,7 @@ void setupLevel2() {
   auto mainCam = gameState.getMainCamera();
   mainCam->scripter.addScript("followPlayer", script::followPlayer);
 
-  auto *scriptRunner = new ScriptRunner();
+  auto *scriptRunner = new ScriptRunner(GameObject::UniversalDomain());
   scriptRunner->scripter.addScript("levelCreatorInputs",
                                    script::levelCreatorInputs);
   scriptRunner->scripter.addScript("particleGeneration",

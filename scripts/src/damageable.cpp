@@ -11,6 +11,8 @@ namespace script {
 
 namespace {
 const float EXPLOSION_COOLDOWN = 0.1f;
+const float KICK_PUSHBACK_Y = 3.f * 55.f;
+const float KICK_PUSHBACK_X = 5.f * 55.f;
 
 struct DamageState {
   int life;
@@ -143,10 +145,12 @@ void damageable(TangibleObject &tangible, const GeneralContext &ctx,
       state.life -= ctx.player->attackHitbox->damage;
       state.hitTimer = hitDuration;
 
-      tangible.physics.setSpdx(5.f * static_cast<float>(ctx.player->direction),
+      tangible.physics.setSpdx(KICK_PUSHBACK_X *
+                                   static_cast<float>(ctx.player->direction),
                                PhysicsComponent::SpeedType::MOVEMENT);
 
-      tangible.physics.setSpdy(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+      tangible.physics.setSpdy(-KICK_PUSHBACK_Y,
+                               PhysicsComponent::SpeedType::MOVEMENT);
 
       const float playerKickSpeed =
           ctx.player->physics.getSpdx(PhysicsComponent::SpeedType::KICK);

@@ -5,13 +5,20 @@
 #include "SFML/System/Vector2.hpp"
 #include <SFML/Graphics.hpp>
 
+#define ENUM_TO_STR =
+
 GameState::GameState()
     : activeCameras({}),
-      activeWindows({new sf::RenderWindow(
-          sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT),
-          Constants::MAIN_WINDOW_NAME)}),
+      activeWindows(static_cast<size_t>(WindowTypes::COUNT),
+                    GameWindow(nullptr, Constants::FRAME_RATE)),
       checkpoint({-1, -1}), playerHealth(3),
-      selectedWeapon(Bullet::Type::Normal) {}
+      selectedWeapon(Bullet::Type::Normal) {
+
+  activeWindows[static_cast<size_t>(WindowTypes::MAIN)].setWindow(
+      new sf::RenderWindow(
+          sf::VideoMode(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT),
+          Constants::MAIN_WINDOW_NAME));
+}
 
 GameState &GameState::getInstance() {
   static GameState instance;
@@ -20,20 +27,25 @@ GameState &GameState::getInstance() {
 
 void GameState::removeWindow(WindowTypes type) {
   auto index = static_cast<size_t>(type);
-  if (activeWindows.size() > index && activeWindows[index]) {
-    if (activeWindows[index]->isOpen()) {
-      activeWindows[index]->close();
-    }
+  if (activeWindows.size() <= index)
+    return;
 
-    Renderizer::unregisterByWindow(activeWindows[index]);
-    delete activeWindows[index];
-    activeWindows[index] = nullptr;
+  auto &gw = activeWindows[index];
+  if (!gw.getWindow())
+    return;
+
+  if (gw.getWindow()->isOpen()) {
+    gw.getWindow()->close();
   }
+
+  Renderizer::unregisterByWindow(gw.getWindow());
+  delete gw.getWindow();
+  gw.setWindow(nullptr);
 }
 
 void GameState::removeWindow(sf::RenderWindow *reference) {
   for (size_t i = 0; i < activeWindows.size(); ++i) {
-    if (activeWindows[i] == reference) {
+    if (activeWindows[i].getWindow() == reference) {
       removeWindow(static_cast<WindowTypes>(i));
       return;
     }
@@ -52,17 +64,30 @@ GameCamera *GameState::getMainCamera() const {
   return nullptr;
 }
 
-sf::RenderWindow *GameState::getMainWindow() const {
-  if (!activeWindows.empty()) {
-    return activeWindows.front();
+const sf::RenderWindow *GameState::getMainWindow() const {
+  if (activeWindows.empty())
+    return nullptr;
+  return activeWindows.front().getWindow();
+}
+
+sf::RenderWindow *GameState::getMainWindow() {
+  if (activeWindows.empty())
+    return nullptr;
+  return activeWindows.front().getWindow();
+}
+
+const sf::RenderWindow *GameState::getTerminalWindow() const {
+  size_t index = static_cast<size_t>(WindowTypes::TERMINAL);
+  if (activeWindows.size() > index) {
+    return activeWindows[index].getWindow();
   }
   return nullptr;
 }
 
-sf::RenderWindow *GameState::getTerminalWindow() const {
-  size_t terminalWindowIndex = static_cast<int>(WindowTypes::TERMINAL);
-  if (activeWindows.size() >= terminalWindowIndex) {
-    return activeWindows[terminalWindowIndex];
+sf::RenderWindow *GameState::getTerminalWindow() {
+  size_t index = static_cast<size_t>(WindowTypes::TERMINAL);
+  if (activeWindows.size() > index) {
+    return activeWindows[index].getWindow();
   }
   return nullptr;
 }
@@ -81,9 +106,14 @@ float GameState::dt() { return dtValue; }
 
 void GameState::updateDt() {
   auto now = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<float> elapsed = now - lastFrameTime;
+  float elapsed = std::chrono::duration<float>(now - lastFrameTime).count();
   lastFrameTime = now;
-  dtValue = elapsed.count();
+
+  constexpr float MAX_DT = 1.f / 20.f;
+  if (elapsed > MAX_DT)
+    elapsed = MAX_DT;
+
+  dtValue = elapsed;
 }
 
 GameCamera *GameState::getUiCamera() const {
@@ -102,7 +132,8 @@ GameCamera *GameState::getTerminalCamera() const {
   return nullptr;
 }
 
-void GameState::createCamera(CameraTypes type) {
+void GameState::createCamera(CameraTypes type,
+                             GameObject::UpdateDomain updateDomain) {
 
   auto index = static_cast<size_t>(type);
 
@@ -114,7 +145,7 @@ void GameState::createCamera(CameraTypes type) {
     return;
   }
 
-  activeCameras[index] = new GameCamera();
+  activeCameras[index] = new GameCamera(std::move(updateDomain));
 
   if (type == CameraTypes::TERMINAL) {
     activeCameras[index]->makePersistentAcrossScenes();
@@ -123,19 +154,18 @@ void GameState::createCamera(CameraTypes type) {
 
 void GameState::createWindow(WindowTypes type, int width, int height,
                              const std::string &name) {
-
   auto index = static_cast<size_t>(type);
 
-  if (activeWindows.size() < static_cast<int>(WindowTypes::COUNT)) {
-    activeWindows.resize(static_cast<int>(WindowTypes::COUNT));
+  if (activeWindows.size() < static_cast<size_t>(WindowTypes::COUNT)) {
+    activeWindows.resize(static_cast<size_t>(WindowTypes::COUNT),
+                         GameWindow(nullptr, Constants::FRAME_RATE));
   }
 
-  if (activeWindows[index]) {
+  auto &gw = activeWindows[index];
+  if (gw.getWindow())
     return;
-  }
 
-  activeWindows[index] =
-      new sf::RenderWindow(sf::VideoMode(width, height), name);
+  gw.setWindow(new sf::RenderWindow(sf::VideoMode(width, height), name));
 }
 
 int GameState::getCrystalAmount() const { return crystals; }
@@ -164,17 +194,17 @@ bool GameState::hasCheckpoint() const {
   return checkpoint != sf::Vector2f{-1, -1};
 }
 
-const std::vector<sf::RenderWindow *> &GameState::getWindows() const {
+const std::vector<GameWindow> &GameState::getWindows() const {
   return activeWindows;
 }
 
-sf::RenderWindow *GameState::getReferenceByType(WindowTypes type) {
+[[nodiscard]] std::vector<GameWindow> &GameState::getWindows() {
+  return activeWindows;
+}
+
+GameWindow &GameState::getWindowByType(WindowTypes type) {
   auto index = static_cast<size_t>(type);
-  if (activeWindows.size() > index) {
-    return activeWindows[index];
-  } else {
-    return nullptr;
-  }
+  return activeWindows[index];
 }
 
 void GameState::updateGeneralContext(GeneralContext &ctx) {
@@ -196,6 +226,35 @@ void GameState::updateGeneralContext(GeneralContext &ctx) {
             return GameObjectExposure::Descriptor::describeActiveCameraList();
           });
 
+  exposedGameState.fields["window"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] {
+            auto windowsObj =
+                std::make_shared<GameObjectExposure::Descriptor>();
+
+            for (size_t i = 0; i < activeWindows.size(); ++i) {
+              WindowTypes type = static_cast<WindowTypes>(i);
+
+              windowsObj->fields[windowTypeToString(type)] =
+                  GameObjectExposure::makeUnmutableField<
+                      GameObjectExposure::Value::Object>([this, type] {
+                    auto index = static_cast<size_t>(type);
+
+                    if (index >= activeWindows.size())
+                      return GameObjectExposure::Value::Object{};
+
+                    auto &gw = activeWindows[index];
+
+                    if (!gw.getWindow())
+                      return GameObjectExposure::Value::Object{};
+
+                    return gw.describe();
+                  });
+            }
+
+            return windowsObj;
+          });
+
   exposedGameState.fields["print_id"] = GameObjectExposure::makeField<bool>(
       [] { return GameState::getInstance().getPrintingObjectIds(); },
       [](bool v) { GameState::getInstance().setPrintingObjectIds(v); });
@@ -213,6 +272,51 @@ void GameState::setPrintingObjectIds(bool value) {
 
 bool GameState::getPrintingObjectIds() const { return printingGameObjectIds; }
 
-// void GameState::setFrameRate(int value) { frameRate = value }
+void GameState::setFrameRate(WindowTypes type, float value) {
+  auto index = static_cast<size_t>(type);
+  if (activeWindows.size() > index) {
+    if (activeWindows[index].getWindow()) {
+      activeWindows[index].updateFrameRate(value);
+    }
+  }
+}
 
-// int GameState::getFrameRate() const { return frameRate; }
+float GameState::getFrameRate(WindowTypes type) const {
+  auto index = static_cast<size_t>(type);
+  if (activeWindows.size() > index) {
+    return activeWindows[index].getFrameRate();
+  }
+  return 0;
+}
+
+void GameState::pauseWindow(WindowTypes type) {
+  getWindowByType(type).pause();
+  GameState::getInstance().resetDt();
+}
+
+void GameState::resumeWindow(WindowTypes type) {
+  getWindowByType(type).resume();
+  GameState::getInstance().resetDt();
+}
+
+bool GameState::isWindowPaused(WindowTypes type) {
+  return getWindowByType(type).isPaused();
+}
+
+void GameState::resetDt() {
+  lastFrameTime = std::chrono::high_resolution_clock::now();
+  dtValue = 0.f;
+}
+
+WindowTypes GameState::windowPtrToType(const sf::RenderWindow *ptr) const {
+  if (!ptr)
+    return WindowTypes::COUNT;
+
+  for (size_t i = 0; i < activeWindows.size(); ++i) {
+    if (activeWindows[i].getWindow() == ptr) {
+      return static_cast<WindowTypes>(i);
+    }
+  }
+
+  return WindowTypes::COUNT;
+}

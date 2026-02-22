@@ -56,6 +56,10 @@ template <> inline Value toValue<int>(int v) {
   return Value{static_cast<float>(v)};
 }
 
+template <> inline Value toValue<unsigned int>(unsigned int v) {
+  return Value{static_cast<float>(v)};
+}
+
 template <> inline Value toValue<std::string>(std::string v) {
   return Value{std::move(v)};
 }
@@ -72,6 +76,14 @@ template <typename T> inline T fromValue(const Value &v) {
 template <> inline int fromValue<int>(const Value &v) {
   if (auto f = std::get_if<float>(&v.value)) {
     return static_cast<int>(*f);
+  }
+
+  throw std::runtime_error("Type mismatch in fromValue<int>: expected float");
+}
+
+template <> inline unsigned int fromValue<unsigned int>(const Value &v) {
+  if (auto f = std::get_if<float>(&v.value)) {
+    return static_cast<unsigned int>(*f);
   }
 
   throw std::runtime_error("Type mismatch in fromValue<int>: expected float");

@@ -200,12 +200,12 @@ RStmtPtr Resolver::resolveStmt(const StmtPtr &stmt) {
   }
 
   //----------- break ----------
-  if (auto breakstmt = dynamic_cast<BreakStmt *>(stmt.get())) {
+  if (dynamic_cast<BreakStmt *>(stmt.get())) {
     return std::make_shared<RBreakStmt>();
   }
 
   //----------- continue ----------
-  if (auto breakstmt = dynamic_cast<ContinueStmt *>(stmt.get())) {
+  if (dynamic_cast<ContinueStmt *>(stmt.get())) {
     return std::make_shared<RContinueStmt>();
   }
 
@@ -387,13 +387,18 @@ RExprPtr Resolver::resolveExpr(const ExprPtr &expr) {
   }
 
   //-----This-----
-  if (auto t = dynamic_cast<ThisExpr *>(expr.get())) {
+  if (dynamic_cast<ThisExpr *>(expr.get())) {
     return std::make_shared<RThisExpr>();
   }
 
   //-----Bool----
   if (auto b = dynamic_cast<BoolExpr *>(expr.get())) {
     return std::make_shared<RBoolExpr>(b->val);
+  }
+
+  //-----NULL----
+  if (dynamic_cast<NullExpr *>(expr.get())) {
+    return std::make_shared<RNullExpr>();
   }
 
   throwError(SnowErr::Phase::Resolver, "unsupported expression", expr->span);

@@ -27,7 +27,7 @@ TangibleObject *reindeer(const sf::Vector2f &pos) {
 
   heli->animator.play("fly");
 
-  heli->scripter.addScript("reindeerAI", script::reindeerAI);
+  heli->scripter.addScript("behaviour", script::reindeerAI);
 
   return heli;
 }

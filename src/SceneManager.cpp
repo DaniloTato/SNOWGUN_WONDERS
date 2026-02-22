@@ -19,10 +19,18 @@ void SceneManager::registerScene(const std::string &name,
   scenes[name] = setup;
 }
 
-void SceneManager::loadScene(const std::string &name) {
-  if (transitioning)
-    return;
+bool SceneManager::loadScene(const std::string &name) {
+  if (transitioning) {
+    return true;
+  }
+
+  if (scenes.find(name) == scenes.end()) {
+    return false;
+  }
+
   beginTransition(name);
+
+  return true;
 }
 
 void SceneManager::reloadCurrentScene() { loadScene(currentScene); }
@@ -105,4 +113,15 @@ void SceneManager::initFadeOverlay() {
   fadeOverlay = new RenderableObject(params);
   fadeOverlay->makePersistentAcrossScenes();
   fadeOverlay->renderizer.setColor(sf::Color(0, 0, 0, 0));
+}
+
+SceneManager::SceneNameList SceneManager::getRegisteredScenes() const {
+  SceneNameList result;
+  result.reserve(scenes.size());
+
+  for (const auto &[name, _] : scenes) {
+    result.push_back(name);
+  }
+
+  return result;
 }

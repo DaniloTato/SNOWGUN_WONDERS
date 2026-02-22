@@ -25,7 +25,7 @@ TangibleObject *healthBlueprint(const sf::Vector2f &pos) {
   hp->collider.setSize({16.f, 16.f});
   hp->animator.play("idle");
 
-  hp->scripter.addScript("healthPickup", script::healthPickup);
+  hp->scripter.addScript("behaviour", script::healthPickup);
 
   return hp;
 }

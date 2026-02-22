@@ -282,7 +282,7 @@ ExprPtr Parser::parseCommandExpr() {
 
       auto eq = raw.find('=');
       if (eq == std::string::npos) {
-        flags[raw] = std::make_shared<BoolExpr>(true);
+        flags[raw] = std::make_shared<NullExpr>();
       } else {
         std::string key = raw.substr(0, eq);
         std::string value = raw.substr(eq + 1);

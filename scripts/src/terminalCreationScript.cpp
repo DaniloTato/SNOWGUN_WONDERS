@@ -13,8 +13,9 @@ void terminalCreationScript(ScriptRunner &renderable,
 
   if (InputManager::getInstance().isJustPressed("terminal")) {
     if (!s_terminal) {
-      GameState::getInstance().createCamera(CameraTypes::TERMINAL);
-      GameState::getInstance().createWindow(WindowTypes::TERMINAL, 900, 400,
+      GameState::getInstance().createCamera(CameraTypes::TERMINAL,
+                                            {WindowTypes::TERMINAL});
+      GameState::getInstance().createWindow(WindowTypes::TERMINAL, 900, 600,
                                             "Snowgun Terminal");
       s_terminal = new Terminal(GameState::getInstance().getTerminalWindow(),
                                 GameState::getInstance().getTerminalCamera());

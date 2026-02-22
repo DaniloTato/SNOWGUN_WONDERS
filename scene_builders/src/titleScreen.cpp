@@ -32,7 +32,7 @@ void titleScreen() {
 
   LevelManager &levelManager = LevelManager::getInstance();
 
-  auto *scriptRunner = new ScriptRunner();
+  auto *scriptRunner = new ScriptRunner(GameObject::UniversalDomain());
   scriptRunner->scripter.addScript("pressStart", script::pressStart);
 
   levelManager.setBackgroundColor(ColorPalette::ElectricBlue);
@@ -64,7 +64,8 @@ void titleScreen() {
       std::to_string(Constants::SCREEN_WIDTH / 3) +
       "\n"
       "#alignment center\n" +
-      "SNOWGUN\n<color=purple><anim=sin>WONDERS</anim></color>\n";
+      "SNOWGUN\n" +
+      R"(\<color=purple\>\<anim=sin\>WONDERS\</anim\>\</color\>)" + "\n";
 
   title->loadFromMarkup(markupLife);
 
@@ -76,7 +77,7 @@ void titleScreen() {
       "\n"
       "#alignment center\n" +
       "#effect typewriter 0.2\n" +
-      "<color=yellow><anim=shake:1>-PRESS ENTER TO START-</anim><color=purple>";
+      R"(\<color=yellow\>\<anim=shake:1\>-PRESS ENTER TO START-\</anim\>\<color=purple\>)";
 
   enter->loadFromMarkup(markupEnter);
 

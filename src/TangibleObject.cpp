@@ -3,9 +3,13 @@
 #include "SoundManager.hpp"
 #include <SFML/Audio.hpp>
 
+#include "GameState.hpp"
+
 TangibleObject::TangibleObject(RenderizerParameters params,
                                Animations cachedAnimations)
-    : GameObject(params.position), renderizer(params) {
+    : GameObject({GameState::getInstance().windowPtrToType(&params.window)},
+                 params.position),
+      renderizer(params) {
   animator.setAnimations(cachedAnimations);
   Renderizer::registerPair(this, &renderizer, params.registerAsRectShape);
 }
@@ -39,6 +43,10 @@ GameObjectExposure::Value::Object TangibleObject::describe() {
   desc->fields["scripts"] =
       GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
           [this] { return scripter.describe(); });
+
+  desc->fields["physics"] =
+      GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
+          [this] { return physics.describe(); });
 
   auto gameObjectDescriptions = GameObject::describe();
   desc->fields.merge(gameObjectDescriptions->fields);

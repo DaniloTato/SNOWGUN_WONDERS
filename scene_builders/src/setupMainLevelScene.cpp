@@ -25,7 +25,7 @@ void setupMainLevelScene() {
   auto mainCam = gameState.getMainCamera();
   mainCam->scripter.addScript("roomCamera", script::roomCamera);
 
-  auto *scriptRunner = new ScriptRunner();
+  auto *scriptRunner = new ScriptRunner(GameObject::UniversalDomain());
   scriptRunner->scripter.addScript("levelCreatorInputs",
                                    script::levelCreatorInputs);
 

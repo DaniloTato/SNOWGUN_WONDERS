@@ -106,6 +106,8 @@ std::string RuntimeValue::toStringImpl(bool showDataTypes, int indentLevel) cons
 
 bool RuntimeValue::isRef() const { return std::holds_alternative<GameObjectRef>(data); }
 
+bool RuntimeValue::isNull() const { return std::holds_alternative<Null>(data); }
+
 RuntimeValue RuntimeValue::readRef() const {
   if (auto *ref = std::get_if<GameObjectRef>(&data))
     return ref->getter();

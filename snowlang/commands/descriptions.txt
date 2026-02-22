@@ -116,3 +116,79 @@ Notes:
 Example:
   let l = list 1 2 3
   push 4 @l
+
+
+
+[scene]
+<color=yellow>usage: scene <scene_name> | scene --reload</color>
+<ln>
+<color=cyan>Loads a new scene or reloads the current one.</color>
+<ln>
+Arguments:
+  <scene_name>        Name of a registered scene to load
+<ln>
+Options:
+  --reload            Reload the currently active scene
+<ln>
+Notes:
+  - Scene names must be registered before use
+  - If a scene does not exist, the command returns false
+  - Scene transitions respect the current transition state
+<ln>
+Example:
+  scene "tutorial"
+  scene "level2"
+  scene --reload
+
+
+
+[share]
+\<color=yellow\>usage: share <field_name> <value>\</color\>
+\<ln\>
+\<color=cyan\>Writes a value into shared memory.\</color\>
+\<ln\>
+Arguments:
+  <field_name>        Name of the shared field (string)
+  <value>             Runtime value to store
+\<ln\>
+Notes:
+  - The field must already exist in shared memory
+  - Overwrites the current value stored in the field
+  - Returns true on success
+  - Raises an error if the field does not exist
+\<ln\>
+Example:
+  share "score" 150
+  share "player_name" "Alice"
+
+
+
+
+[tile]
+\<color=yellow\>usage: tile --at=<list[x,y]> [--rect=<list[x,y]>] [--layer=<number>] [--destroy]\</color\>
+\<ln\>
+\<color=cyan\>Creates or destroys a tile in the level grid.\</color\>
+\<ln\>
+Required flags:
+  --at                List containing tile position [x, y]
+\<ln\>
+Optional flags:
+  --rect              Texture rectangle offset [x, y] (default: [0, 0])
+  --layer             Tile layer index (default: 0)
+  --destroy           Deletes the tile instead of creating one
+\<ln\>
+Behavior:
+  - If --destroy is present, the tile at the given position and layer is removed
+  - Otherwise, a tile is created using the specified texture rectangle
+  - Rectangle width and height use the engine's TILE_SIZE constant
+\<ln\>
+Notes:
+  - Positions and rectangle values must be numeric
+  - Layer is converted to an integer internally
+  - Returns true after queuing the operation
+\<ln\>
+Examples:
+  tile --at=(list 5 3)
+  tile --at=(list 10 4) --rect=(list 32 0)
+  tile --at=(list 8 2) --layer=1
+  tile --at=(list 8 2) --layer=1 --destroy

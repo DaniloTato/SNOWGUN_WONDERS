@@ -35,7 +35,7 @@ void hills() {
   ParticleManager &particleManager = ParticleManager::getInstance();
   mainCam->scripter.addScript("followPlayer", script::followPlayer);
 
-  auto *scriptRunner = new ScriptRunner();
+  auto *scriptRunner = new ScriptRunner(GameObject::UniversalDomain());
   scriptRunner->scripter.addScript("levelCreatorInputs",
                                    script::levelCreatorInputs);
   scriptRunner->scripter.addScript("lifeCounterScript",

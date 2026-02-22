@@ -8,6 +8,8 @@
 
 #include <filesystem>
 
+#include "GameState.hpp"
+
 namespace Helper {
 
 struct TriggerOnce {
@@ -16,6 +18,20 @@ struct TriggerOnce {
   template <typename Fn> void check(bool condition, Fn &&fn) {
     if (condition && !fired) {
       fired = true;
+      fn();
+    }
+  }
+};
+
+class DoEvery {
+private:
+  float counter = 0;
+
+public:
+  template <typename Fn> void operator()(float seconds, Fn &&fn) {
+    counter += GameState::getInstance().dt();
+    if (counter >= seconds) {
+      counter = 0;
       fn();
     }
   }
@@ -32,5 +48,6 @@ sf::FloatRect makeRectFromPoints(float x1, float y1, float x2, float y2);
 std::filesystem::path getExecutableDir();
 std::string getPath(const std::string &relativePath);
 float randRange(float min, float max);
+std::optional<WindowTypes> windowPtrToType(const sf::RenderWindow *ptr);
 
 } // namespace Helper

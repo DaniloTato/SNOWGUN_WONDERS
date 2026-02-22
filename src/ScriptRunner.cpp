@@ -1,7 +1,8 @@
 #include "ScriptRunner.hpp"
 #include "Scripter.hpp"
 
-ScriptRunner::ScriptRunner() : GameObject() {}
+ScriptRunner::ScriptRunner(GameObject::UpdateDomain updateDomain)
+    : GameObject(std::move(updateDomain)) {}
 
 void ScriptRunner::update(const GeneralContext &ctx) {
   scripter.runScripts(*this, ctx);

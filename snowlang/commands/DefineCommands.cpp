@@ -56,6 +56,10 @@ void DefineCommands(Snowlang::SnowlangInstance &snowlang) {
   newCommand(snowlang, "task", Snowlang::Commands::taskCommand);
   newCommand(snowlang, "game_get", Snowlang::Commands::gameGetCommand);
   newCommand(snowlang, "find_class", Snowlang::Commands::findClassCommand);
+  newCommand(snowlang, "scene", Snowlang::Commands::sceneCommand);
+  newCommand(snowlang, "add_script", Snowlang::Commands::addScriptCommand);
+  newCommand(snowlang, "share", Snowlang::Commands::shareCommand);
+  newCommand(snowlang, "tile", Snowlang::Commands::tileCommand);
 }
 
 } // namespace Snowlang::Commands

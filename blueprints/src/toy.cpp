@@ -27,7 +27,7 @@ TangibleObject *toy(const sf::Vector2f &pos) {
 
   toy->animator.play("walking");
 
-  toy->scripter.addScript("enemyPatrol", script::enemyPatrol);
+  toy->scripter.addScript("behaviour", script::enemyPatrol);
   toy->direction = -1;
 
   return toy;

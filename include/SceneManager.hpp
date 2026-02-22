@@ -9,15 +9,18 @@
 class SceneManager {
 public:
   using SceneSetupFn = std::function<void()>;
+  using SceneNameList = std::vector<std::string>;
 
   static SceneManager &getInstance();
 
   void registerScene(const std::string &name, const SceneSetupFn &setup);
-  void loadScene(const std::string &name);
+  bool loadScene(const std::string &name);
   void reloadCurrentScene();
   bool isTransitioning();
 
   void update();
+
+  [[nodiscard]] SceneNameList getRegisteredScenes() const;
 
 private:
   SceneManager() = default;

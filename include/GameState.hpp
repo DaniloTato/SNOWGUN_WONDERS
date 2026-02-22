@@ -6,11 +6,11 @@
 #include "GeneralContext.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "WindowTypes.hpp"
 #include <chrono>
 #include <vector>
 
 enum class CameraTypes : std::uint8_t { MAIN, UI, TERMINAL, COUNT };
-enum class WindowTypes : std::uint8_t { MAIN, TERMINAL, COUNT };
 
 struct WindowCreationRequest {
   WindowTypes type;
@@ -20,31 +20,89 @@ struct WindowCreationRequest {
 };
 
 struct GameWindow {
+
+  [[nodiscard]] GameObjectExposure::Value::Object describe() {
+    auto desc = std::make_shared<GameObjectExposure::Descriptor>();
+
+    desc->fields["fps"] = GameObjectExposure::makeField<float>(
+        [this] { return getFrameRate(); },
+        [this](float v) { updateFrameRate(v); });
+
+    desc->fields["paused"] = GameObjectExposure::makePublicField<bool>(paused);
+
+    return desc;
+  }
+
+  GameWindow() = default;
+
+  GameWindow(sf::RenderWindow *window, float frameRate)
+      : window(window), frameRate(frameRate) {
+    if (window) {
+      window->setFramerateLimit(0); // Run as fast as it can
+      window->setVerticalSyncEnabled(false);
+    }
+  }
+
+  bool renderFlag() {
+    if (frameRate <= 0)
+      return true;
+    float target = 1.f / frameRate;
+    return clock.getElapsedTime().asSeconds() >= target;
+  }
+
+  void markAsRendered() { clock.restart(); }
+
+  void setWindow(sf::RenderWindow *newWindow) {
+    window = newWindow;
+    updateFrameRate(frameRate);
+  }
+  [[nodiscard]] sf::RenderWindow *getWindow() { return window; }
+  [[nodiscard]] const sf::RenderWindow *getWindow() const { return window; }
+
+  [[nodiscard]] float getFrameRate() const { return frameRate; }
+
+  void updateFrameRate(float newFrameRate) { frameRate = newFrameRate; }
+
+  void pause() { paused = true; }
+
+  void resume() { paused = false; }
+
+  [[nodiscard]] bool isPaused() const { return paused; }
+
+private:
   sf::RenderWindow *window;
-  int frameRate;
+  sf::Clock clock;
+  float frameRate;
+  bool paused = false;
 };
 
 class GameState {
 public:
   static GameState &getInstance();
 
-  void createCamera(CameraTypes type);
+  void createCamera(CameraTypes type, GameObject::UpdateDomain updateDomain);
 
   void removeWindow(WindowTypes type);
   void removeWindow(sf::RenderWindow *reference);
   void createWindow(WindowTypes type, int width, int height,
                     const std::string &name);
 
-  sf::RenderWindow *getReferenceByType(WindowTypes type);
+  GameWindow &getWindowByType(WindowTypes type);
 
-  [[nodiscard]] const std::vector<sf::RenderWindow *> &getWindows() const;
+  [[nodiscard]] const std::vector<GameWindow> &getWindows() const;
+  [[nodiscard]] std::vector<GameWindow> &getWindows();
 
   [[nodiscard]] const std::vector<GameCamera *> &getActiveCameras() const;
   [[nodiscard]] GameCamera *getMainCamera() const;
   [[nodiscard]] GameCamera *getUiCamera() const;
   [[nodiscard]] GameCamera *getTerminalCamera() const;
-  [[nodiscard]] sf::RenderWindow *getMainWindow() const;
-  [[nodiscard]] sf::RenderWindow *getTerminalWindow() const;
+  [[nodiscard]] const sf::RenderWindow *getMainWindow() const;
+  [[nodiscard]] sf::RenderWindow *getMainWindow();
+  [[nodiscard]] const sf::RenderWindow *getTerminalWindow() const;
+  [[nodiscard]] sf::RenderWindow *getTerminalWindow();
+
+  WindowTypes windowPtrToType(const sf::RenderWindow *ptr) const;
+
   void clearCameras();
   float dt();
   void updateDt();
@@ -71,8 +129,13 @@ public:
   void setPrintingObjectIds(bool value);
   [[nodiscard]] bool getPrintingObjectIds() const;
 
-  void setFrameRate(WindowTypes type, int value);
-  [[nodiscard]] int getFrameRate(WindowTypes type) const;
+  void setFrameRate(WindowTypes type, float value);
+  [[nodiscard]] float getFrameRate(WindowTypes type) const;
+
+  void pauseWindow(WindowTypes type);
+  void resumeWindow(WindowTypes type);
+  [[nodiscard]] bool isWindowPaused(WindowTypes type);
+  void resetDt();
 
   GameState(const GameState &) = delete;
   GameState &operator=(const GameState &) = delete;
@@ -83,8 +146,22 @@ public:
 private:
   GameState();
 
+  constexpr std::string windowTypeToString(WindowTypes type) {
+    using enum WindowTypes;
+    switch (type) {
+    case MAIN:
+      return "main";
+    case TERMINAL:
+      return "terminal";
+    case COUNT:
+      return "count";
+    }
+    return "unknown";
+  }
+
+private:
   std::vector<GameCamera *> activeCameras;
-  std::vector<sf::RenderWindow *> activeWindows;
+  std::vector<GameWindow> activeWindows;
 
   std::chrono::high_resolution_clock::time_point lastFrameTime =
       std::chrono::high_resolution_clock::now();

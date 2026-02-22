@@ -9,17 +9,25 @@
 
 namespace script {
 
+namespace {
+struct ParticleGenerationState {
+  bool prewarmed = false;
+  Helper::DoEvery generateSnowEvery;
+};
+} // namespace
+
 void particleGeneration(ScriptRunner &runner, const GeneralContext &ctx) {
 
   // Particles are not game objects. Hence, they do not need to be queued to be
   // destroyed.
 
-  static bool prewarmed = false;
+  auto &state =
+      runner.scripter.getState<ParticleGenerationState>("particleGeneration");
 
   const float snowSpawnRange = 7.f;
   auto *camera = GameState::getInstance().getMainCamera();
-  if (!prewarmed) {
-    for (int i = 0; i < 1200; i++) {
+  if (!state.prewarmed) {
+    for (int i = 0; i < 5000; i++) {
       sf::Vector2f worldPos = camera->screenToWorld(
           {static_cast<float>(Helper::randRange(
                -Constants::SCREEN_WIDTH * snowSpawnRange * 0.5f,
@@ -34,11 +42,11 @@ void particleGeneration(ScriptRunner &runner, const GeneralContext &ctx) {
       }
     }
 
-    prewarmed = true;
+    state.prewarmed = true;
     return;
   }
 
-  for (int i = 0; i < 3; i++) {
+  state.generateSnowEvery(1 / 360.f, [camera, snowSpawnRange] {
     sf::Vector2f inGamePosition = camera->screenToWorld(
         {static_cast<float>(Helper::randRange(
              -Constants::SCREEN_WIDTH * snowSpawnRange * 0.5f,
@@ -46,10 +54,9 @@ void particleGeneration(ScriptRunner &runner, const GeneralContext &ctx) {
          -50.f},
         1.f);
 
-    if (inGamePosition.x > 370 * 16)
-      continue;
-
-    ParticleManager::getInstance().emitSnow(inGamePosition);
-  }
+    if (inGamePosition.x < 370 * 16) {
+      ParticleManager::getInstance().emitSnow(inGamePosition);
+    }
+  });
 }
 } // namespace script

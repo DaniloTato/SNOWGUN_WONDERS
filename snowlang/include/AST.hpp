@@ -120,6 +120,10 @@ struct BoolExpr : Expr {
   explicit BoolExpr(bool val) : val(val) {}
 };
 
+struct NullExpr : Expr {
+  explicit NullExpr() = default;
+};
+
 struct ExprStmt : Stmt {
   ExprPtr expr;
   explicit ExprStmt(ExprPtr e) : expr(std::move(e)) {}

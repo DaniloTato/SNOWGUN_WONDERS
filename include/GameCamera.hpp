@@ -9,7 +9,7 @@ struct GeneralContext;
 
 class GameCamera : public GameObject {
 public:
-  GameCamera();
+  GameCamera(UpdateDomain updateDomain);
 
   [[nodiscard]] const sf::Vector2f &getPosition() const;
 

@@ -17,7 +17,7 @@ struct CommandContext {
 
   template <typename T> T getFlag(const std::string &name, const T &defaultValue) const {
     auto it = flags.find(name);
-    if (it == flags.end()) {
+    if (it == flags.end() || it->second.isNull()) {
       return defaultValue;
     }
 
@@ -35,5 +35,9 @@ RuntimeValue taskCommand(const CommandContext &ctx);
 RuntimeValue gameGetCommand(const CommandContext &ctx);
 RuntimeValue findClassCommand(const CommandContext &ctx);
 RuntimeValue pushCommand(const CommandContext &ctx);
+RuntimeValue sceneCommand(const CommandContext &ctx);
+RuntimeValue addScriptCommand(const CommandContext &ctx);
+RuntimeValue shareCommand(const CommandContext &ctx);
+RuntimeValue tileCommand(const CommandContext &ctx);
 void DefineCommands(SnowlangInstance &snowlang);
 } // namespace Snowlang::Commands

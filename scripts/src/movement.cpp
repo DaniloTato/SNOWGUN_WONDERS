@@ -3,6 +3,7 @@
 #include "BasicCollider.hpp"
 #include "BulletManager.hpp"
 #include "GameState.hpp"
+#include "Helpers.hpp"
 #include "InputManager.hpp"
 #include "PhysicsComponent.hpp"
 #include "SceneManager.hpp"
@@ -14,20 +15,27 @@ namespace script {
 namespace {
 const float MAX_MOVEMENT_LOCK = 0.1;
 
-const float KICK_JUMP_HEIGHT = -3.f;
-const float KICK_JUMP_X_SPEED = 4.f;
+const float KICK_JUMP_HEIGHT = -3.f * 60.f;
+const float KICK_JUMP_X_SPEED = 4 * 50.f;
 const float KICK_DURATION = 0.18f;
 const int KICK_DAMAGE = 4;
 
 const int SPRITE_DIRECTION_OFFSET = 8.f;
 
+const float PLAYER_SPEED = 3.f * 50.f;
+const float PLAYER_JUMP_SPEED = 5.f * 60.f;
+const float GRAVITY = 0.3f * 3500.f;
+const sf::Vector2f PLAYER_KNOCK_SPEED = {5 * 55.f, -3 * 55.f};
+
 struct MovementState {
   float movementLock = 0;
-  int timeInAir = 0;
+  float secondsInAir = 0;
 
   bool kicking = false;
   bool godMode = false;
   float kickTimer = 0.f;
+
+  Helper::TriggerOnce firstFrame;
 };
 } // namespace
 
@@ -38,6 +46,9 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
   }
 
   auto &state = tangible.scripter.getState<MovementState>("movement");
+
+  state.firstFrame.check(true,
+                         [&tangible] { tangible.physics.gravity = GRAVITY; });
 
   std::string desiredAnimation = "idle";
 
@@ -50,27 +61,30 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
 
   if (state.godMode) {
     tangible.physics.turnOnYFriction();
-    tangible.physics.gravity = 0.f;
 
     if (InputManager::getInstance().isPressed("left")) {
-      tangible.physics.setSpdx(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+      tangible.physics.setSpdx(-PLAYER_SPEED,
+                               PhysicsComponent::SpeedType::MOVEMENT);
     } else if (InputManager::getInstance().isPressed("right")) {
-      tangible.physics.setSpdx(3.f, PhysicsComponent::SpeedType::MOVEMENT);
+      tangible.physics.setSpdx(PLAYER_SPEED,
+                               PhysicsComponent::SpeedType::MOVEMENT);
     }
 
     tangible.physics.updateX(tangible.position);
 
     if (InputManager::getInstance().isPressed("up")) {
-      tangible.physics.setSpdy(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+      tangible.physics.setSpdy(-PLAYER_SPEED,
+                               PhysicsComponent::SpeedType::MOVEMENT);
     } else if (InputManager::getInstance().isPressed("down")) {
-      tangible.physics.setSpdy(3.f, PhysicsComponent::SpeedType::MOVEMENT);
+      tangible.physics.setSpdy(PLAYER_SPEED,
+                               PhysicsComponent::SpeedType::MOVEMENT);
     }
 
     tangible.physics.updateY(tangible.position);
 
   } else {
 
-    playerDamage(tangible, ctx, 1.f, {5, -3});
+    playerDamage(tangible, ctx, 1.f, PLAYER_KNOCK_SPEED);
 
     if (PlayerDamageFunctions::isKnocked(tangible) ||
         GameState::getInstance().getPlayerHealth() <= 0) {
@@ -94,24 +108,27 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
     }
 
     tangible.physics.turnOffYFriction();
-    tangible.physics.gravity = 0.3f;
 
     if (InputManager::getInstance().isPressed("left")) {
       tangible.direction = -1;
 
       if (state.movementLock <= 0) {
-        tangible.physics.setSpdx(-3.f, PhysicsComponent::SpeedType::MOVEMENT);
+        tangible.physics.setSpdx(-PLAYER_SPEED,
+                                 PhysicsComponent::SpeedType::MOVEMENT);
       } else {
-        tangible.physics.setSpdx(-1.f, PhysicsComponent::SpeedType::MOVEMENT);
+        tangible.physics.setSpdx(-(PLAYER_SPEED / 3.f),
+                                 PhysicsComponent::SpeedType::MOVEMENT);
       }
       desiredAnimation = "walk";
     } else if (InputManager::getInstance().isPressed("right")) {
       tangible.direction = 1;
 
       if (state.movementLock <= 0) {
-        tangible.physics.setSpdx(3.f, PhysicsComponent::SpeedType::MOVEMENT);
+        tangible.physics.setSpdx(PLAYER_SPEED,
+                                 PhysicsComponent::SpeedType::MOVEMENT);
       } else {
-        tangible.physics.setSpdx(1.f, PhysicsComponent::SpeedType::MOVEMENT);
+        tangible.physics.setSpdx(PLAYER_SPEED / 3.f,
+                                 PhysicsComponent::SpeedType::MOVEMENT);
       }
       desiredAnimation = "walk";
     }
@@ -120,19 +137,20 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
     tangible.collider.horizontalLevelCollision(tangible.position);
 
     if (InputManager::getInstance().isJustPressed("jump") &&
-        state.timeInAir == 0) {
-      tangible.physics.setSpdy(-5.f, PhysicsComponent::SpeedType::MOVEMENT);
+        state.secondsInAir == 0) {
+      tangible.physics.setSpdy(-PLAYER_JUMP_SPEED,
+                               PhysicsComponent::SpeedType::MOVEMENT);
     }
 
     tangible.physics.updateY(tangible.position);
     if (tangible.collider.verticalLevelCollision(tangible.position)) {
       tangible.physics.setSpdy(0.f, PhysicsComponent::SpeedType::MOVEMENT);
-      state.timeInAir = 0;
+      state.secondsInAir = 0;
     } else {
-      state.timeInAir++;
+      state.secondsInAir += GameState::getInstance().dt();
     }
 
-    if (state.timeInAir > 0) {
+    if (state.secondsInAir > 0) {
       desiredAnimation = "jump_once";
     }
 
@@ -167,7 +185,7 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
 
       desiredAnimation = "kick_once";
 
-      if (state.kickTimer <= 0.f && state.timeInAir <= 0) {
+      if (state.kickTimer <= 0.f && state.secondsInAir <= 0) {
         state.kicking = false;
       }
     } else {
@@ -193,11 +211,11 @@ void movement(TangibleObject &tangible, const GeneralContext &ctx) {
 
     sf::Vector2f bulletSpeed;
     if (lookingUp == 1) {
-      bulletSpeed = {0.f, -4.f};
+      bulletSpeed = {0.f, -4.f * 60.f};
     } else if (lookingUp == -1) {
-      bulletSpeed = {0.f, 4.f};
+      bulletSpeed = {0.f, 4.f * 60.f};
     } else {
-      bulletSpeed = {4.f * static_cast<float>(tangible.direction), 0.f};
+      bulletSpeed = {4.f * 60.f * static_cast<float>(tangible.direction), 0.f};
     }
 
     BulletManager::getInstance().queueSpawn(

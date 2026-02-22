@@ -95,6 +95,9 @@ void Renderizer::render(GameObject *obj) {
     idText.setString(std::to_string(obj->getId()));
     idText.setPosition(screenPos);
     idText.setCharacterSize(11);
+    idText.setFillColor(sf::Color::White);
+    idText.setOutlineColor(sf::Color::Black);
+    idText.setOutlineThickness(1.5f);
     window.draw(idText);
   }
 }

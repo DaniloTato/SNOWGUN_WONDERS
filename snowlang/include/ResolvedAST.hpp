@@ -31,7 +31,8 @@ enum class ExprKind : std::uint8_t {
   Object,
   MemberAccess,
   This,
-  Bool
+  Bool,
+  Null
 };
 
 struct RExpr : public Node {
@@ -233,6 +234,10 @@ struct RThisExpr : RExpr {
 struct RBoolExpr : RExpr {
   bool val;
   explicit RBoolExpr(bool val) : RExpr(ExprKind::Bool), val(val) {}
+};
+
+struct RNullExpr : RExpr {
+  explicit RNullExpr() : RExpr(ExprKind::Null) {}
 };
 
 } // namespace Snowlang

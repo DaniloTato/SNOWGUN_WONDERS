@@ -1,7 +1,7 @@
 #include "ParticleManager.hpp"
 #include "Animator.hpp"
 #include "ColorPalette.hpp"
-#include "Constants.hpp"
+#include "GameState.hpp"
 #include "Helpers.hpp"
 #include "PolyRenderizer.hpp"
 #include "RenderCommand.hpp"
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <memory>
 
-ParticleManager::ParticleManager() {
+ParticleManager::ParticleManager() : GameObject({WindowTypes::MAIN}) {
   cachedAnimations = Animator::getAsepriteJSONAnimations(
       (Helper::getPath("assets/json/particles.json")));
   persistentAcrossScenes = true;
@@ -241,7 +241,7 @@ void ParticleManager::setWind(const sf::Vector2f &windVec) { wind = windVec; }
 
 void ParticleManager::updateParticles() {
 
-  float dt = 1.f / Constants::FRAME_RATE;
+  float dt = GameState::getInstance().dt();
 
   for (auto &p : particles) {
 

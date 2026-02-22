@@ -12,7 +12,7 @@
 #include <ranges>
 #include <string_view>
 
-static constexpr size_t MAX_LINES = 35;
+static constexpr size_t MAX_LINES = 55;
 
 std::vector<Terminal *> Terminal::s_activeTerminals;
 

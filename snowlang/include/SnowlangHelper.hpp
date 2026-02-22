@@ -131,4 +131,35 @@ inline float toNumber(const RuntimeValue &v) {
   return 0.0f;
 }
 
+template <typename... Ts> class GetListHelper {
+public:
+  GetListHelper(const SourceSpan &span) : span(span) {}
+
+  std::tuple<Ts...> operator()(const RuntimeValue &value) const {
+    using List = Snowlang::RuntimeValue::List;
+
+    const auto &list = RuntimeValueTo<List>(span)(value);
+
+    if (list.size() != sizeof...(Ts)) {
+      throwError(SnowErr::Phase::Evaluator,
+                 "List must contain exactly " + std::to_string(sizeof...(Ts)) + " elements.", span);
+    }
+
+    return convertElements<Ts...>(list, std::index_sequence_for<Ts...>{});
+  }
+
+private:
+  const SourceSpan &span;
+
+  template <typename... Us, std::size_t... Is>
+  std::tuple<Us...> convertElements(const RuntimeValue::List &list,
+                                    std::index_sequence<Is...>) const {
+    return std::make_tuple(RuntimeValueTo<Us>(span)(list[Is])...);
+  }
+};
+
+template <typename... Ts> GetListHelper<Ts...> GetList(const SourceSpan &span) {
+  return GetListHelper<Ts...>(span);
+}
+
 } // namespace Snowlang::SnowlangHelper

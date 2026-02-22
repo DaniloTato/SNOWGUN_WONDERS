@@ -10,7 +10,7 @@ namespace script {
 namespace {
 
 const int MAX_LIFE = 10;
-const float SPEED = 1.f;
+const float SPEED = 1.f * 55.f;
 const float EXPLOSION_SPEED = 0.1;
 const int EXPLOSION_DAMAGE = 1;
 const float DEAD_DURATION = 1.f;
@@ -22,6 +22,8 @@ const float CAMERA_SHAKE_INTENSITY = 20.f;
 struct MissileState {
   float currentExplosionRadius = 0;
   Helper::TriggerOnce cameraShake;
+  Helper::DoEvery emitExplosionEvery;
+  Helper::DoEvery emitSmokeEvery;
 };
 } // namespace
 
@@ -29,13 +31,13 @@ void missileAI(TangibleObject &tangible, const GeneralContext &ctx) {
 
   script::damageable(tangible, ctx, MAX_LIFE, 0.6f, DEAD_DURATION);
 
-  auto &status = tangible.scripter.getState<MissileState>("missileAI");
+  auto &state = tangible.scripter.getState<MissileState>("missileAI");
 
   tangible.offset = {static_cast<float>(rand() % 2 - 2), 0.f};
 
   bool isDying = script::DamageFunctions::isDying(tangible);
 
-  status.cameraShake.check((isDying), [] {
+  state.cameraShake.check((isDying), [] {
     script::ShakeFunctions::startShake(
         *GameState::getInstance().getMainCamera(), CAMERA_SHAKE_DURATION,
         CAMERA_SHAKE_INTENSITY);
@@ -49,22 +51,25 @@ void missileAI(TangibleObject &tangible, const GeneralContext &ctx) {
 
     tangible.renderizer.setLayer(
         0.f); // change layer so it renders behind explosion
-    status.currentExplosionRadius =
-        Helper::lerp(status.currentExplosionRadius, MAXIMUM_EXPLOSION_RADIUS,
+    state.currentExplosionRadius =
+        Helper::lerp(state.currentExplosionRadius, MAXIMUM_EXPLOSION_RADIUS,
                      EXPLOSION_SPEED);
 
     sf::Vector2f explosionCenter = tangible.position + sf::Vector2f(8.f, 24.f);
-    ParticleManager::getInstance().emitMediumExplosion(
-        explosionCenter, 2, status.currentExplosionRadius);
+
+    state.emitExplosionEvery(1 / 60.f, [&state, &explosionCenter] {
+      ParticleManager::getInstance().emitMediumExplosion(
+          explosionCenter, 2, state.currentExplosionRadius);
+    });
 
     BasicCollider explosionCollider;
-    explosionCollider.setSize({2.f * status.currentExplosionRadius,
-                               2.f * status.currentExplosionRadius});
+    explosionCollider.setSize({2.f * state.currentExplosionRadius,
+                               2.f * state.currentExplosionRadius});
 
     explosionCollider.setOffset(
-        {explosionCenter.x - status.currentExplosionRadius -
+        {explosionCenter.x - state.currentExplosionRadius -
              tangible.position.x + 10,
-         explosionCenter.y - status.currentExplosionRadius -
+         explosionCenter.y - state.currentExplosionRadius -
              tangible.position.y});
 
     AttackHitbox explosionHitbox = {.collider = explosionCollider,
@@ -76,8 +81,10 @@ void missileAI(TangibleObject &tangible, const GeneralContext &ctx) {
     return;
   }
 
-  ParticleManager::getInstance().emitSmoke(
-      tangible.position + sf::Vector2f(23, 15), 1);
+  state.emitSmokeEvery(1 / 60.f, [&tangible] {
+    ParticleManager::getInstance().emitSmoke(
+        tangible.position + sf::Vector2f(23, 15), 1);
+  });
 
   tangible.physics.setSpdx(SPEED * static_cast<float>(tangible.direction),
                            PhysicsComponent::SpeedType::MOVEMENT);

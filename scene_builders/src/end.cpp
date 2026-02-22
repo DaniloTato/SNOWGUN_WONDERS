@@ -35,7 +35,7 @@ void end() {
 
   LevelManager &levelManager = LevelManager::getInstance();
 
-  auto *scriptRunner = new ScriptRunner();
+  auto *scriptRunner = new ScriptRunner(GameObject::UniversalDomain());
   scriptRunner->scripter.addScript("pressStart", script::pressStart);
 
   levelManager.setBackgroundColor(ColorPalette::Black);

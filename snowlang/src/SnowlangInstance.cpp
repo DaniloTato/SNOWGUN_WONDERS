@@ -55,7 +55,7 @@ void SnowlangInstance::run(const std::string &source) {
 std::string SnowlangInstance::readFile(const std::string &path) const {
   std::ifstream file(path, std::ios::in);
   if (!file.is_open()) {
-    throw std::runtime_error("[IO] Could not open file: " + path);
+    throwError(SnowErr::Phase::Evaluator, "[IO] Could not open file: " + path, SourceSpan{});
   }
 
   std::stringstream buffer;

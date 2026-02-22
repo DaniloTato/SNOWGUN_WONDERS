@@ -15,8 +15,8 @@ namespace SceneBuilder {
 
 // Creates cameras and adds standard scripts
 void setupCameras(GameState &gameState) {
-  gameState.createCamera(CameraTypes::MAIN);
-  gameState.createCamera(CameraTypes::UI);
+  gameState.createCamera(CameraTypes::MAIN, {WindowTypes::MAIN});
+  gameState.createCamera(CameraTypes::UI, {WindowTypes::MAIN});
 
   auto mainCam = gameState.getMainCamera();
   mainCam->zoomTo(3.f);

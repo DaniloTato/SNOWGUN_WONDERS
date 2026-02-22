@@ -27,7 +27,7 @@ TangibleObject *crystalBlueprint(const sf::Vector2f &pos) {
 
   crystal->animator.play("big");
 
-  crystal->scripter.addScript("crystalShard", script::crystalShard);
+  crystal->scripter.addScript("behaviour", script::crystalShard);
 
   return crystal;
 }

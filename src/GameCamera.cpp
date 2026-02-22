@@ -4,6 +4,8 @@
 #include "SFML/System/Vector2.hpp"
 #include "Scripter.hpp"
 
+#include "GameState.hpp"
+
 sf::Vector2i Vec2fTo2i(sf::Vector2f vec) {
   return {static_cast<int>(vec.x), static_cast<int>(vec.y)};
 }
@@ -12,10 +14,11 @@ sf::Vector2f Vec2iTo2f(sf::Vector2i vec) {
   return {static_cast<float>(vec.x), static_cast<float>(vec.y)};
 }
 
-GameCamera::GameCamera()
-    : GameObject({0, 0}), desiredPosition(0.f, 0.f), shakePosition(0.f, 0.f),
-      zoom(1.f), desiredZoom(1.f), impactZoom(0.f),
-      followSpeed(sf::Vector2f(0.1, 0.05)), zoomSpeed(0.3) {}
+GameCamera::GameCamera(UpdateDomain updateDomain)
+    : GameObject(std::move(updateDomain), {0, 0}), desiredPosition(0.f, 0.f),
+      shakePosition(0.f, 0.f), zoom(1.f), desiredZoom(1.f), impactZoom(0.f),
+      followSpeed(sf::Vector2f(0.1 * 50.f, 0.05 * 50.f)),
+      zoomSpeed(0.3 * 50.f) {}
 
 void GameCamera::goTo(const sf::Vector2f &pos) { desiredPosition = pos; }
 
@@ -27,11 +30,12 @@ void GameCamera::zoomToDesired() { zoom = desiredZoom; }
 
 void GameCamera::update(const GeneralContext &ctx) {
   scripter.runScripts(*this, ctx);
-  zoom += ((desiredZoom + impactZoom) - zoom) * zoomSpeed;
+  float dt = GameState::getInstance().dt();
+  zoom += ((desiredZoom + impactZoom) - zoom) * zoomSpeed * dt;
   position.x +=
-      ((desiredPosition.x + shakePosition.x) - position.x) * followSpeed.x;
+      ((desiredPosition.x + shakePosition.x) - position.x) * followSpeed.x * dt;
   position.y +=
-      ((desiredPosition.y + shakePosition.y) - position.y) * followSpeed.y;
+      ((desiredPosition.y + shakePosition.y) - position.y) * followSpeed.y * dt;
 }
 
 float GameCamera::getZoom() const { return zoom; }

@@ -10,6 +10,7 @@
 
 namespace script {
 
+namespace {
 struct CrystalState {
   bool collected = false;
   bool isBig = false;
@@ -19,11 +20,18 @@ struct CrystalState {
       : isBig(isBig), startingSpeed(startingSpeed) {}
 };
 
+const float MAX_SPDX = 4.f * 55.f;
+const float MIN_SPDY = 3.f * 55.f;
+const float MAX_SPDY = 6.f * 55.f;
+
+} // namespace
+
 void crystalShard(TangibleObject &obj, const GeneralContext &ctx) {
   bool crystalSize = (rand() % 3 == 0);
   auto &state = obj.scripter.getState<CrystalState>(
       "crystal", crystalSize,
-      sf::Vector2f(Helper::randRange(-4.f, 4.f), Helper::randRange(3.f, 6.f)));
+      sf::Vector2f(Helper::randRange(-MAX_SPDX, MAX_SPDX),
+                   Helper::randRange(MIN_SPDY, MAX_SPDY)));
 
   if (state.collected) {
     if (!obj.isPlayingAnySound()) {

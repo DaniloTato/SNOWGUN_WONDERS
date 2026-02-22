@@ -1,11 +1,13 @@
 #include "GameObject.hpp"
 #include "GameObjectExposure.hpp"
+#include "GameState.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <vector>
 
 unsigned int GameObject::nextId = 0;
 
-GameObject::GameObject(sf::Vector2f pos) : position(pos) {
+GameObject::GameObject(UpdateDomain updateDomain, sf::Vector2f pos)
+    : position(pos), updateDomain(std::move(updateDomain)) {
   s_gameObjects.push_back(this);
   id = nextId++;
 }
@@ -70,6 +72,8 @@ GameObjectExposure::Value::Object GameObject::describe() {
             return GameObjectExposure::Descriptor::describeVector2f(position);
           });
 
+  desc->fields["id"] = GameObjectExposure::makePublicField<unsigned int>(id);
+
   desc->fields["offset"] =
       GameObjectExposure::makeUnmutableField<GameObjectExposure::Value::Object>(
           [this] {
@@ -77,4 +81,29 @@ GameObjectExposure::Value::Object GameObject::describe() {
           });
 
   return desc;
+}
+
+bool GameObject::isUpdateDomainPaused() {
+  for (const auto &i : updateDomain) {
+    if (!GameState::getInstance().getWindowByType(i).isPaused()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+GameObject::UpdateDomain GameObject::UniversalDomain() {
+  UpdateDomain domain;
+  for (size_t i = 0; i < static_cast<size_t>(WindowTypes::COUNT); ++i)
+    domain.push_back(static_cast<WindowTypes>(i));
+  return domain;
+}
+
+GameObject *GameObject::findGameObjectById(float id) {
+  for (auto *obj : GameObject::getGameObjects()) {
+    if (obj->getId() == static_cast<unsigned int>(id))
+      return obj;
+  }
+  return nullptr;
 }

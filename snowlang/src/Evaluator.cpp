@@ -421,6 +421,11 @@ RuntimeValue Evaluator::evalExpr(const RExprPtr &expr) {
     return {b->val};
   }
 
+  // ---------- NULL ----------
+  case ExprKind::Null: {
+    return {};
+  }
+
   default:
     throwError(SnowErr::Phase::Evaluator, "unsupported expression", expr->span);
   }

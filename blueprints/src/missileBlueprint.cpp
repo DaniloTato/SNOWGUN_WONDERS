@@ -27,7 +27,7 @@ TangibleObject *missileBlueprint(const sf::Vector2f &pos) {
 
   missile->animator.play("idle");
 
-  missile->scripter.addScript("missileAI", script::missileAI);
+  missile->scripter.addScript("behaviour", script::missileAI);
   missile->direction = -1;
 
   return missile;

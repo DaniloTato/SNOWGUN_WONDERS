@@ -16,9 +16,6 @@
 #include "SoundManager.hpp"
 #include "Terminal.hpp"
 
-/*Namespaces*/
-#include "Constants.hpp"
-
 /*TangibleObject Scripts*/
 #include "missileBlueprint.hpp"
 #include "reindeer.hpp"
@@ -53,8 +50,6 @@ int main() {
   EnemyManager &enemyManager = EnemyManager::getInstance();
   GameState &gameState = GameState::getInstance();
   CollectableManager &collectableManager = CollectableManager::getInstance();
-
-  gameState.getMainWindow()->setFramerateLimit(Constants::FRAME_RATE);
 
   inputManager.loadBindingsFromJsonFile(
       (Helper::getPath("config/control_config.json")));
@@ -136,7 +131,7 @@ int main() {
   sceneManager.registerScene("barracks", SceneBuilder::setupMainLevelScene);
   sceneManager.registerScene("level2", SceneBuilder::setupLevel2);
   sceneManager.registerScene("tutorial", SceneBuilder::tutorial);
-  sceneManager.registerScene("titleScreen", SceneBuilder::titleScreen);
+  sceneManager.registerScene("titlescreen", SceneBuilder::titleScreen);
   sceneManager.registerScene("end", SceneBuilder::end);
   sceneManager.registerScene("hills", SceneBuilder::hills);
 
@@ -145,18 +140,19 @@ int main() {
   sf::Clock clock;
 
   while (gameState.getMainWindow() && gameState.getMainWindow()->isOpen()) {
+
     sf::Event event;
     inputManager.update();
 
-    const std::vector<sf::RenderWindow *> &windows = gameState.getWindows();
+    std::vector<GameWindow> &windows = gameState.getWindows();
     for (WindowTypes i = WindowTypes::MAIN; i != WindowTypes::COUNT;
          i = static_cast<WindowTypes>(static_cast<int>(i) + 1)) {
 
       auto windowType = static_cast<size_t>(i);
-      if (!windows[windowType] || i == WindowTypes::TERMINAL)
+      if (!windows[windowType].getWindow() || i == WindowTypes::TERMINAL)
         continue;
 
-      while (windows[windowType]->pollEvent(event)) {
+      while (windows[windowType].getWindow()->pollEvent(event)) {
         if (i == WindowTypes::MAIN) {
           inputManager.handleEvent(event);
         }
@@ -164,6 +160,14 @@ int main() {
         if (event.type == sf::Event::Closed) {
           GameState::getInstance().removeWindow(i);
           break;
+        }
+
+        if (event.type == sf::Event::LostFocus) {
+          gameState.pauseWindow(i);
+        }
+
+        if (event.type == sf::Event::GainedFocus) {
+          gameState.resumeWindow(i);
         }
       }
     }
@@ -185,30 +189,36 @@ int main() {
          i = static_cast<WindowTypes>(static_cast<int>(i) + 1)) {
 
       auto windowType = static_cast<size_t>(i);
-      if (!windows[windowType])
+      if (!windows[windowType].getWindow())
         continue;
 
       if (i == WindowTypes::MAIN) {
-        windows[windowType]->clear(
+        windows[windowType].getWindow()->clear(
             LevelManager::getInstance().getBackgroundColor());
       } else {
-        windows[windowType]->clear();
+        windows[windowType].getWindow()->clear();
       }
     }
 
     for (GameObject *gameObject : GameObject::getGameObjects()) {
-      if (gameObject) {
-        gameObject->update(GameState::getInstance().getGeneralContext());
+      if (gameObject && !gameObject->isUpdateDomainPaused()) {
+        gameObject->update(gameState.getGeneralContext());
       }
     }
 
     Renderizer::renderAll();
 
-    for (auto &window : gameState.getWindows()) {
-      if (window) {
-        window->display();
+    for (auto &gameWindow : gameState.getWindows()) {
+      if (!gameWindow.getWindow())
+        continue;
+
+      if (gameWindow.renderFlag()) {
+        gameWindow.getWindow()->display();
+        gameWindow.markAsRendered();
       }
     }
+
+    sf::sleep(sf::milliseconds(1));
   }
 
   return 0;
